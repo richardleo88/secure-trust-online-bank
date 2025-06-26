@@ -1,6 +1,6 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -19,6 +19,23 @@ import { Menu } from "lucide-react";
 
 const Header = () => {
   const [language, setLanguage] = useState("en");
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    console.log("Login clicked, navigating to dashboard");
+    navigate("/dashboard");
+  };
+
+  const handleRegister = () => {
+    console.log("Register clicked, navigating to dashboard");
+    navigate("/dashboard");
+  };
+
+  const handleLanguageChange = (value: string) => {
+    console.log("Language changed to:", value);
+    setLanguage(value);
+    // Here you would typically implement actual language switching logic
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -52,7 +69,7 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-2 md:space-x-4">
-          <Select value={language} onValueChange={setLanguage}>
+          <Select value={language} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-16 md:w-20 h-8 text-sm">
               <SelectValue />
             </SelectTrigger>
@@ -66,10 +83,10 @@ const Header = () => {
 
           {/* Desktop Login/Register */}
           <div className="hidden sm:flex items-center space-x-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleLogin}>
               Login
             </Button>
-            <Button className="banking-gradient text-white hover:opacity-90" size="sm">
+            <Button className="banking-gradient text-white hover:opacity-90" size="sm" onClick={handleRegister}>
               Register
             </Button>
           </div>
@@ -107,10 +124,10 @@ const Header = () => {
 
                 {/* Mobile Login/Register */}
                 <div className="pt-6 border-t space-y-3">
-                  <Button variant="outline" className="w-full" size="lg">
+                  <Button variant="outline" className="w-full" size="lg" onClick={handleLogin}>
                     Login
                   </Button>
-                  <Button className="banking-gradient text-white hover:opacity-90 w-full" size="lg">
+                  <Button className="banking-gradient text-white hover:opacity-90 w-full" size="lg" onClick={handleRegister}>
                     Register
                   </Button>
                 </div>
