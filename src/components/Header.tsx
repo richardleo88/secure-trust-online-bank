@@ -22,13 +22,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log("Login clicked, navigating to dashboard");
-    navigate("/dashboard");
+    console.log("Login clicked, navigating to sign in");
+    navigate("/signin");
   };
 
   const handleRegister = () => {
-    console.log("Register clicked, navigating to dashboard");
-    navigate("/dashboard");
+    console.log("Register clicked, navigating to sign up");
+    navigate("/signup");
   };
 
   const handleLanguageChange = (value: string) => {
@@ -84,10 +84,10 @@ const Header = () => {
           {/* Desktop Login/Register */}
           <div className="hidden sm:flex items-center space-x-2">
             <Button variant="outline" size="sm" onClick={handleLogin}>
-              Login
+              Sign In
             </Button>
             <Button className="banking-gradient text-white hover:opacity-90" size="sm" onClick={handleRegister}>
-              Register
+              Sign Up
             </Button>
           </div>
 
@@ -125,10 +125,10 @@ const Header = () => {
                 {/* Mobile Login/Register */}
                 <div className="pt-6 border-t space-y-3">
                   <Button variant="outline" className="w-full" size="lg" onClick={handleLogin}>
-                    Login
+                    Sign In
                   </Button>
                   <Button className="banking-gradient text-white hover:opacity-90 w-full" size="lg" onClick={handleRegister}>
-                    Register
+                    Sign Up
                   </Button>
                 </div>
               </div>
