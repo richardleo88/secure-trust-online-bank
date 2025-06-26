@@ -8,6 +8,9 @@ import ActionsPanel from "@/components/dashboard/ActionsPanel";
 import SecurityPanel from "@/components/dashboard/SecurityPanel";
 import NotificationsCenter from "@/components/dashboard/NotificationsCenter";
 import MobileBottomNav from "@/components/dashboard/MobileBottomNav";
+import WireTransfer from "@/components/dashboard/WireTransfer";
+import LocalTransfer from "@/components/dashboard/LocalTransfer";
+import WesternUnion from "@/components/dashboard/WesternUnion";
 import { Menu } from "lucide-react";
 
 const Dashboard = () => {
@@ -24,13 +27,19 @@ const Dashboard = () => {
         return <SecurityPanel />;
       case "notifications":
         return <NotificationsCenter />;
+      case "wire-transfer":
+        return <WireTransfer />;
+      case "local-transfer":
+        return <LocalTransfer />;
+      case "western-union":
+        return <WesternUnion />;
       default:
         return <AccountOverview />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
       <SidebarProvider>
         <div className="flex w-full min-h-screen">
           <DashboardSidebar 
@@ -42,7 +51,7 @@ const Dashboard = () => {
           
           <main className="flex-1 flex flex-col">
             {/* Header */}
-            <header className="bg-white shadow-sm border-b p-4 flex items-center justify-between">
+            <header className="bg-white/90 backdrop-blur-md shadow-sm border-b p-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Button
                   variant="ghost"
