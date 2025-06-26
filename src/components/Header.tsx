@@ -8,6 +8,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
 
 const Header = () => {
   const [language, setLanguage] = useState("en");
@@ -43,9 +51,9 @@ const Header = () => {
           </a>
         </nav>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-20 h-8 text-sm">
+            <SelectTrigger className="w-16 md:w-20 h-8 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -56,12 +64,59 @@ const Header = () => {
             </SelectContent>
           </Select>
 
-          <Button variant="outline" className="hidden sm:flex">
-            Login
-          </Button>
-          <Button className="banking-gradient text-white hover:opacity-90">
-            Register
-          </Button>
+          {/* Desktop Login/Register */}
+          <div className="hidden sm:flex items-center space-x-2">
+            <Button variant="outline" size="sm">
+              Login
+            </Button>
+            <Button className="banking-gradient text-white hover:opacity-90" size="sm">
+              Register
+            </Button>
+          </div>
+
+          {/* Mobile Menu */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+              </SheetHeader>
+              <div className="flex flex-col space-y-4 mt-6">
+                {/* Mobile Navigation */}
+                <div className="space-y-3">
+                  <a href="#personal" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                    Personal
+                  </a>
+                  <a href="#business" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                    Business
+                  </a>
+                  <a href="#investments" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                    Investments
+                  </a>
+                  <a href="#loans" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                    Loans
+                  </a>
+                  <a href="#support" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                    Support
+                  </a>
+                </div>
+
+                {/* Mobile Login/Register */}
+                <div className="pt-6 border-t space-y-3">
+                  <Button variant="outline" className="w-full" size="lg">
+                    Login
+                  </Button>
+                  <Button className="banking-gradient text-white hover:opacity-90 w-full" size="lg">
+                    Register
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
