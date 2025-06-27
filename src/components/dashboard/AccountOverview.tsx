@@ -37,12 +37,32 @@ const AccountOverview = () => {
     },
   ];
 
-  const recentTransactions = [
-    { type: "Deposit", amount: 2500, date: "2024-01-15", description: "Salary Deposit", category: "Income" },
-    { type: "Transfer", amount: -150, date: "2024-01-14", description: "To Savings Account", category: "Transfer" },
-    { type: "Purchase", amount: -45.50, date: "2024-01-13", description: "Grocery Store", category: "Shopping" },
-    { type: "Transfer", amount: -800, date: "2024-01-12", description: "Rent Payment", category: "Bills" },
-  ];
+  // Get recent transactions from localStorage (real user transactions)
+  const getRecentTransactions = () => {
+    const stored = localStorage.getItem('userTransactions');
+    const storedTransactions = stored ? JSON.parse(stored) : [];
+    
+    // If no stored transactions, show sample data
+    if (storedTransactions.length === 0) {
+      return [
+        { type: "Deposit", amount: 2500, date: "2024-01-15", description: "Salary Deposit", category: "Income" },
+        { type: "Transfer", amount: -150, date: "2024-01-14", description: "To Savings Account", category: "Transfer" },
+        { type: "Purchase", amount: -45.50, date: "2024-01-13", description: "Grocery Store", category: "Shopping" },
+        { type: "Transfer", amount: -800, date: "2024-01-12", description: "Rent Payment", category: "Bills" },
+      ];
+    }
+    
+    // Convert stored transactions to recent transaction format
+    return storedTransactions.slice(0, 4).map(transaction => ({
+      type: transaction.type,
+      amount: parseFloat(transaction.amount.replace('$', '').replace(',', '')) * -1, // Outgoing transactions are negative
+      date: transaction.date,
+      description: `To ${transaction.recipient}`,
+      category: transaction.method
+    }));
+  };
+
+  const [recentTransactions] = useState(getRecentTransactions());
 
   return (
     <div className="space-y-8">

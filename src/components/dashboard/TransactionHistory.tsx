@@ -5,73 +5,70 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { History, Download, Eye, Filter, Search, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import TransactionDetailModal from "./TransactionDetailModal";
 
 const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const transactions = [
-    {
-      id: "TXN001",
-      type: "Wire Transfer",
-      recipient: "John Smith",
-      amount: "$2,500.00",
-      status: "Completed",
-      date: "2024-01-15",
-      time: "2:30 PM",
-      reference: "INT-WIRE-001",
-      method: "International Wire",
-      account: "****1234"
-    },
-    {
-      id: "TXN002", 
-      type: "ACH Transfer",
-      recipient: "Sarah Johnson",
-      amount: "$1,200.00",
-      status: "Completed",
-      date: "2024-01-14",
-      time: "10:15 AM",
-      reference: "ACH-DOM-002",
-      method: "Domestic ACH",
-      account: "****5678"
-    },
-    {
-      id: "TXN003",
-      type: "Local Transfer",
-      recipient: "Michael Brown",
-      amount: "$350.00",
-      status: "Completed",
-      date: "2024-01-13",
-      time: "4:45 PM",
-      reference: "LOCAL-003",
-      method: "Zelle",
-      account: "****9012"
-    },
-    {
-      id: "TXN004",
-      type: "Western Union",
-      recipient: "Maria Garcia",
-      amount: "$800.00",
-      status: "Pending",
-      date: "2024-01-12",
-      time: "1:20 PM",
-      reference: "WU-004",
-      method: "Cash Pickup",
-      account: "****3456"
-    },
-    {
-      id: "TXN005",
-      type: "Wire Transfer",
-      recipient: "David Wilson",
-      amount: "$5,000.00",
-      status: "Failed",
-      date: "2024-01-11",
-      time: "9:30 AM",
-      reference: "INT-WIRE-005",
-      method: "International Wire",
-      account: "****7890"
+  // Get transactions from localStorage (real user transactions)
+  const getStoredTransactions = () => {
+    const stored = localStorage.getItem('userTransactions');
+    return stored ? JSON.parse(stored) : [];
+  };
+
+  const [transactions] = useState(() => {
+    const storedTransactions = getStoredTransactions();
+    
+    // If no stored transactions, show sample data
+    if (storedTransactions.length === 0) {
+      return [
+        {
+          id: "TXN001",
+          type: "Wire Transfer",
+          recipient: "John Smith",
+          amount: "$2,500.00",
+          status: "Completed",
+          date: "2024-01-15",
+          time: "2:30 PM",
+          reference: "INT-WIRE-001",
+          method: "International Wire",
+          account: "****1234",
+          fee: "$25.00"
+        },
+        {
+          id: "TXN002", 
+          type: "ACH Transfer",
+          recipient: "Sarah Johnson",
+          amount: "$1,200.00",
+          status: "Completed",
+          date: "2024-01-14",
+          time: "10:15 AM",
+          reference: "ACH-DOM-002",
+          method: "Domestic ACH",
+          account: "****5678",
+          fee: "$3.00"
+        },
+        {
+          id: "TXN003",
+          type: "Local Transfer",
+          recipient: "Michael Brown",
+          amount: "$350.00",
+          status: "Completed",
+          date: "2024-01-13",
+          time: "4:45 PM",
+          reference: "LOCAL-003",
+          method: "Zelle",
+          account: "****9012",
+          fee: "$0.00"
+        }
+      ];
     }
-  ];
+    
+    return storedTransactions;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -89,6 +86,11 @@ const TransactionHistory = () => {
     const matchesFilter = filterStatus === "all" || transaction.status.toLowerCase() === filterStatus;
     return matchesSearch && matchesFilter;
   });
+
+  const handleViewDetails = (transaction: any) => {
+    setSelectedTransaction(transaction);
+    setIsDetailModalOpen(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -180,12 +182,12 @@ const TransactionHistory = () => {
                     {transaction.amount}
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleViewDetails(transaction)}>
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
                     {transaction.status === "Completed" && (
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(transaction)}>
                         <Download className="h-4 w-4 mr-2" />
                         Receipt
                       </Button>
@@ -209,6 +211,13 @@ const TransactionHistory = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Transaction Detail Modal */}
+      <TransactionDetailModal
+        transaction={selectedTransaction}
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+      />
     </div>
   );
 };

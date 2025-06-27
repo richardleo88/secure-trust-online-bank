@@ -27,54 +27,26 @@ const SecurityPanel = () => {
     return deviceName;
   };
 
-  const [loginHistory, setLoginHistory] = useState([
-    { 
-      id: 1,
-      device: getCurrentDevice(), 
-      location: "New York, NY", 
-      time: "Current session", 
-      status: "current",
-      trusted: true 
-    },
-    { 
-      id: 2,
-      device: "Chrome Browser", 
-      location: "New York, NY", 
-      time: "2 hours ago", 
-      status: "success",
-      trusted: false 
-    },
-    { 
-      id: 3,
-      device: "Safari Browser", 
-      location: "Boston, MA", 
-      time: "1 day ago", 
-      status: "suspicious",
-      trusted: false 
-    },
-  ]);
+  // Get user's approximate location (mock for demo)
+  const getCurrentLocation = () => {
+    return "New York, NY"; // In real app, this would come from IP geolocation
+  };
+
+  const [currentSession] = useState({
+    id: 1,
+    device: getCurrentDevice(),
+    location: getCurrentLocation(),
+    time: "Current session",
+    status: "current",
+    trusted: true
+  });
 
   const securityScore = 75;
 
-  const handleClearLoginHistory = () => {
-    setLoginHistory(prev => prev.filter(login => login.status === "current"));
-    toast({
-      title: "Login History Cleared",
-      description: "Previous device login history has been cleared successfully.",
-    });
-  };
-
   const handleActivateCurrentDevice = () => {
-    setLoginHistory(prev => 
-      prev.map(login => 
-        login.status === "current" 
-          ? { ...login, trusted: true }
-          : login
-      )
-    );
     toast({
-      title: "Device Activated",
-      description: "Current device has been set as trusted.",
+      title: "Device Already Trusted",
+      description: "Current device is already set as trusted.",
     });
   };
 
@@ -105,6 +77,28 @@ const SecurityPanel = () => {
       description: enabled 
         ? "You will receive SMS notifications for account sign-ups."
         : "SMS notifications have been disabled.",
+    });
+  };
+
+  const handleChangePassword = () => {
+    toast({
+      title: "Password Change",
+      description: "Password change feature would open here in a real application.",
+    });
+  };
+
+  const handleEnable2FA = () => {
+    handleToggle2FA(true);
+  };
+
+  const handleEnableSMS = () => {
+    handleSMSAlertsToggle(true);
+  };
+
+  const handleReviewActivity = () => {
+    toast({
+      title: "Security Review",
+      description: "Security activity review would open here in a real application.",
     });
   };
 
@@ -176,7 +170,7 @@ const SecurityPanel = () => {
           </CardContent>
         </Card>
 
-        {/* Device Management */}
+        {/* Device Management - Current Session Only */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -186,45 +180,34 @@ const SecurityPanel = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3 mb-4">
-              {loginHistory.map((login) => (
-                <div key={login.id} className={`flex items-center justify-between p-3 rounded-lg ${
-                  login.status === "current" ? "bg-green-50 ring-2 ring-green-200" : "bg-gray-50"
-                }`}>
-                  <div className="flex items-center gap-3">
-                    {login.device.includes("iPhone") || login.device.includes("Android") ? (
-                      <Smartphone className="h-4 w-4 text-gray-600" />
-                    ) : (
-                      <Monitor className="h-4 w-4 text-gray-600" />
-                    )}
-                    <div>
-                      <div className="font-medium text-sm flex items-center gap-2">
-                        {login.device}
-                        {login.status === "current" && (
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                            Current Activity
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-600 flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {login.location}
-                      </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 ring-2 ring-green-200">
+                <div className="flex items-center gap-3">
+                  {currentSession.device.includes("iPhone") || currentSession.device.includes("Android") ? (
+                    <Smartphone className="h-4 w-4 text-gray-600" />
+                  ) : (
+                    <Monitor className="h-4 w-4 text-gray-600" />
+                  )}
+                  <div>
+                    <div className="font-medium text-sm flex items-center gap-2">
+                      {currentSession.device}
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                        Current Activity
+                      </span>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-gray-500 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {login.time}
+                    <div className="text-xs text-gray-600 flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {currentSession.location}
                     </div>
-                    {login.status === "current" && (
-                      <CheckCircle className="h-4 w-4 text-green-500 ml-auto mt-1" />
-                    )}
-                    {login.status === "suspicious" && (
-                      <AlertTriangle className="h-4 w-4 text-red-500 ml-auto mt-1" />
-                    )}
                   </div>
                 </div>
-              ))}
+                <div className="text-right">
+                  <div className="text-xs text-gray-500 flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {currentSession.time}
+                  </div>
+                  <CheckCircle className="h-4 w-4 text-green-500 ml-auto mt-1" />
+                </div>
+              </div>
             </div>
             
             <div className="flex gap-2">
@@ -236,20 +219,12 @@ const SecurityPanel = () => {
                 <Shield className="h-4 w-4 mr-2" />
                 Trust This Device
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleClearLoginHistory}
-                className="flex items-center gap-2"
-              >
-                <Trash2 className="h-4 w-4" />
-                Clear History
-              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Security Recommendations - Automatically Activated */}
+      {/* Security Recommendations - Functional */}
       <Card>
         <CardHeader>
           <CardTitle>Security Recommendations</CardTitle>
@@ -263,7 +238,7 @@ const SecurityPanel = () => {
                   <div className="font-medium text-red-800">Enable Two-Factor Authentication</div>
                   <div className="text-sm text-red-700">Critical: Your account needs 2FA for enhanced security</div>
                 </div>
-                <Button size="sm" variant="outline" onClick={() => handleToggle2FA(true)} className="ml-auto">
+                <Button size="sm" variant="outline" onClick={handleEnable2FA} className="ml-auto">
                   Enable Now
                 </Button>
               </div>
@@ -276,7 +251,7 @@ const SecurityPanel = () => {
                   <div className="font-medium text-yellow-800">Enable SMS Alerts</div>
                   <div className="text-sm text-yellow-700">Recommended: Get notified of suspicious account activity</div>
                 </div>
-                <Button size="sm" variant="outline" onClick={() => handleSMSAlertsToggle(true)} className="ml-auto">
+                <Button size="sm" variant="outline" onClick={handleEnableSMS} className="ml-auto">
                   Enable
                 </Button>
               </div>
@@ -288,23 +263,10 @@ const SecurityPanel = () => {
                 <div className="font-medium text-blue-800">Password Security</div>
                 <div className="text-sm text-blue-700">Your password meets security requirements</div>
               </div>
-              <Button size="sm" variant="outline" className="ml-auto">
+              <Button size="sm" variant="outline" onClick={handleChangePassword} className="ml-auto">
                 Change Password
               </Button>
             </div>
-
-            {loginHistory.some(login => login.status === "suspicious") && (
-              <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
-                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
-                <div>
-                  <div className="font-medium text-red-800">Suspicious Activity Detected</div>
-                  <div className="text-sm text-red-700">Recent login from unfamiliar location detected</div>
-                </div>
-                <Button size="sm" variant="outline" className="ml-auto">
-                  Review Activity
-                </Button>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
