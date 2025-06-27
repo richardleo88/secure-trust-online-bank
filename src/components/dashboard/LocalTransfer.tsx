@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Building } from "lucide-react";
+import TransferPinModal from "./TransferPinModal";
+import TransferSuccessModal from "./TransferSuccessModal";
 
 const LocalTransfer = () => {
   const [amount, setAmount] = useState("");
@@ -13,6 +14,9 @@ const LocalTransfer = () => {
   const [recipientAccount, setRecipientAccount] = useState("");
   const [routingNumber, setRoutingNumber] = useState("");
   const [selectedBank, setSelectedBank] = useState("");
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [transferData, setTransferData] = useState<any>({});
 
   const usaBanks = [
     "JPMorgan Chase Bank", "Bank of America", "Wells Fargo Bank", "Citibank",
@@ -29,9 +33,16 @@ const LocalTransfer = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Local transfer submitted:", {
+    const data = {
       amount, recipientName, recipientAccount, routingNumber, selectedBank
-    });
+    };
+    setTransferData(data);
+    setShowPinModal(true);
+  };
+
+  const handlePinSuccess = () => {
+    setShowPinModal(false);
+    setShowSuccessModal(true);
   };
 
   return (
@@ -141,6 +152,20 @@ const LocalTransfer = () => {
           </ul>
         </CardContent>
       </Card>
+
+      <TransferPinModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onSuccess={handlePinSuccess}
+        transferData={transferData}
+      />
+
+      <TransferSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        transferData={transferData}
+        transferType="Local Transfer"
+      />
     </div>
   );
 };

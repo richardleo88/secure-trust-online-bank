@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Banknote, Users } from "lucide-react";
+import TransferPinModal from "./TransferPinModal";
+import TransferSuccessModal from "./TransferSuccessModal";
 
 const WesternUnion = () => {
   const [amount, setAmount] = useState("");
@@ -13,6 +14,9 @@ const WesternUnion = () => {
   const [recipientCountry, setRecipientCountry] = useState("");
   const [recipientCity, setRecipientCity] = useState("");
   const [transferPurpose, setTransferPurpose] = useState("");
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [transferData, setTransferData] = useState<any>({});
 
   const countries = [
     "Mexico", "Philippines", "India", "China", "Guatemala", "El Salvador",
@@ -28,9 +32,16 @@ const WesternUnion = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Western Union transfer submitted:", {
+    const data = {
       amount, recipientName, recipientCountry, recipientCity, transferPurpose
-    });
+    };
+    setTransferData(data);
+    setShowPinModal(true);
+  };
+
+  const handlePinSuccess = () => {
+    setShowPinModal(false);
+    setShowSuccessModal(true);
   };
 
   return (
@@ -158,6 +169,20 @@ const WesternUnion = () => {
           </CardContent>
         </Card>
       </div>
+
+      <TransferPinModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onSuccess={handlePinSuccess}
+        transferData={transferData}
+      />
+
+      <TransferSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        transferData={transferData}
+        transferType="Western Union Transfer"
+      />
     </div>
   );
 };

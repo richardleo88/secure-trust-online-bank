@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Globe, DollarSign } from "lucide-react";
+import TransferPinModal from "./TransferPinModal";
+import TransferSuccessModal from "./TransferSuccessModal";
 
 const WireTransfer = () => {
   const [amount, setAmount] = useState("");
@@ -14,6 +15,9 @@ const WireTransfer = () => {
   const [swiftCode, setSwiftCode] = useState("");
   const [bankName, setBankName] = useState("");
   const [country, setCountry] = useState("");
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [transferData, setTransferData] = useState<any>({});
 
   const countries = [
     "United Kingdom", "Canada", "Germany", "France", "Japan", "Australia", 
@@ -22,9 +26,16 @@ const WireTransfer = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Wire transfer submitted:", {
+    const data = {
       amount, recipientName, recipientAccount, swiftCode, bankName, country
-    });
+    };
+    setTransferData(data);
+    setShowPinModal(true);
+  };
+
+  const handlePinSuccess = () => {
+    setShowPinModal(false);
+    setShowSuccessModal(true);
   };
 
   return (
@@ -145,6 +156,20 @@ const WireTransfer = () => {
           </ul>
         </CardContent>
       </Card>
+
+      <TransferPinModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onSuccess={handlePinSuccess}
+        transferData={transferData}
+      />
+
+      <TransferSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        transferData={transferData}
+        transferType="International Wire Transfer"
+      />
     </div>
   );
 };

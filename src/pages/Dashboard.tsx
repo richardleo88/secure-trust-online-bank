@@ -11,6 +11,8 @@ import MobileBottomNav from "@/components/dashboard/MobileBottomNav";
 import WireTransfer from "@/components/dashboard/WireTransfer";
 import LocalTransfer from "@/components/dashboard/LocalTransfer";
 import WesternUnion from "@/components/dashboard/WesternUnion";
+import ATMCard from "@/components/dashboard/ATMCard";
+import Profile from "@/components/dashboard/Profile";
 import { Menu } from "lucide-react";
 
 const Dashboard = () => {
@@ -33,6 +35,10 @@ const Dashboard = () => {
         return <LocalTransfer />;
       case "western-union":
         return <WesternUnion />;
+      case "atm":
+        return <ATMCard />;
+      case "profile":
+        return <Profile />;
       default:
         return <AccountOverview />;
     }
