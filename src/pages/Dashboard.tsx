@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -14,6 +13,7 @@ import LocalTransfer from "@/components/dashboard/LocalTransfer";
 import WesternUnion from "@/components/dashboard/WesternUnion";
 import ATMCard from "@/components/dashboard/ATMCard";
 import Profile from "@/components/dashboard/Profile";
+import TransactionHistory from "@/components/dashboard/TransactionHistory";
 import { Menu } from "lucide-react";
 
 const Dashboard = () => {
@@ -42,6 +42,8 @@ const Dashboard = () => {
         return <ATMCard />;
       case "profile":
         return <Profile />;
+      case "history":
+        return <TransactionHistory />;
       default:
         return <AccountOverview />;
     }

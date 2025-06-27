@@ -1,22 +1,112 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Shield, Smartphone, Monitor, AlertTriangle, CheckCircle } from "lucide-react";
+import { Shield, Smartphone, Monitor, AlertTriangle, CheckCircle, Trash2, MapPin, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const SecurityPanel = () => {
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
+  const { toast } = useToast();
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [smsAlerts, setSmsAlerts] = useState(false);
 
-  const recentLogins = [
-    { device: "iPhone 14", location: "New York, NY", time: "2 hours ago", status: "current" },
-    { device: "Chrome Browser", location: "New York, NY", time: "1 day ago", status: "success" },
-    { device: "Safari Browser", location: "Boston, MA", time: "3 days ago", status: "suspicious" },
-  ];
+  // Get current device info
+  const getCurrentDevice = () => {
+    const userAgent = navigator.userAgent;
+    let deviceName = "Unknown Device";
+    
+    if (/iPhone/.test(userAgent)) deviceName = "iPhone";
+    else if (/iPad/.test(userAgent)) deviceName = "iPad";
+    else if (/Android/.test(userAgent)) deviceName = "Android Device";
+    else if (/Windows/.test(userAgent)) deviceName = "Windows PC";
+    else if (/Mac/.test(userAgent)) deviceName = "MacBook";
+    else if (/Linux/.test(userAgent)) deviceName = "Linux PC";
+    
+    return deviceName;
+  };
 
-  const securityScore = 85;
+  const [loginHistory, setLoginHistory] = useState([
+    { 
+      id: 1,
+      device: getCurrentDevice(), 
+      location: "New York, NY", 
+      time: "Current session", 
+      status: "current",
+      trusted: true 
+    },
+    { 
+      id: 2,
+      device: "Chrome Browser", 
+      location: "New York, NY", 
+      time: "2 hours ago", 
+      status: "success",
+      trusted: false 
+    },
+    { 
+      id: 3,
+      device: "Safari Browser", 
+      location: "Boston, MA", 
+      time: "1 day ago", 
+      status: "suspicious",
+      trusted: false 
+    },
+  ]);
+
+  const securityScore = 75;
+
+  const handleClearLoginHistory = () => {
+    setLoginHistory(prev => prev.filter(login => login.status === "current"));
+    toast({
+      title: "Login History Cleared",
+      description: "Previous device login history has been cleared successfully.",
+    });
+  };
+
+  const handleActivateCurrentDevice = () => {
+    setLoginHistory(prev => 
+      prev.map(login => 
+        login.status === "current" 
+          ? { ...login, trusted: true }
+          : login
+      )
+    );
+    toast({
+      title: "Device Activated",
+      description: "Current device has been set as trusted.",
+    });
+  };
+
+  const handleToggle2FA = (enabled: boolean) => {
+    setTwoFactorEnabled(enabled);
+    toast({
+      title: enabled ? "2FA Enabled" : "2FA Disabled",
+      description: enabled 
+        ? "Two-factor authentication has been activated for enhanced security."
+        : "Two-factor authentication has been disabled.",
+    });
+  };
+
+  const handleEmailAlertsToggle = (enabled: boolean) => {
+    setEmailAlerts(enabled);
+    toast({
+      title: enabled ? "Email Alerts Enabled" : "Email Alerts Disabled",
+      description: enabled 
+        ? "You will receive email notifications for account sign-ins and new registrations."
+        : "Email notifications have been disabled.",
+    });
+  };
+
+  const handleSMSAlertsToggle = (enabled: boolean) => {
+    setSmsAlerts(enabled);
+    toast({
+      title: enabled ? "SMS Alerts Enabled" : "SMS Alerts Disabled",
+      description: enabled 
+        ? "You will receive SMS notifications for account sign-ups."
+        : "SMS notifications have been disabled.",
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -28,7 +118,7 @@ const SecurityPanel = () => {
         </div>
       </div>
 
-      {/* Security Settings */}
+      {/* Authentication Settings */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -37,46 +127,56 @@ const SecurityPanel = () => {
               Authentication Settings
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">Two-Factor Authentication</div>
-                <div className="text-sm text-gray-600">Add extra security to your account</div>
+                <div className="font-medium">Two-Factor Authentication (2FA)</div>
+                <div className="text-sm text-gray-600">
+                  {twoFactorEnabled ? "Active on current device" : "Inactive - Enable for extra security"}
+                </div>
               </div>
               <Switch 
                 checked={twoFactorEnabled} 
-                onCheckedChange={setTwoFactorEnabled}
+                onCheckedChange={handleToggle2FA}
               />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Email Alerts</div>
-                <div className="text-sm text-gray-600">Get notified of account activity</div>
+                <div className="text-sm text-gray-600">
+                  Notify when someone signs in or registers with your email
+                </div>
               </div>
               <Switch 
                 checked={emailAlerts} 
-                onCheckedChange={setEmailAlerts}
+                onCheckedChange={handleEmailAlertsToggle}
               />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">SMS Alerts</div>
-                <div className="text-sm text-gray-600">Receive text notifications</div>
+                <div className="text-sm text-gray-600">
+                  Send message to registered phone for account sign-ups
+                </div>
               </div>
               <Switch 
                 checked={smsAlerts} 
-                onCheckedChange={setSmsAlerts}
+                onCheckedChange={handleSMSAlertsToggle}
               />
             </div>
 
-            <Button className="w-full mt-4">
+            <Button className="w-full mt-4" onClick={() => toast({
+              title: "Settings Updated",
+              description: "Your security settings have been saved successfully.",
+            })}>
               Update Security Settings
             </Button>
           </CardContent>
         </Card>
 
+        {/* Device Management */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -85,22 +185,37 @@ const SecurityPanel = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {recentLogins.map((login, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+            <div className="space-y-3 mb-4">
+              {loginHistory.map((login) => (
+                <div key={login.id} className={`flex items-center justify-between p-3 rounded-lg ${
+                  login.status === "current" ? "bg-green-50 ring-2 ring-green-200" : "bg-gray-50"
+                }`}>
                   <div className="flex items-center gap-3">
-                    {login.device.includes("iPhone") ? (
+                    {login.device.includes("iPhone") || login.device.includes("Android") ? (
                       <Smartphone className="h-4 w-4 text-gray-600" />
                     ) : (
                       <Monitor className="h-4 w-4 text-gray-600" />
                     )}
                     <div>
-                      <div className="font-medium text-sm">{login.device}</div>
-                      <div className="text-xs text-gray-600">{login.location}</div>
+                      <div className="font-medium text-sm flex items-center gap-2">
+                        {login.device}
+                        {login.status === "current" && (
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                            Current Activity
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-600 flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {login.location}
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-gray-500">{login.time}</div>
+                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {login.time}
+                    </div>
                     {login.status === "current" && (
                       <CheckCircle className="h-4 w-4 text-green-500 ml-auto mt-1" />
                     )}
@@ -111,41 +226,85 @@ const SecurityPanel = () => {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              Manage All Devices
-            </Button>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="flex-1" 
+                onClick={handleActivateCurrentDevice}
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Trust This Device
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleClearLoginHistory}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Clear History
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Security Recommendations */}
+      {/* Security Recommendations - Automatically Activated */}
       <Card>
         <CardHeader>
           <CardTitle>Security Recommendations</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
-              <div>
-                <div className="font-medium text-yellow-800">Enable SMS Alerts</div>
-                <div className="text-sm text-yellow-700">Add SMS notifications for enhanced security monitoring</div>
+            {!twoFactorEnabled && (
+              <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                <div>
+                  <div className="font-medium text-red-800">Enable Two-Factor Authentication</div>
+                  <div className="text-sm text-red-700">Critical: Your account needs 2FA for enhanced security</div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => handleToggle2FA(true)} className="ml-auto">
+                  Enable Now
+                </Button>
               </div>
-              <Button size="sm" variant="outline" className="ml-auto">
-                Enable
-              </Button>
-            </div>
+            )}
+            
+            {!smsAlerts && (
+              <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <div className="font-medium text-yellow-800">Enable SMS Alerts</div>
+                  <div className="text-sm text-yellow-700">Recommended: Get notified of suspicious account activity</div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => handleSMSAlertsToggle(true)} className="ml-auto">
+                  Enable
+                </Button>
+              </div>
+            )}
             
             <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
               <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
-                <div className="font-medium text-blue-800">Update Password</div>
-                <div className="text-sm text-blue-700">Your password was last updated 6 months ago</div>
+                <div className="font-medium text-blue-800">Password Security</div>
+                <div className="text-sm text-blue-700">Your password meets security requirements</div>
               </div>
               <Button size="sm" variant="outline" className="ml-auto">
-                Update
+                Change Password
               </Button>
             </div>
+
+            {loginHistory.some(login => login.status === "suspicious") && (
+              <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                <div>
+                  <div className="font-medium text-red-800">Suspicious Activity Detected</div>
+                  <div className="text-sm text-red-700">Recent login from unfamiliar location detected</div>
+                </div>
+                <Button size="sm" variant="outline" className="ml-auto">
+                  Review Activity
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
