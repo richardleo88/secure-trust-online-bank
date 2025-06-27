@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -13,7 +14,9 @@ import {
   Shield,
   Bell,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  RefreshCw,
+  Smartphone
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -32,7 +35,8 @@ const DashboardSidebar = ({ isOpen, onClose, activeSection, setActiveSection }: 
 
   const transferItems = [
     { id: "wire-transfer", icon: Send, label: "Wire Transfer", section: "wire-transfer" },
-    { id: "local-transfer", icon: MapPin, label: "Local Transfer", section: "local-transfer" },
+    { id: "ach-transfer", icon: RefreshCw, label: "ACH Transfer", section: "ach-transfer" },
+    { id: "local-transfer", icon: Smartphone, label: "Local Transfer / Zelle", section: "local-transfer" },
     { id: "western-union", icon: Banknote, label: "Western Union", section: "western-union" },
   ];
 

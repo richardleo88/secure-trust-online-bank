@@ -9,6 +9,7 @@ import SecurityPanel from "@/components/dashboard/SecurityPanel";
 import NotificationsCenter from "@/components/dashboard/NotificationsCenter";
 import MobileBottomNav from "@/components/dashboard/MobileBottomNav";
 import WireTransfer from "@/components/dashboard/WireTransfer";
+import ACHTransfer from "@/components/dashboard/ACHTransfer";
 import LocalTransfer from "@/components/dashboard/LocalTransfer";
 import WesternUnion from "@/components/dashboard/WesternUnion";
 import ATMCard from "@/components/dashboard/ATMCard";
@@ -31,6 +32,8 @@ const Dashboard = () => {
         return <NotificationsCenter />;
       case "wire-transfer":
         return <WireTransfer />;
+      case "ach-transfer":
+        return <ACHTransfer />;
       case "local-transfer":
         return <LocalTransfer />;
       case "western-union":

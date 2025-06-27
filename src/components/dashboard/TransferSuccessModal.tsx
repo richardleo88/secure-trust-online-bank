@@ -13,44 +13,87 @@ interface TransferSuccessModalProps {
 
 const TransferSuccessModal = ({ isOpen, onClose, transferData, transferType }: TransferSuccessModalProps) => {
   const transactionId = `TXN${Date.now().toString().slice(-8)}`;
-  const currentDate = new Date().toLocaleString();
+  const currentDate = new Date().toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
 
   const handleSaveSlip = () => {
-    // In a real app, this would generate and download a PDF
+    // Generate JP Morgan Chase style payment slip
     const slipContent = `
-Transfer Receipt
-Transaction ID: ${transactionId}
-Date: ${currentDate}
-Type: ${transferType}
-Amount: $${transferData.amount}
-Status: Successful
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                    UNIONTRUST BANK
+                   Payment Confirmation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Transaction Details:
+────────────────────────────────────────────────────
+Transaction ID:     ${transactionId}
+Date & Time:        ${currentDate}
+Transfer Type:      ${transferType}
+Amount:             $${transferData.amount} USD
+Status:             COMPLETED ✓
+
+Recipient Information:
+────────────────────────────────────────────────────
+${transferData.recipientName ? `Name:               ${transferData.recipientName}` : ''}
+${transferData.accountNumber ? `Account Number:     ${transferData.accountNumber}` : ''}
+${transferData.bankName ? `Bank:               ${transferData.bankName}` : ''}
+${transferData.country ? `Country:            ${transferData.country}` : ''}
+${transferData.swiftCode ? `SWIFT Code:         ${transferData.swiftCode}` : ''}
+${transferData.routingNumber ? `Routing Number:     ${transferData.routingNumber}` : ''}
+
+Security Information:
+────────────────────────────────────────────────────
+Authorized by PIN:  ****
+Processing Time:    1-3 Business Days
+Reference Number:   ${transactionId}
+
+Important Notes:
+────────────────────────────────────────────────────
+• Keep this receipt for your records
+• Funds will be processed within stated timeframe
+• Contact customer service for any inquiries
+• This transaction is irreversible once processed
+
+Customer Service: 1-800-UNION-TRUST
+Online Banking: www.uniontrustbank.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            Thank you for banking with UnionTrust
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     `;
     
     const blob = new Blob([slipContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `transfer-receipt-${transactionId}.txt`;
+    a.download = `UnionTrust-Transfer-${transactionId}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const handleShareSlip = () => {
+    const shareText = `UnionTrust Transfer Receipt\nTransaction ID: ${transactionId}\nAmount: $${transferData.amount}\nType: ${transferType}\nStatus: Completed ✓`;
+    
     if (navigator.share) {
       navigator.share({
-        title: 'Transfer Receipt',
-        text: `Transfer of $${transferData.amount} completed successfully. Transaction ID: ${transactionId}`,
+        title: 'UnionTrust Transfer Receipt',
+        text: shareText,
       });
     } else {
-      // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(`Transfer Receipt - Transaction ID: ${transactionId} - Amount: $${transferData.amount}`);
+      navigator.clipboard.writeText(shareText);
       alert('Receipt details copied to clipboard!');
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-green-600">
             <CheckCircle className="h-6 w-6" />
@@ -58,37 +101,69 @@ Status: Successful
           </DialogTitle>
         </DialogHeader>
         
-        <Card className="bg-green-50 border-green-200">
+        {/* Premium JP Morgan Chase style receipt */}
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-lg">Transfer Completed</h3>
-                <p className="text-2xl font-bold text-green-600">${transferData.amount}</p>
+              {/* Header with logo area */}
+              <div className="border-b border-blue-200 pb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full mx-auto mb-2 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">U</span>
+                </div>
+                <h3 className="font-bold text-lg text-blue-900">UNIONTRUST BANK</h3>
+                <p className="text-sm text-blue-700">Payment Confirmation</p>
               </div>
               
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Transaction ID:</span>
-                  <span className="font-mono">{transactionId}</span>
+              {/* Amount display */}
+              <div className="py-4">
+                <p className="text-sm text-gray-600 mb-1">Transfer Amount</p>
+                <p className="text-3xl font-bold text-green-600">${transferData.amount}</p>
+                <p className="text-sm text-gray-500">USD</p>
+              </div>
+              
+              {/* Transaction details in premium format */}
+              <div className="bg-white/70 rounded-lg p-4 space-y-3 text-left">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-gray-500">Transaction ID:</span>
+                    <p className="font-mono font-semibold text-blue-900">{transactionId}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Date & Time:</span>
+                    <p className="font-semibold text-blue-900">{currentDate}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Transfer Type:</span>
+                    <p className="font-semibold text-blue-900">{transferType}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Status:</span>
+                    <p className="font-semibold text-green-600 flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      COMPLETED
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Date:</span>
-                  <span>{currentDate}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Transfer Type:</span>
-                  <span>{transferType}</span>
-                </div>
+                
                 {transferData.recipientName && (
-                  <div className="flex justify-between">
-                    <span>Recipient:</span>
-                    <span>{transferData.recipientName}</span>
+                  <div>
+                    <span className="text-gray-500 text-xs">Recipient:</span>
+                    <p className="font-semibold text-blue-900">{transferData.recipientName}</p>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span>Status:</span>
-                  <span className="text-green-600 font-semibold">Successful</span>
-                </div>
+                
+                {transferData.bankName && (
+                  <div>
+                    <span className="text-gray-500 text-xs">Bank:</span>
+                    <p className="font-semibold text-blue-900">{transferData.bankName}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Security footer */}
+              <div className="text-xs text-blue-700 pt-2 border-t border-blue-200">
+                <p>🔒 Secured by 256-bit encryption</p>
+                <p>Customer Service: 1-800-UNION-TRUST</p>
               </div>
             </div>
           </CardContent>

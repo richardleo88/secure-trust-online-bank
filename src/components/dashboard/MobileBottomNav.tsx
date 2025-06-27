@@ -10,7 +10,7 @@ interface MobileBottomNavProps {
 const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavProps) => {
   const navItems = [
     { id: "overview", icon: Home, label: "Home" },
-    { id: "actions", icon: Send, label: "Transfer" },
+    { id: "wire-transfer", icon: Send, label: "Transfer" },
     { id: "atm", icon: CreditCard, label: "ATM" },
     { id: "profile", icon: User, label: "Profile" },
   ];
@@ -24,7 +24,9 @@ const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavPro
             variant="ghost"
             size="sm"
             className={`flex flex-col items-center gap-1 h-auto py-2 px-3 ${
-              activeSection === item.id ? 'text-banking-navy bg-blue-50' : 'text-gray-600'
+              activeSection === item.id || 
+              (item.id === "wire-transfer" && ["wire-transfer", "ach-transfer", "local-transfer", "western-union"].includes(activeSection))
+                ? 'text-banking-navy bg-blue-50' : 'text-gray-600'
             }`}
             onClick={() => setActiveSection(item.id)}
           >
