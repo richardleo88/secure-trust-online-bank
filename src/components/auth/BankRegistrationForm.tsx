@@ -6,37 +6,41 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Upload, FileText, User, Briefcase, Shield, Camera } from 'lucide-react';
+import { Upload, FileText, User, Briefcase, Shield, Camera, CheckCircle, Copy } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import CountryPhoneInput from './CountryPhoneInput';
-import CountryStateSelect from './CountryStateSelect';
+import CountryCitySelect from './CountryCitySelect';
 
 interface BankRegistrationFormProps {
   onSuccess: () => void;
+}
+
+interface AccountDetails {
+  fullName: string;
+  email: string;
+  accountNumber: string;
+  phone: string;
+  balance: string;
 }
 
 const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
   const [formData, setFormData] = useState({
     // Personal Information
     firstName: '',
-    middleName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
     dateOfBirth: '',
-    ssn: '',
     phone: '',
     
     // Address Information
     streetAddress: '',
     city: '',
     country: '',
-    state: '',
     zipCode: '',
-    stateOfBirth: '',
     citizenshipStatus: '',
     
     // Employment Information
@@ -54,6 +58,8 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [showAccountDetails, setShowAccountDetails] = useState(false);
+  const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(null);
   
   const { signUp } = useAuth();
   const { toast } = useToast();
@@ -79,6 +85,10 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
       console.error('File upload error:', error);
       return null;
     }
+  };
+
+  const generateAccountNumber = () => {
+    return Math.floor(Math.random() * 9000000000) + 1000000000;
   };
 
   const validateForm = () => {
@@ -121,6 +131,14 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
     return true;
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: "Information copied to clipboard",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -130,10 +148,11 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
 
     try {
       // Create user account
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       const { error: signUpError } = await signUp(
         formData.email,
         formData.password,
-        `${formData.firstName} ${formData.middleName} ${formData.lastName}`.trim()
+        fullName
       );
 
       if (signUpError) {
@@ -161,22 +180,20 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
           documentUrl = await handleFileUpload(documentFile, 'documents', user.id);
         }
 
+        const accountNumber = generateAccountNumber().toString();
+
         // Update profile with comprehensive data
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
-            middle_name: formData.middleName,
             phone: formData.phone,
             date_of_birth: formData.dateOfBirth,
-            ssn_last_four: formData.ssn.slice(-4),
             address: {
               street: formData.streetAddress,
               city: formData.city,
-              state: formData.state,
               country: formData.country,
               zip: formData.zipCode
             },
-            state_of_birth: formData.stateOfBirth,
             citizenship_status: formData.citizenshipStatus,
             employment_status: formData.employmentStatus,
             employer_name: formData.employerName,
@@ -186,7 +203,9 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
             document_expiry_date: formData.documentExpiryDate,
             document_url: documentUrl,
             profile_picture_url: profilePictureUrl,
-            verification_status: 'pending'
+            verification_status: 'approved',
+            account_number: accountNumber,
+            balance: 5000.00
           })
           .eq('id', user.id);
 
@@ -194,12 +213,25 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
           console.error('Profile update error:', updateError);
         }
 
-        toast({
-          title: "Registration Successful!",
-          description: "Your account has been created and is pending verification. You can now sign in.",
+        // Set account details to display
+        setAccountDetails({
+          fullName: fullName,
+          email: formData.email,
+          accountNumber: accountNumber,
+          phone: formData.phone,
+          balance: "5,000.00"
         });
 
-        onSuccess();
+        // Send welcome email
+        try {
+          await supabase.functions.invoke('send-welcome-email', {
+            body: { userId: user.id }
+          });
+        } catch (emailError) {
+          console.error('Email sending error:', emailError);
+        }
+
+        setShowAccountDetails(true);
       }
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -213,6 +245,99 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
     }
   };
 
+  if (showAccountDetails && accountDetails) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-green-600" />
+          </div>
+          <CardTitle className="text-2xl text-green-600">Account Created Successfully!</CardTitle>
+          <CardDescription>
+            Your UnionTrust Bank account is now active. Here are your account details:
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-blue-50 p-6 rounded-lg space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Account Holder:</span>
+              <div className="flex items-center gap-2">
+                <span>{accountDetails.fullName}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(accountDetails.fullName)}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Account Number:</span>
+              <div className="flex items-center gap-2">
+                <span className="font-mono">{accountDetails.accountNumber}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(accountDetails.accountNumber)}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Bank Name:</span>
+              <span>UnionTrust Bank</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Email:</span>
+              <div className="flex items-center gap-2">
+                <span>{accountDetails.email}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(accountDetails.email)}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Phone:</span>
+              <span>{accountDetails.phone}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Initial Balance:</span>
+              <span className="font-bold text-green-600">${accountDetails.balance}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Account Status:</span>
+              <span className="text-green-600 font-medium">Active</span>
+            </div>
+          </div>
+          
+          <div className="text-center space-y-4">
+            <p className="text-sm text-gray-600">
+              A confirmation email with all your account details has been sent to your email address.
+            </p>
+            <Button
+              onClick={onSuccess}
+              className="w-full banking-gradient text-white"
+            >
+              Continue to Sign In
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const renderStep1 = () => (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
@@ -220,7 +345,7 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
         <h3 className="text-lg font-semibold">Personal Information</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="firstName">First Name *</Label>
           <Input
@@ -228,14 +353,6 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
             value={formData.firstName}
             onChange={(e) => handleInputChange('firstName', e.target.value)}
             required
-          />
-        </div>
-        <div>
-          <Label htmlFor="middleName">Middle Name</Label>
-          <Input
-            id="middleName"
-            value={formData.middleName}
-            onChange={(e) => handleInputChange('middleName', e.target.value)}
           />
         </div>
         <div>
@@ -278,18 +395,6 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
         label="Phone Number"
         required
       />
-
-      <div>
-        <Label htmlFor="ssn">Social Security Number *</Label>
-        <Input
-          id="ssn"
-          type="password"
-          placeholder="XXX-XX-XXXX"
-          value={formData.ssn}
-          onChange={(e) => handleInputChange('ssn', e.target.value)}
-          required
-        />
-      </div>
     </div>
   );
 
@@ -310,16 +415,14 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
         />
       </div>
 
+      <CountryCitySelect
+        selectedCountry={formData.country}
+        selectedCity={formData.city}
+        onCountryChange={(country) => handleInputChange('country', country)}
+        onCityChange={(city) => handleInputChange('city', city)}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="city">City *</Label>
-          <Input
-            id="city"
-            value={formData.city}
-            onChange={(e) => handleInputChange('city', e.target.value)}
-            required
-          />
-        </div>
         <div>
           <Label htmlFor="zipCode">ZIP Code *</Label>
           <Input
@@ -329,31 +432,6 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
             required
           />
         </div>
-      </div>
-
-      <CountryStateSelect
-        selectedCountry={formData.country}
-        selectedState={formData.state}
-        onCountryChange={(country) => handleInputChange('country', country)}
-        onStateChange={(state) => handleInputChange('state', state)}
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="stateOfBirth">State of Birth *</Label>
-          <Select value={formData.stateOfBirth} onValueChange={(value) => handleInputChange('stateOfBirth', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select State" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="AL">Alabama</SelectItem>
-              <SelectItem value="CA">California</SelectItem>
-              <SelectItem value="FL">Florida</SelectItem>
-              <SelectItem value="NY">New York</SelectItem>
-              <SelectItem value="TX">Texas</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
         <div>
           <Label htmlFor="citizenshipStatus">Citizenship Status *</Label>
           <Select value={formData.citizenshipStatus} onValueChange={(value) => handleInputChange('citizenshipStatus', value)}>
@@ -361,7 +439,7 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
               <SelectValue placeholder="Select Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="us_citizen">US Citizen</SelectItem>
+              <SelectItem value="citizen">Citizen</SelectItem>
               <SelectItem value="permanent_resident">Permanent Resident</SelectItem>
               <SelectItem value="visa_holder">Visa Holder</SelectItem>
             </SelectContent>
@@ -375,7 +453,7 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <Briefcase className="h-5 w-5 text-blue-600" />
-        <h3 className="text-lg font-semibold">Employment Information</h3>
+        <h3 className="text-lg font-semibold">Employment & Security</h3>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
