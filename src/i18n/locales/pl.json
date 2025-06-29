@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Osobiste",
+    "business": "Biznes",
+    "investments": "Inwestycje",
+    "loans": "Pożyczki",
+    "support": "Wsparcie",
+    "signIn": "Zaloguj się",
+    "signUp": "Zarejestruj się",
+    "menu": "Menu",
+    "languageSelector": "Wybierz swój język"
+  },
+  "hero": {
+    "title1": "Wzmacnianie Twojej",
+    "title2": "Finansowej Przyszłości",
+    "subtitle": "Doświadcz bezpiecznej, nowoczesnej bankowości z dostępem cyfrowym 24/7, natychmiastowymi przelewami i kompleksowymi rozwiązaniami finansowymi dostosowanymi do Twoich potrzeb.",
+    "getStarted": "Zacznij Dziś",
+    "learnMore": "Dowiedz się Więcej"
+  },
+  "auth": {
+    "welcome": "Witamy z powrotem",
+    "signInSubtitle": "Zaloguj się na swoje konto, aby kontynuować",
+    "signUpTitle": "Utwórz swoje konto",
+    "signUpSubtitle": "Dołącz do tysięcy zadowolonych klientów",
+    "email": "Adres E-mail",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "fullName": "Imię i nazwisko",
+    "phoneNumber": "Numer telefonu",
+    "dateOfBirth": "Data urodzenia",
+    "address": "Adres",
+    "country": "Kraj",
+    "city": "Miasto",
+    "postalCode": "Kod pocztowy",
+    "rememberMe": "Zapamiętaj mnie",
+    "forgotPassword": "Zapomniałeś hasła?",
+    "dontHaveAccount": "Nie masz konta?",
+    "alreadyHaveAccount": "Masz już konto?",
+    "createAccount": "Utwórz konto",
+    "backToHome": "← Powrót do strony głównej",
+    "accountCreated": "Konto utworzone pomyślnie!",
+    "accountDetails": "Szczegóły Twojego konta",
+    "accountNumber": "Numer konta",
+    "accountType": "Typ konta",
+    "initialBalance": "Saldo początkowe",
+    "loginToContinue": "Możesz teraz zalogować się swoimi danymi",
+    "selectCountry": "Wybierz kraj",
+    "selectCity": "Wybierz miasto",
+    "firstSelectCountry": "Najpierw wybierz kraj"
+  },
+  "languageWelcome": {
+    "title": "Wybierz swój język",
+    "subtitle": "Poczuj się jak w domu w swoim języku.",
+    "description": "Twój wybór będzie z Tobą wszędzie - rejestracja, panel i dalej."
+  },
+  "dashboard": {
+    "welcome": "Witamy z powrotem",
+    "realBankingAccount": "Prawdziwe konto bankowe - Wszystkie przelewy są przetwarzane natychmiast"
+  }
+}

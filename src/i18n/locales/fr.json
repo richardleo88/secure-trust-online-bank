@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Personnel",
+    "business": "Entreprise",
+    "investments": "Investissements",
+    "loans": "Prêts",
+    "support": "Support",
+    "signIn": "Se Connecter",
+    "signUp": "S'inscrire",
+    "menu": "Menu",
+    "languageSelector": "Choisissez votre langue"
+  },
+  "hero": {
+    "title1": "Renforcer votre",
+    "title2": "Avenir Financier",
+    "subtitle": "Découvrez une banque sécurisée et moderne avec un accès numérique 24h/24 et 7j/7, des transferts instantanés et des solutions financières complètes adaptées à vos besoins.",
+    "getStarted": "Commencer Aujourd'hui",
+    "learnMore": "En Savoir Plus"
+  },
+  "auth": {
+    "welcome": "Bon Retour",
+    "signInSubtitle": "Connectez-vous à votre compte pour continuer",
+    "signUpTitle": "Créez votre Compte",
+    "signUpSubtitle": "Rejoignez des milliers de clients satisfaits",
+    "email": "Adresse E-mail",
+    "password": "Mot de Passe",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "fullName": "Nom Complet",
+    "phoneNumber": "Numéro de Téléphone",
+    "dateOfBirth": "Date de Naissance",
+    "address": "Adresse",
+    "country": "Pays",
+    "city": "Ville",
+    "postalCode": "Code Postal",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "createAccount": "Créer un Compte",
+    "backToHome": "← Retour à l'Accueil",
+    "accountCreated": "Compte Créé avec Succès !",
+    "accountDetails": "Détails de votre Compte",
+    "accountNumber": "Numéro de Compte",
+    "accountType": "Type de Compte",
+    "initialBalance": "Solde Initial",
+    "loginToContinue": "Vous pouvez maintenant vous connecter avec vos identifiants",
+    "selectCountry": "Sélectionner le Pays",
+    "selectCity": "Sélectionner la Ville",
+    "firstSelectCountry": "Sélectionnez d'abord un pays"
+  },
+  "languageWelcome": {
+    "title": "Choisissez votre Langue",
+    "subtitle": "Sentez-vous chez vous dans votre propre langue.",
+    "description": "Votre sélection vous accompagnera partout - inscription, tableau de bord, et au-delà."
+  },
+  "dashboard": {
+    "welcome": "Bon retour",
+    "realBankingAccount": "Compte Bancaire Réel - Tous les transferts sont traités immédiatement"
+  }
+}

@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Cá nhân",
+    "business": "Doanh nghiệp",
+    "investments": "Đầu tư",
+    "loans": "Vay vốn",
+    "support": "Hỗ trợ",
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký",
+    "menu": "Menu",
+    "languageSelector": "Chọn ngôn ngữ của bạn"
+  },
+  "hero": {
+    "title1": "Trao quyền cho",
+    "title2": "Tương lai Tài chính của bạn",
+    "subtitle": "Trải nghiệm ngân hàng an toàn, hiện đại với truy cập kỹ thuật số 24/7, chuyển khoản tức thì và các giải pháp tài chính toàn diện được thiết kế riêng cho nhu cầu của bạn.",
+    "getStarted": "Bắt đầu ngay hôm nay",
+    "learnMore": "Tìm hiểu thêm"
+  },
+  "auth": {
+    "welcome": "Chào mừng trở lại",
+    "signInSubtitle": "Đăng nhập vào tài khoản của bạn để tiếp tục",
+    "signUpTitle": "Tạo tài khoản của bạn",
+    "signUpSubtitle": "Tham gia cùng hàng nghìn khách hàng hài lòng",
+    "email": "Địa chỉ Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "fullName": "Họ và tên",
+    "phoneNumber": "Số điện thoại",
+    "dateOfBirth": "Ngày sinh",
+    "address": "Địa chỉ",
+    "country": "Quốc gia",
+    "city": "Thành phố",
+    "postalCode": "Mã bưu điện",
+    "rememberMe": "Ghi nhớ tôi",
+    "forgotPassword": "Quên mật khẩu?",
+    "dontHaveAccount": "Chưa có tài khoản?",
+    "alreadyHaveAccount": "Đã có tài khoản?",
+    "createAccount": "Tạo tài khoản",
+    "backToHome": "← Quay lại trang chủ",
+    "accountCreated": "Tạo tài khoản thành công!",
+    "accountDetails": "Chi tiết tài khoản của bạn",
+    "accountNumber": "Số tài khoản",
+    "accountType": "Loại tài khoản",
+    "initialBalance": "Số dư ban đầu",
+    "loginToContinue": "Bây giờ bạn có thể đăng nhập bằng thông tin đăng nhập của mình",
+    "selectCountry": "Chọn quốc gia",
+    "selectCity": "Chọn thành phố",
+    "firstSelectCountry": "Chọn quốc gia trước"
+  },
+  "languageWelcome": {
+    "title": "Chọn ngôn ngữ của bạn",
+    "subtitle": "Cảm thấy thoải mái với ngôn ngữ của riêng bạn.",
+    "description": "Lựa chọn của bạn sẽ đi cùng bạn khắp mọi nơi - đăng ký, bảng điều khiển, và hơn thế nữa."
+  },
+  "dashboard": {
+    "welcome": "Chào mừng trở lại",
+    "realBankingAccount": "Tài khoản ngân hàng thực - Tất cả giao dịch chuyển khoản đều được xử lý ngay lập tức"
+  }
+}

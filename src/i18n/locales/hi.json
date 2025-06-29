@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "व्यक्तिगत",
+    "business": "व्यवसाय",
+    "investments": "निवेश",
+    "loans": "ऋण",
+    "support": "सहायता",
+    "signIn": "साइन इन",
+    "signUp": "साइन अप",
+    "menu": "मेन्यू",
+    "languageSelector": "अपनी भाषा चुनें"
+  },
+  "hero": {
+    "title1": "आपके",
+    "title2": "वित्तीय भविष्य को सशक्त बनाना",
+    "subtitle": "24/7 डिजिटल एक्सेस, तत्काल स्थानांतरण, और आपकी आवश्यकताओं के अनुरूप व्यापक वित्तीय समाधानों के साथ सुरक्षित, आधुनिक बैंकिंग का अनुभव करें।",
+    "getStarted": "आज शुरू करें",
+    "learnMore": "और जानें"
+  },
+  "auth": {
+    "welcome": "वापस स्वागत है",
+    "signInSubtitle": "जारी रखने के लिए अपने खाते में साइन इन करें",
+    "signUpTitle": "अपना खाता बनाएं",
+    "signUpSubtitle": "हजारों संतुष्ट ग्राहकों में शामिल हों",
+    "email": "ईमेल पता",
+    "password": "पासवर्ड",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "fullName": "पूरा नाम",
+    "phoneNumber": "फोन नंबर",
+    "dateOfBirth": "जन्म तिथि",
+    "address": "पता",
+    "country": "देश",
+    "city": "शहर",
+    "postalCode": "पोस्टल कोड",
+    "rememberMe": "मुझे याद रखें",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "dontHaveAccount": "कोई खाता नहीं है?",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "createAccount": "खाता बनाएं",
+    "backToHome": "← होम पर वापस जाएं",
+    "accountCreated": "खाता सफलतापूर्वक बनाया गया!",
+    "accountDetails": "आपके खाते का विवरण",
+    "accountNumber": "खाता संख्या",
+    "accountType": "खाता प्रकार",
+    "initialBalance": "प्रारंभिक शेष",
+    "loginToContinue": "अब आप अपनी साख के साथ साइन इन कर सकते हैं",
+    "selectCountry": "देश चुनें",
+    "selectCity": "शहर चुनें",
+    "firstSelectCountry": "पहले देश चुनें"
+  },
+  "languageWelcome": {
+    "title": "अपनी भाषा चुनें",
+    "subtitle": "अपनी भाषा में घर जैसा महसूस करें।",
+    "description": "आपका चयन हर जगह आपके साथ रहेगा - साइनअप, डैशबोर्ड, और उससे आगे भी।"
+  },
+  "dashboard": {
+    "welcome": "वापस स्वागत है",
+    "realBankingAccount": "वास्तविक बैंकिंग खाता - सभी स्थानांतरण तुरंत संसाधित होते हैं"
+  }
+}

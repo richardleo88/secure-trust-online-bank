@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "个人",
+    "business": "商业",
+    "investments": "投资",
+    "loans": "贷款",
+    "support": "支持",
+    "signIn": "登录",
+    "signUp": "注册",
+    "menu": "菜单",
+    "languageSelector": "选择您的语言"
+  },
+  "hero": {
+    "title1": "赋能您的",
+    "title2": "财务未来",
+    "subtitle": "体验安全、现代的银行服务，提供24/7数字访问、即时转账和为您需求量身定制的全面金融解决方案。",
+    "getStarted": "今天开始",
+    "learnMore": "了解更多"
+  },
+  "auth": {
+    "welcome": "欢迎回来",
+    "signInSubtitle": "登录您的账户以继续",
+    "signUpTitle": "创建您的账户",
+    "signUpSubtitle": "加入数千名满意的客户",
+    "email": "电子邮件地址",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "fullName": "全名",
+    "phoneNumber": "电话号码",
+    "dateOfBirth": "出生日期",
+    "address": "地址",
+    "country": "国家",
+    "city": "城市",
+    "postalCode": "邮政编码",
+    "rememberMe": "记住我",
+    "forgotPassword": "忘记密码？",
+    "dontHaveAccount": "还没有账户？",
+    "alreadyHaveAccount": "已经有账户了？",
+    "createAccount": "创建账户",
+    "backToHome": "← 返回首页",
+    "accountCreated": "账户创建成功！",
+    "accountDetails": "您的账户详情",
+    "accountNumber": "账户号码",
+    "accountType": "账户类型",
+    "initialBalance": "初始余额",
+    "loginToContinue": "您现在可以使用您的凭据登录",
+    "selectCountry": "选择国家",
+    "selectCity": "选择城市",
+    "firstSelectCountry": "请先选择国家"
+  },
+  "languageWelcome": {
+    "title": "选择您的语言",
+    "subtitle": "用您自己的语言感受家的温暖。",
+    "description": "您的选择将伴随您到处 - 注册、仪表板及更多地方。"
+  },
+  "dashboard": {
+    "welcome": "欢迎回来",
+    "realBankingAccount": "真实银行账户 - 所有转账都将立即处理"
+  }
+}

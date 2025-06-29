@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "شخصي",
+    "business": "الأعمال",
+    "investments": "الاستثمارات",
+    "loans": "القروض",
+    "support": "الدعم",
+    "signIn": "تسجيل الدخول",
+    "signUp": "انشاء حساب",
+    "menu": "القائمة",
+    "languageSelector": "اختر لغتك"
+  },
+  "hero": {
+    "title1": "تمكين",
+    "title2": "مستقبلك المالي",
+    "subtitle": "اختبر الخدمات المصرفية الآمنة والحديثة مع الوصول الرقمي على مدار الساعة والتحويلات الفورية والحلول المالية الشاملة المصممة خصيصاً لاحتياجاتك.",
+    "getStarted": "ابدأ اليوم",
+    "learnMore": "اعرف المزيد"
+  },
+  "auth": {
+    "welcome": "مرحباً بعودتك",
+    "signInSubtitle": "سجل الدخول إلى حسابك للمتابعة",
+    "signUpTitle": "أنشئ حسابك",
+    "signUpSubtitle": "انضم إلى آلاف العملاء الراضين",
+    "email": "عنوان البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "fullName": "الاسم الكامل",
+    "phoneNumber": "رقم الهاتف",
+    "dateOfBirth": "تاريخ الميلاد",
+    "address": "العنوان",
+    "country": "البلد",
+    "city": "المدينة",
+    "postalCode": "الرمز البريدي",
+    "rememberMe": "تذكرني",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "dontHaveAccount": "ليس لديك حساب؟",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "createAccount": "إنشاء حساب",
+    "backToHome": "← العودة للصفحة الرئيسية",
+    "accountCreated": "تم إنشاء الحساب بنجاح!",
+    "accountDetails": "تفاصيل حسابك",
+    "accountNumber": "رقم الحساب",
+    "accountType": "نوع الحساب",
+    "initialBalance": "الرصيد الأولي",
+    "loginToContinue": "يمكنك الآن تسجيل الدخول بمعلوماتك",
+    "selectCountry": "اختر البلد",
+    "selectCity": "اختر المدينة",
+    "firstSelectCountry": "اختر البلد أولاً"
+  },
+  "languageWelcome": {
+    "title": "اختر لغتك",
+    "subtitle": "اشعر بالراحة في لغتك الأم.",
+    "description": "اختيارك سيرافقك في كل مكان - التسجيل، لوحة التحكم، وما بعد ذلك."
+  },
+  "dashboard": {
+    "welcome": "مرحباً بعودتك",
+    "realBankingAccount": "حساب مصرفي حقيقي - جميع التحويلات تتم معالجتها فوراً"
+  }
+}

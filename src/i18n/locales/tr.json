@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Kişisel",
+    "business": "İş",
+    "investments": "Yatırımlar",
+    "loans": "Krediler",
+    "support": "Destek",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "menu": "Menü",
+    "languageSelector": "Dilinizi seçin"
+  },
+  "hero": {
+    "title1": "Mali",
+    "title2": "Geleceğinizi Güçlendirin",
+    "subtitle": "7/24 dijital erişim, anında transferler ve ihtiyaçlarınıza göre tasarlanmış kapsamlı finansal çözümlerle güvenli, modern bankacılık deneyimi yaşayın.",
+    "getStarted": "Bugün Başlayın",
+    "learnMore": "Daha Fazla Öğren"
+  },
+  "auth": {
+    "welcome": "Tekrar Hoş Geldiniz",
+    "signInSubtitle": "Devam etmek için hesabınıza giriş yapın",
+    "signUpTitle": "Hesabınızı Oluşturun",
+    "signUpSubtitle": "Binlerce memnun müşteriye katılın",
+    "email": "E-posta Adresi",
+    "password": "Şifre",
+    "confirmPassword": "Şifreyi Onayla",
+    "fullName": "Ad Soyad",
+    "phoneNumber": "Telefon Numarası",
+    "dateOfBirth": "Doğum Tarihi",
+    "address": "Adres",
+    "country": "Ülke",
+    "city": "Şehir",
+    "postalCode": "Posta Kodu",
+    "rememberMe": "Beni hatırla",
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
+    "dontHaveAccount": "Hesabınız yok mu?",
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "createAccount": "Hesap Oluştur",
+    "backToHome": "← Ana Sayfaya Dön",
+    "accountCreated": "Hesap Başarıyla Oluşturuldu!",
+    "accountDetails": "Hesap Bilgileriniz",
+    "accountNumber": "Hesap Numarası",
+    "accountType": "Hesap Türü",
+    "initialBalance": "Başlangıç Bakiyesi",
+    "loginToContinue": "Artık kimlik bilgilerinizle giriş yapabilirsiniz",
+    "selectCountry": "Ülke Seçin",
+    "selectCity": "Şehir Seçin",
+    "firstSelectCountry": "Önce bir ülke seçin"
+  },
+  "languageWelcome": {
+    "title": "Dilinizi Seçin",
+    "subtitle": "Kendi dilinizde kendinizi evde hissedin.",
+    "description": "Seçiminiz her yerde sizinle olacak - kayıt, kontrol paneli ve ötesinde."
+  },
+  "dashboard": {
+    "welcome": "Tekrar hoş geldiniz",
+    "realBankingAccount": "Gerçek Banka Hesabı - Tüm transferler anında işlenir"
+  }
+}

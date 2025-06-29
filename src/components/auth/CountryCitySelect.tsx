@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
@@ -75,6 +76,7 @@ const CountryCitySelect = ({
   onCountryChange, 
   onCityChange 
 }: CountryCitySelectProps) => {
+  const { t } = useTranslation();
   const [availableCities, setAvailableCities] = useState<string[]>([]);
 
   useEffect(() => {
@@ -94,10 +96,10 @@ const CountryCitySelect = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <Label htmlFor="country">Country *</Label>
+        <Label htmlFor="country">{t('auth.country')} *</Label>
         <Select value={selectedCountry} onValueChange={handleCountryChange}>
           <SelectTrigger>
-            <SelectValue placeholder="Select Country" />
+            <SelectValue placeholder={t('auth.selectCountry')} />
           </SelectTrigger>
           <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
             {countriesWithCities.map((country) => (
@@ -110,14 +112,14 @@ const CountryCitySelect = ({
       </div>
       
       <div>
-        <Label htmlFor="city">City *</Label>
+        <Label htmlFor="city">{t('auth.city')} *</Label>
         <Select 
           value={selectedCity} 
           onValueChange={onCityChange}
           disabled={!selectedCountry || availableCities.length === 0}
         >
           <SelectTrigger>
-            <SelectValue placeholder={availableCities.length > 0 ? "Select City" : "First select a country"} />
+            <SelectValue placeholder={availableCities.length > 0 ? t('auth.selectCity') : t('auth.firstSelectCountry')} />
           </SelectTrigger>
           <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
             {availableCities.map((city) => (

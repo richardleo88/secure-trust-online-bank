@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Personligt",
+    "business": "Företag",
+    "investments": "Investeringar",
+    "loans": "Lån",
+    "support": "Support",
+    "signIn": "Logga in",
+    "signUp": "Registrera",
+    "menu": "Meny",
+    "languageSelector": "Välj ditt språk"
+  },
+  "hero": {
+    "title1": "Stärk din",
+    "title2": "Finansiella Framtid",
+    "subtitle": "Upplev säker, modern bankverksamhet med 24/7 digital åtkomst, omedelbara överföringar och omfattande finansiella lösningar skräddarsydda för dina behov.",
+    "getStarted": "Börja idag",
+    "learnMore": "Läs mer"
+  },
+  "auth": {
+    "welcome": "Välkommen tillbaka",
+    "signInSubtitle": "Logga in på ditt konto för att fortsätta",
+    "signUpTitle": "Skapa ditt konto",
+    "signUpSubtitle": "Gå med tusentals nöjda kunder",
+    "email": "E-postadress",
+    "password": "Lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "fullName": "Fullständigt namn",
+    "phoneNumber": "Telefonnummer",
+    "dateOfBirth": "Födelsedatum",
+    "address": "Adress",
+    "country": "Land",
+    "city": "Stad",
+    "postalCode": "Postnummer",
+    "rememberMe": "Kom ihåg mig",
+    "forgotPassword": "Glömt lösenordet?",
+    "dontHaveAccount": "Har du inget konto?",
+    "alreadyHaveAccount": "Har du redan ett konto?",
+    "createAccount": "Skapa konto",
+    "backToHome": "← Tillbaka till hem",
+    "accountCreated": "Konto skapat framgångsrikt!",
+    "accountDetails": "Dina kontouppgifter",
+    "accountNumber": "Kontonummer",
+    "accountType": "Kontotyp",
+    "initialBalance": "Startsaldo",
+    "loginToContinue": "Du kan nu logga in med dina uppgifter",
+    "selectCountry": "Välj land",
+    "selectCity": "Välj stad",
+    "firstSelectCountry": "Välj först ett land"
+  },
+  "languageWelcome": {
+    "title": "Välj ditt språk",
+    "subtitle": "Känn dig hemma på ditt eget språk.",
+    "description": "Ditt val följer med dig överallt - registrering, instrumentpanel och vidare."
+  },
+  "dashboard": {
+    "welcome": "Välkommen tillbaka",
+    "realBankingAccount": "Riktigt bankkonto - Alla överföringar behandlas omedelbart"
+  }
+}

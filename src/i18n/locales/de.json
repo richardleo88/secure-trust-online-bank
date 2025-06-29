@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Persönlich",
+    "business": "Geschäft",
+    "investments": "Investitionen",
+    "loans": "Kredite",
+    "support": "Support",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "menu": "Menü",
+    "languageSelector": "Wählen Sie Ihre Sprache"
+  },
+  "hero": {
+    "title1": "Stärken Sie Ihre",
+    "title2": "Finanzielle Zukunft",
+    "subtitle": "Erleben Sie sicheres, modernes Banking mit 24/7-Digitalzugang, Sofortüberweisungen und umfassenden Finanzlösungen, die auf Ihre Bedürfnisse zugeschnitten sind.",
+    "getStarted": "Heute Beginnen",
+    "learnMore": "Mehr Erfahren"
+  },
+  "auth": {
+    "welcome": "Willkommen Zurück",
+    "signInSubtitle": "Melden Sie sich in Ihrem Konto an, um fortzufahren",
+    "signUpTitle": "Erstellen Sie Ihr Konto",
+    "signUpSubtitle": "Treten Sie Tausenden zufriedener Kunden bei",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "confirmPassword": "Passwort Bestätigen",
+    "fullName": "Vollständiger Name",
+    "phoneNumber": "Telefonnummer",
+    "dateOfBirth": "Geburtsdatum",
+    "address": "Adresse",
+    "country": "Land",
+    "city": "Stadt",
+    "postalCode": "Postleitzahl",
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "dontHaveAccount": "Haben Sie kein Konto?",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "createAccount": "Konto Erstellen",
+    "backToHome": "← Zurück zur Startseite",
+    "accountCreated": "Konto Erfolgreich Erstellt!",
+    "accountDetails": "Ihre Kontodaten",
+    "accountNumber": "Kontonummer",
+    "accountType": "Kontotyp",
+    "initialBalance": "Anfangssaldo",
+    "loginToContinue": "Sie können sich jetzt mit Ihren Anmeldedaten anmelden",
+    "selectCountry": "Land Auswählen",
+    "selectCity": "Stadt Auswählen",
+    "firstSelectCountry": "Wählen Sie zuerst ein Land"
+  },
+  "languageWelcome": {
+    "title": "Wählen Sie Ihre Sprache",
+    "subtitle": "Fühlen Sie sich in Ihrer eigenen Sprache zu Hause.",
+    "description": "Ihre Auswahl begleitet Sie überall - Anmeldung, Dashboard und darüber hinaus."
+  },
+  "dashboard": {
+    "welcome": "Willkommen zurück",
+    "realBankingAccount": "Echtes Bankkonto - Alle Überweisungen werden sofort verarbeitet"
+  }
+}

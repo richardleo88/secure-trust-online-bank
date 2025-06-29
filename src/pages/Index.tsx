@@ -12,6 +12,7 @@ import BankPhotosCarousel from "@/components/BankPhotosCarousel";
 import ATMCardShowcase from "@/components/ATMCardShowcase";
 import Footer from "@/components/Footer";
 import LiveChat from "@/components/LiveChat";
+import LanguageWelcomeModal from "@/components/LanguageWelcomeModal";
 
 const Index = () => {
   const { user, loading, isAdmin } = useAuth();
@@ -48,6 +49,7 @@ const Index = () => {
       <Testimonials />
       <Footer />
       <LiveChat />
+      <LanguageWelcomeModal />
     </div>
   );
 };

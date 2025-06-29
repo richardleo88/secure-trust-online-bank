@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Personale",
+    "business": "Business",
+    "investments": "Investimenti",
+    "loans": "Prestiti",
+    "support": "Supporto",
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "menu": "Menu",
+    "languageSelector": "Scegli la tua lingua"
+  },
+  "hero": {
+    "title1": "Potenziare il tuo",
+    "title2": "Futuro Finanziario",
+    "subtitle": "Sperimenta un banking sicuro e moderno con accesso digitale 24/7, trasferimenti istantanei e soluzioni finanziarie complete su misura per le tue esigenze.",
+    "getStarted": "Inizia Oggi",
+    "learnMore": "Scopri di Più"
+  },
+  "auth": {
+    "welcome": "Bentornato",
+    "signInSubtitle": "Accedi al tuo account per continuare",
+    "signUpTitle": "Crea il tuo Account",
+    "signUpSubtitle": "Unisciti a migliaia di clienti soddisfatti",
+    "email": "Indirizzo Email",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "fullName": "Nome Completo",
+    "phoneNumber": "Numero di Telefono",
+    "dateOfBirth": "Data di Nascita",
+    "address": "Indirizzo",
+    "country": "Paese",
+    "city": "Città",
+    "postalCode": "Codice Postale",
+    "rememberMe": "Ricordami",
+    "forgotPassword": "Password dimenticata?",
+    "dontHaveAccount": "Non hai un account?",
+    "alreadyHaveAccount": "Hai già un account?",
+    "createAccount": "Crea Account",
+    "backToHome": "← Torna alla Home",
+    "accountCreated": "Account Creato con Successo!",
+    "accountDetails": "Dettagli del tuo Account",
+    "accountNumber": "Numero di Conto",
+    "accountType": "Tipo di Conto",
+    "initialBalance": "Saldo Iniziale",
+    "loginToContinue": "Ora puoi accedere con le tue credenziali",
+    "selectCountry": "Seleziona Paese",
+    "selectCity": "Seleziona Città",
+    "firstSelectCountry": "Prima seleziona un paese"
+  },
+  "languageWelcome": {
+    "title": "Scegli la tua Lingua",
+    "subtitle": "Sentiti a casa nella tua lingua.",
+    "description": "La tua selezione ti accompagnerà ovunque - registrazione, dashboard e oltre."
+  },
+  "dashboard": {
+    "welcome": "Bentornato",
+    "realBankingAccount": "Conto Bancario Reale - Tutti i trasferimenti vengono elaborati immediatamente"
+  }
+}

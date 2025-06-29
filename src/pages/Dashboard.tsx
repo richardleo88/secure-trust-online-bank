@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logActivity } = useAuth();
@@ -91,11 +92,11 @@ const Dashboard = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl font-bold text-banking-navy">
-                      Welcome back, {user?.user_metadata?.full_name || 'User'}
+                      {t('dashboard.welcome')}, {user?.user_metadata?.full_name || 'User'}
                     </h1>
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   </div>
-                  <p className="text-banking-slate text-sm">Real Banking Account - All transfers are processed immediately</p>
+                  <p className="text-banking-slate text-sm">{t('dashboard.realBankingAccount')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

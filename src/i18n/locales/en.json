@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Personal",
+    "business": "Business",
+    "investments": "Investments",
+    "loans": "Loans",
+    "support": "Support",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "menu": "Menu",
+    "languageSelector": "Choose Your Language"
+  },
+  "hero": {
+    "title1": "Empowering Your",
+    "title2": "Financial Future",
+    "subtitle": "Experience secure, modern banking with 24/7 digital access, instant transfers, and comprehensive financial solutions tailored to your needs.",
+    "getStarted": "Get Started Today",
+    "learnMore": "Learn More"
+  },
+  "auth": {
+    "welcome": "Welcome Back",
+    "signInSubtitle": "Sign in to your account to continue",
+    "signUpTitle": "Create Your Account",
+    "signUpSubtitle": "Join thousands of satisfied customers",
+    "email": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number",
+    "dateOfBirth": "Date of Birth",
+    "address": "Address",
+    "country": "Country",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create Account",
+    "backToHome": "← Back to Home",
+    "accountCreated": "Account Created Successfully!",
+    "accountDetails": "Your Account Details",
+    "accountNumber": "Account Number",
+    "accountType": "Account Type",
+    "initialBalance": "Initial Balance",
+    "loginToContinue": "You can now sign in with your credentials",
+    "selectCountry": "Select Country",
+    "selectCity": "Select City",
+    "firstSelectCountry": "First select a country"
+  },
+  "languageWelcome": {
+    "title": "Choose Your Language",
+    "subtitle": "Make yourself at home in your own language.",
+    "description": "Your selection will stay with you everywhere - signup, dashboard, and beyond."
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "realBankingAccount": "Real Banking Account - All transfers are processed immediately"
+  }
+}

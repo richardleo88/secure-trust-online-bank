@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "個人",
+    "business": "ビジネス",
+    "investments": "投資",
+    "loans": "ローン",
+    "support": "サポート",
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "menu": "メニュー",
+    "languageSelector": "言語を選択"
+  },
+  "hero": {
+    "title1": "あなたの",
+    "title2": "金融の未来を強化",
+    "subtitle": "24時間365日のデジタルアクセス、即座の送金、あなたのニーズに合わせた包括的な金融ソリューションで、安全で現代的な銀行業務を体験してください。",
+    "getStarted": "今日から始める",
+    "learnMore": "詳細を見る"
+  },
+  "auth": {
+    "welcome": "お帰りなさい",
+    "signInSubtitle": "アカウントにサインインして続行",
+    "signUpTitle": "アカウントを作成",
+    "signUpSubtitle": "数千人の満足した顧客に参加",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "confirmPassword": "パスワードを確認",
+    "fullName": "フルネーム",
+    "phoneNumber": "電話番号",
+    "dateOfBirth": "生年月日",
+    "address": "住所",
+    "country": "国",
+    "city": "都市",
+    "postalCode": "郵便番号",
+    "rememberMe": "ログイン状態を保持",
+    "forgotPassword": "パスワードを忘れましたか？",
+    "dontHaveAccount": "アカウントをお持ちでないですか？",
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
+    "createAccount": "アカウント作成",
+    "backToHome": "← ホームに戻る",
+    "accountCreated": "アカウントが正常に作成されました！",
+    "accountDetails": "あなたのアカウント詳細",
+    "accountNumber": "アカウント番号",
+    "accountType": "アカウントタイプ",
+    "initialBalance": "初期残高",
+    "loginToContinue": "認証情報でサインインできます",
+    "selectCountry": "国を選択",
+    "selectCity": "都市を選択",
+    "firstSelectCountry": "まず国を選択してください"
+  },
+  "languageWelcome": {
+    "title": "言語を選択",
+    "subtitle": "あなたの母国語でくつろいでください。",
+    "description": "あなたの選択はどこでも一緒です - サインアップ、ダッシュボード、そしてそれ以降も。"
+  },
+  "dashboard": {
+    "welcome": "お帰りなさい",
+    "realBankingAccount": "リアル銀行口座 - すべての送金は即座に処理されます"
+  }
+}

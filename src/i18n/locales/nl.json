@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Persoonlijk",
+    "business": "Zakelijk",
+    "investments": "Investeringen",
+    "loans": "Leningen",
+    "support": "Ondersteuning",
+    "signIn": "Inloggen",
+    "signUp": "Registreren",
+    "menu": "Menu",
+    "languageSelector": "Kies uw taal"
+  },
+  "hero": {
+    "title1": "Versterk uw",
+    "title2": "Financiële Toekomst",
+    "subtitle": "Ervaar veilig, modern bankieren met 24/7 digitale toegang, directe overboekingen en uitgebreide financiële oplossingen afgestemd op uw behoeften.",
+    "getStarted": "Begin Vandaag",
+    "learnMore": "Meer Weten"
+  },
+  "auth": {
+    "welcome": "Welkom Terug",
+    "signInSubtitle": "Log in op uw account om door te gaan",
+    "signUpTitle": "Maak uw account aan",
+    "signUpSubtitle": "Sluit je aan bij duizenden tevreden klanten",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "fullName": "Volledige naam",
+    "phoneNumber": "Telefoonnummer",
+    "dateOfBirth": "Geboortedatum",
+    "address": "Adres",
+    "country": "Land",
+    "city": "Stad",
+    "postalCode": "Postcode",
+    "rememberMe": "Onthoud mij",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "dontHaveAccount": "Geen account?",
+    "alreadyHaveAccount": "Al een account?",
+    "createAccount": "Account aanmaken",
+    "backToHome": "← Terug naar home",
+    "accountCreated": "Account succesvol aangemaakt!",
+    "accountDetails": "Uw accountgegevens",
+    "accountNumber": "Rekeningnummer",
+    "accountType": "Accounttype",
+    "initialBalance": "Startsaldo",
+    "loginToContinue": "U kunt nu inloggen met uw inloggegevens",
+    "selectCountry": "Selecteer land",
+    "selectCity": "Selecteer stad",
+    "firstSelectCountry": "Selecteer eerst een land"
+  },
+  "languageWelcome": {
+    "title": "Kies uw taal",
+    "subtitle": "Voel u thuis in uw eigen taal.",
+    "description": "Uw keuze gaat met u mee overal - registratie, dashboard, en verder."
+  },
+  "dashboard": {
+    "welcome": "Welkom terug",
+    "realBankingAccount": "Echte bankrekening - Alle overboekingen worden onmiddellijk verwerkt"
+  }
+}

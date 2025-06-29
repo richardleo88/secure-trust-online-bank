@@ -1,0 +1,61 @@
+
+{
+  "header": {
+    "personal": "Pessoal",
+    "business": "Negócios",
+    "investments": "Investimentos",
+    "loans": "Empréstimos",
+    "support": "Suporte",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "menu": "Menu",
+    "languageSelector": "Escolha seu idioma"
+  },
+  "hero": {
+    "title1": "Potencializando seu",
+    "title2": "Futuro Financeiro",
+    "subtitle": "Experimente um banco seguro e moderno com acesso digital 24/7, transferências instantâneas e soluções financeiras abrangentes sob medida para suas necessidades.",
+    "getStarted": "Comece Hoje",
+    "learnMore": "Saiba Mais"
+  },
+  "auth": {
+    "welcome": "Bem-vindo de Volta",
+    "signInSubtitle": "Entre na sua conta para continuar",
+    "signUpTitle": "Crie sua Conta",
+    "signUpSubtitle": "Junte-se a milhares de clientes satisfeitos",
+    "email": "Endereço de Email",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "fullName": "Nome Completo",
+    "phoneNumber": "Número de Telefone",
+    "dateOfBirth": "Data de Nascimento",
+    "address": "Endereço",
+    "country": "País",
+    "city": "Cidade",
+    "postalCode": "Código Postal",
+    "rememberMe": "Lembrar de mim",
+    "forgotPassword": "Esqueceu a senha?",
+    "dontHaveAccount": "Não tem uma conta?",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "createAccount": "Criar Conta",
+    "backToHome": "← Voltar ao Início",
+    "accountCreated": "Conta Criada com Sucesso!",
+    "accountDetails": "Detalhes da sua Conta",
+    "accountNumber": "Número da Conta",
+    "accountType": "Tipo de Conta",
+    "initialBalance": "Saldo Inicial",
+    "loginToContinue": "Agora você pode entrar com suas credenciais",
+    "selectCountry": "Selecionar País",
+    "selectCity": "Selecionar Cidade",
+    "firstSelectCountry": "Primeiro selecione um país"
+  },
+  "languageWelcome": {
+    "title": "Escolha seu Idioma",
+    "subtitle": "Sinta-se em casa no seu próprio idioma.",
+    "description": "Sua seleção estará com você em todos os lugares - cadastro, painel e além."
+  },
+  "dashboard": {
+    "welcome": "Bem-vindo de volta",
+    "realBankingAccount": "Conta Bancária Real - Todas as transferências são processadas imediatamente"
+  }
+}
