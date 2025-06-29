@@ -12,7 +12,6 @@ const HeroSection = () => {
   };
 
   const handleLearnMore = () => {
-    // Scroll to features section or navigate to about page
     const featuresSection = document.getElementById('features');
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: 'smooth' });
@@ -36,10 +35,19 @@ const HeroSection = () => {
               {t('hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4" onClick={handleGetStarted}>
+              <Button 
+                size="lg" 
+                className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4" 
+                onClick={handleGetStarted}
+              >
                 {t('hero.getStarted')}
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-banking-navy text-lg px-8 py-4" onClick={handleLearnMore}>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-white text-white hover:bg-white hover:text-banking-navy text-lg px-8 py-4" 
+                onClick={handleLearnMore}
+              >
                 {t('hero.learnMore')}
               </Button>
             </div>
