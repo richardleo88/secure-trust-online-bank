@@ -31,12 +31,14 @@ const Auth = () => {
       let result;
       if (isSignIn) {
         result = await signIn(email, password);
+        // Navigate to dashboard immediately after successful sign in
+        if (!result.error) {
+          navigate('/dashboard', { replace: true });
+        }
       } else {
         result = await signUp(email, password, fullName);
-      }
-
-      if (!result.error && isSignIn) {
-        navigate(from, { replace: true });
+        // For sign up, user will need to confirm email first
+        // The success toast is already shown in the signUp function
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -145,6 +147,18 @@ const Auth = () => {
                   {loading ? 'Processing...' : isSignIn ? 'Sign In Securely' : 'Create Account'}
                 </Button>
               </form>
+
+              {isSignIn && (
+                <div className="mt-4 text-center">
+                  <Button 
+                    variant="link" 
+                    className="text-blue-600 hover:underline text-sm"
+                    onClick={() => navigate('/')}
+                  >
+                    ← Back to Home
+                  </Button>
+                </div>
+              )}
             </Tabs>
 
             <div className="mt-6 text-center text-sm text-gray-600">

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -22,13 +23,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log("Login clicked, navigating to sign in");
-    navigate("/signin");
+    console.log("Login clicked, navigating to auth");
+    navigate("/auth");
   };
 
   const handleRegister = () => {
-    console.log("Register clicked, navigating to sign up");
-    navigate("/signup");
+    console.log("Register clicked, navigating to auth");
+    navigate("/auth");
   };
 
   const handleLanguageChange = (value: string) => {
