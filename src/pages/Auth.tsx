@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Lock, Eye, EyeOff } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, UserCheck } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -16,10 +18,12 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
   
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   
   const from = location.state?.from?.pathname || '/dashboard';
 
@@ -32,26 +36,50 @@ const Auth = () => {
       if (isSignIn) {
         console.log('Attempting sign in...');
         result = await signIn(email, password);
-        // Navigate to dashboard immediately after successful sign in with full access
+        
         if (!result.error) {
-          console.log('Sign in successful, redirecting to dashboard with full features');
-          navigate('/dashboard', { replace: true });
+          // Check if user is admin after successful login
+          if (isAdminLogin) {
+            const { data: user } = await supabase.auth.getUser();
+            if (user.user) {
+              const { data: adminData } = await supabase
+                .from('admin_users')
+                .select('admin_role, is_active')
+                .eq('user_id', user.user.id)
+                .eq('is_active', true)
+                .single();
+
+              if (adminData) {
+                console.log('Admin login successful, redirecting to admin dashboard');
+                navigate('/admin', { replace: true });
+              } else {
+                toast({
+                  title: "Access Denied",
+                  description: "You don't have administrator privileges.",
+                  variant: "destructive",
+                });
+                setLoading(false);
+                return;
+              }
+            }
+          } else {
+            console.log('User login successful, redirecting to dashboard');
+            navigate('/dashboard', { replace: true });
+          }
         }
       } else {
         console.log('Attempting sign up...');
-        // Ensure fullName is provided for signup
         if (!fullName.trim()) {
           console.error('Full name is required for signup');
           setLoading(false);
           return;
         }
         result = await signUp(email, password, fullName.trim());
-        // For sign up, if successful, switch to sign in tab
         if (!result.error) {
           console.log('Sign up successful, switching to sign in');
           setIsSignIn(true);
-          setPassword(''); // Clear password for security
-          setFullName(''); // Clear full name
+          setPassword('');
+          setFullName('');
         }
       }
     } catch (error) {
@@ -79,13 +107,35 @@ const Auth = () => {
             </CardTitle>
             <CardDescription className="text-center">
               {isSignIn 
-                ? 'Sign in to access your secure banking dashboard with transfers, security, and full account management' 
-                : 'Join UnionTrust Bank for complete banking services with transfers, security monitoring, and account management'
+                ? 'Sign in to access your secure banking dashboard' 
+                : 'Join UnionTrust Bank for complete banking services'
               }
             </CardDescription>
           </CardHeader>
 
           <CardContent>
+            {isSignIn && (
+              <div className="mb-4 flex gap-2">
+                <Button
+                  type="button"
+                  variant={!isAdminLogin ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setIsAdminLogin(false)}
+                >
+                  User Login
+                </Button>
+                <Button
+                  type="button"
+                  variant={isAdminLogin ? "default" : "outline"}
+                  className="flex-1 flex items-center gap-2"
+                  onClick={() => setIsAdminLogin(true)}
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Admin Login
+                </Button>
+              </div>
+            )}
+
             <Tabs value={isSignIn ? 'signin' : 'signup'} onValueChange={(value) => setIsSignIn(value === 'signin')}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
@@ -112,7 +162,7 @@ const Auth = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={isAdminLogin ? "Admin email address" : "Enter your email"}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -152,13 +202,23 @@ const Auth = () => {
                   )}
                 </div>
 
+                {isAdminLogin && isSignIn && (
+                  <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700">
+                    <p className="font-medium">Admin Login</p>
+                    <p>Use your administrator credentials to access the admin dashboard</p>
+                  </div>
+                )}
+
                 <Button
                   type="submit"
                   className="w-full banking-gradient text-white"
                   disabled={loading}
                 >
                   <Lock className="h-4 w-4 mr-2" />
-                  {loading ? 'Processing...' : isSignIn ? 'Access Full Dashboard' : 'Create Banking Account'}
+                  {loading ? 'Processing...' : isSignIn ? 
+                    (isAdminLogin ? 'Access Admin Dashboard' : 'Access Dashboard') : 
+                    'Create Banking Account'
+                  }
                 </Button>
               </form>
 
@@ -178,7 +238,7 @@ const Auth = () => {
             <div className="mt-6 text-center text-sm text-gray-600">
               <div className="flex items-center justify-center space-x-1">
                 <Shield className="h-4 w-4" />
-                <span>Full access to transfers, security, notifications & transaction history</span>
+                <span>Secure authentication with role-based access</span>
               </div>
             </div>
           </CardContent>

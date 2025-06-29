@@ -31,21 +31,30 @@ const FraudMonitoring = ({ adminRole }: FraudMonitoringProps) => {
 
   const fetchFraudAlerts = async () => {
     try {
-      const { data, error } = await supabase
+      // First get fraud alerts
+      const { data: alertData, error: alertError } = await supabase
         .from('fraud_alerts')
-        .select(`
-          *,
-          profiles!inner(email, full_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (alertError) throw alertError;
 
-      const alertsWithUserInfo = data?.map(alert => ({
-        ...alert,
-        user_email: alert.profiles?.email,
-        user_name: alert.profiles?.full_name
-      })) || [];
+      // Then get user profiles
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, email, full_name');
+
+      if (profileError) throw profileError;
+
+      // Combine the data
+      const alertsWithUserInfo = alertData?.map(alert => {
+        const userProfile = profiles?.find(profile => profile.id === alert.user_id);
+        return {
+          ...alert,
+          user_email: userProfile?.email,
+          user_name: userProfile?.full_name
+        };
+      }) || [];
 
       setAlerts(alertsWithUserInfo);
     } catch (error: any) {

@@ -33,22 +33,31 @@ const TransactionLogs = ({ adminRole }: TransactionLogsProps) => {
 
   const fetchTransactions = async () => {
     try {
-      const { data, error } = await supabase
+      // First get transactions
+      const { data: transactionData, error: transactionError } = await supabase
         .from('transactions')
-        .select(`
-          *,
-          profiles!inner(email, full_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (error) throw error;
+      if (transactionError) throw transactionError;
 
-      const transactionsWithUserInfo = data?.map(transaction => ({
-        ...transaction,
-        user_email: transaction.profiles?.email,
-        user_name: transaction.profiles?.full_name
-      })) || [];
+      // Then get user profiles
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, email, full_name');
+
+      if (profileError) throw profileError;
+
+      // Combine the data
+      const transactionsWithUserInfo = transactionData?.map(transaction => {
+        const userProfile = profiles?.find(profile => profile.id === transaction.user_id);
+        return {
+          ...transaction,
+          user_email: userProfile?.email,
+          user_name: userProfile?.full_name
+        };
+      }) || [];
 
       setTransactions(transactionsWithUserInfo);
     } catch (error: any) {

@@ -77,7 +77,7 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
     user.account_number?.includes(searchTerm)
   );
 
-  const makeAdmin = async (userId: string, role: string = 'support') => {
+  const makeAdmin = async (userId: string, role: 'support' | 'moderator' | 'admin' | 'super_admin' = 'support') => {
     try {
       const { error } = await supabase
         .from('admin_users')

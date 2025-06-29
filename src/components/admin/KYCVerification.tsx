@@ -29,21 +29,30 @@ const KYCVerification = ({ adminRole }: KYCVerificationProps) => {
 
   const fetchVerifications = async () => {
     try {
-      const { data, error } = await supabase
+      // First get KYC verifications
+      const { data: kycData, error: kycError } = await supabase
         .from('kyc_verifications')
-        .select(`
-          *,
-          profiles!inner(email, full_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (kycError) throw kycError;
 
-      const verificationsWithUserInfo = data?.map(verification => ({
-        ...verification,
-        user_email: verification.profiles?.email,
-        user_name: verification.profiles?.full_name
-      })) || [];
+      // Then get user profiles
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, email, full_name');
+
+      if (profileError) throw profileError;
+
+      // Combine the data
+      const verificationsWithUserInfo = kycData?.map(verification => {
+        const userProfile = profiles?.find(profile => profile.id === verification.user_id);
+        return {
+          ...verification,
+          user_email: userProfile?.email,
+          user_name: userProfile?.full_name
+        };
+      }) || [];
 
       setVerifications(verificationsWithUserInfo);
     } catch (error: any) {
