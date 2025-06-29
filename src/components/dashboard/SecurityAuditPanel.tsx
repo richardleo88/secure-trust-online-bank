@@ -7,15 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, AlertTriangle, Clock, MapPin, Monitor, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Json } from '@/integrations/supabase/types';
 
 interface ActivityLog {
   id: string;
   action: string;
-  device_info: any;
-  location_info: any;
+  device_info: Json;
+  location_info: Json;
   created_at: string;
   success: boolean;
-  ip_address: string;
+  ip_address: unknown;
 }
 
 interface UserSession {
@@ -24,8 +25,8 @@ interface UserSession {
   device_type: string;
   browser: string;
   os: string;
-  ip_address: string;
-  location: any;
+  ip_address: unknown;
+  location: Json;
   is_active: boolean;
   last_activity: string;
   created_at: string;
@@ -121,6 +122,18 @@ const SecurityAuditPanel = () => {
     }
   };
 
+  const formatIpAddress = (ip: unknown): string => {
+    return typeof ip === 'string' ? ip : String(ip) || 'Unknown';
+  };
+
+  const getLocationString = (location: Json): string => {
+    if (location && typeof location === 'object' && location !== null) {
+      const loc = location as Record<string, any>;
+      return `${loc.city || 'Unknown'}, ${loc.country || 'Unknown'}`;
+    }
+    return 'Unknown';
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -174,9 +187,9 @@ const SecurityAuditPanel = () => {
                     </p>
                     <div className="flex items-center text-xs text-gray-500 mt-1">
                       <MapPin className="h-3 w-3 mr-1" />
-                      {log.location_info?.city || 'Unknown'}, {log.location_info?.country || 'Unknown'}
+                      {getLocationString(log.location_info)}
                       <span className="mx-2">•</span>
-                      IP: {log.ip_address || 'Unknown'}
+                      IP: {formatIpAddress(log.ip_address)}
                     </div>
                   </div>
                 </div>
@@ -208,13 +221,13 @@ const SecurityAuditPanel = () => {
                         {session.device_name || `${session.os} - ${session.browser}`}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {session.location?.city || 'Unknown Location'}
+                        {getLocationString(session.location)}
                       </p>
                       <p className="text-xs text-gray-500">
                         Last active: {new Date(session.last_activity).toLocaleString()}
                       </p>
                       <p className="text-xs text-gray-500">
-                        IP: {session.ip_address}
+                        IP: {formatIpAddress(session.ip_address)}
                       </p>
                     </div>
                   </div>
@@ -276,7 +289,7 @@ const SecurityAuditPanel = () => {
                 Set up alerts for account activities and transactions.
               </p>
               <Button size="sm" variant="outline">
-                Manage Alerts
+                manage Alerts
               </Button>
             </div>
           </div>
