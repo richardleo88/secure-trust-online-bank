@@ -101,7 +101,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(true);
       const redirectUrl = `${window.location.origin}/dashboard`;
       
-      const { error } = await supabase.auth.signUp({
+      console.log('Starting signup process for:', email);
+      console.log('Redirect URL:', redirectUrl);
+      
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -112,21 +115,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       });
 
+      console.log('Signup response:', { data, error });
+
       if (error) {
+        console.error('Signup error:', error);
         toast({
           title: "Sign Up Failed",
           description: error.message,
           variant: "destructive",
         });
       } else {
+        console.log('Signup successful');
         toast({
-          title: "Check Your Email",
-          description: "We've sent you a confirmation link to complete your registration.",
+          title: "Account Created Successfully!",
+          description: "You can now sign in to access your dashboard.",
         });
       }
 
       return { error };
     } catch (error: any) {
+      console.error('Signup catch error:', error);
+      toast({
+        title: "Sign Up Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
       return { error };
     } finally {
       setLoading(false);
@@ -199,6 +212,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -229,6 +243,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

@@ -30,6 +30,7 @@ const Auth = () => {
     try {
       let result;
       if (isSignIn) {
+        console.log('Attempting sign in...');
         result = await signIn(email, password);
         // Navigate to dashboard immediately after successful sign in with full access
         if (!result.error) {
@@ -37,10 +38,13 @@ const Auth = () => {
           navigate('/dashboard', { replace: true });
         }
       } else {
+        console.log('Attempting sign up...');
         result = await signUp(email, password, fullName);
-        // For sign up, show success message - user will get email confirmation
+        // For sign up, if successful, switch to sign in tab
         if (!result.error) {
-          console.log('Sign up successful, user will receive email confirmation');
+          console.log('Sign up successful, switching to sign in');
+          setIsSignIn(true);
+          setPassword(''); // Clear password for security
         }
       }
     } catch (error) {
