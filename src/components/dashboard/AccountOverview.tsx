@@ -1,68 +1,74 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, TrendingUp, TrendingDown, Plus, CreditCard, PiggyBank, Wallet } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const AccountOverview = () => {
   const [balancesVisible, setBalancesVisible] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+  const { user } = useAuth();
+  const { transactions } = useTransactions();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (data) {
+        setUserProfile(data);
+      }
+    };
+
+    fetchUserProfile();
+  }, [user]);
 
   const accounts = [
     { 
-      type: "Savings", 
-      balance: 15420.50, 
-      change: +245.30, 
-      trend: "up",
-      icon: PiggyBank,
+      type: "Checking", 
+      balance: userProfile?.balance || 5000.00, 
+      change: 0, 
+      trend: "neutral",
+      icon: Wallet,
       gradient: "from-blue-600 to-blue-800",
       bgGradient: "from-blue-50 to-blue-100"
     },
     { 
-      type: "Checking", 
-      balance: 3200.75, 
-      change: -120.00, 
-      trend: "down",
-      icon: Wallet,
+      type: "Savings", 
+      balance: 0, 
+      change: 0, 
+      trend: "neutral",
+      icon: PiggyBank,
       gradient: "from-indigo-600 to-indigo-800",
       bgGradient: "from-indigo-50 to-indigo-100"
     },
     { 
       type: "Credit Card", 
-      balance: -850.25, 
-      change: -45.50, 
-      trend: "down",
+      balance: 0, 
+      change: 0, 
+      trend: "neutral",
       icon: CreditCard,
       gradient: "from-slate-600 to-slate-800",
       bgGradient: "from-slate-50 to-slate-100"
     },
   ];
 
-  // Get recent transactions from localStorage (real user transactions)
-  const getRecentTransactions = () => {
-    const stored = localStorage.getItem('userTransactions');
-    const storedTransactions = stored ? JSON.parse(stored) : [];
-    
-    // If no stored transactions, show sample data
-    if (storedTransactions.length === 0) {
-      return [
-        { type: "Deposit", amount: 2500, date: "2024-01-15", description: "Salary Deposit", category: "Income" },
-        { type: "Transfer", amount: -150, date: "2024-01-14", description: "To Savings Account", category: "Transfer" },
-        { type: "Purchase", amount: -45.50, date: "2024-01-13", description: "Grocery Store", category: "Shopping" },
-        { type: "Transfer", amount: -800, date: "2024-01-12", description: "Rent Payment", category: "Bills" },
-      ];
-    }
-    
-    // Convert stored transactions to recent transaction format
-    return storedTransactions.slice(0, 4).map(transaction => ({
-      type: transaction.type,
-      amount: parseFloat(transaction.amount.replace('$', '').replace(',', '')) * -1, // Outgoing transactions are negative
-      date: transaction.date,
-      description: `To ${transaction.recipient}`,
-      category: transaction.method
-    }));
-  };
-
-  const [recentTransactions] = useState(getRecentTransactions());
+  // Get recent transactions from the database
+  const recentTransactions = transactions.slice(0, 4).map(transaction => ({
+    type: transaction.transaction_type,
+    amount: -transaction.amount, // Outgoing transactions are negative
+    date: new Date(transaction.created_at).toLocaleDateString(),
+    description: `To ${transaction.recipient_name}`,
+    category: transaction.transaction_type.replace('_', ' ')
+  }));
 
   return (
     <div className="space-y-8">
@@ -72,7 +78,7 @@ const AccountOverview = () => {
           <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Account Overview
           </h2>
-          <p className="text-slate-600 mt-1">Manage your finances with confidence</p>
+          <p className="text-slate-600 mt-1">Your real banking account</p>
         </div>
         <Button
           variant="outline"
@@ -113,20 +119,20 @@ const AccountOverview = () => {
                         <span className="text-red-500 text-lg ml-2">CR</span>
                       )}
                     </div>
-                    {balancesVisible && (
+                    {balancesVisible && account.change !== 0 && (
                       <div className="flex items-center text-sm">
                         {account.trend === "up" ? (
                           <div className="flex items-center text-emerald-600">
                             <TrendingUp className="h-4 w-4 mr-1" />
                             <span>+${Math.abs(account.change).toFixed(2)}</span>
                           </div>
-                        ) : (
+                        ) : account.trend === "down" ? (
                           <div className="flex items-center text-red-500">
                             <TrendingDown className="h-4 w-4 mr-1" />
                             <span>-${Math.abs(account.change).toFixed(2)}</span>
                           </div>
-                        )}
-                        <span className="text-slate-500 ml-2">this month</span>
+                        ) : null}
+                        {account.change !== 0 && <span className="text-slate-500 ml-2">this month</span>}
                       </div>
                     )}
                   </div>
@@ -152,43 +158,50 @@ const AccountOverview = () => {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y divide-slate-100">
-            {recentTransactions.map((transaction, index) => (
-              <div key={index} className="p-4 hover:bg-slate-50 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        transaction.amount > 0 
-                          ? 'bg-emerald-100 text-emerald-600' 
-                          : 'bg-slate-100 text-slate-600'
-                        }`}>
-                        {transaction.amount > 0 ? '+' : '-'}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-slate-800">{transaction.description}</div>
-                        <div className="flex items-center space-x-2 text-sm text-slate-500">
-                          <span>{transaction.date}</span>
-                          <span>•</span>
-                          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
-                            {transaction.category}
-                          </span>
+          {recentTransactions.length === 0 ? (
+            <div className="p-8 text-center text-slate-500">
+              <p>No transactions yet</p>
+              <p className="text-sm mt-1">Start making transactions to see your activity here</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {recentTransactions.map((transaction, index) => (
+                <div key={index} className="p-4 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          transaction.amount > 0 
+                            ? 'bg-emerald-100 text-emerald-600' 
+                            : 'bg-slate-100 text-slate-600'
+                          }`}>
+                          {transaction.amount > 0 ? '+' : '-'}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-800">{transaction.description}</div>
+                          <div className="flex items-center space-x-2 text-sm text-slate-500">
+                            <span>{transaction.date}</span>
+                            <span>•</span>
+                            <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
+                              {transaction.category}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`font-bold text-lg ${
-                      transaction.amount > 0 ? "text-emerald-600" : "text-slate-700"
-                    }`}>
-                      {transaction.amount > 0 ? "+" : ""}${Math.abs(transaction.amount).toFixed(2)}
+                    <div className="text-right">
+                      <div className={`font-bold text-lg ${
+                        transaction.amount > 0 ? "text-emerald-600" : "text-slate-700"
+                      }`}>
+                        {transaction.amount > 0 ? "+" : ""}${Math.abs(transaction.amount).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-slate-500 capitalize">{transaction.type}</div>
                     </div>
-                    <div className="text-xs text-slate-500 capitalize">{transaction.type}</div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

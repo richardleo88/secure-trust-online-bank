@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,15 +38,110 @@ const SecurityAuditPanel = () => {
   const { user, logActivity } = useAuth();
   const { toast } = useToast();
 
+  const getCountryFlag = (countryCode: string) => {
+    if (!countryCode) return '🌍';
+    try {
+      const codePoints = countryCode
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt(0));
+      return String.fromCodePoint(...codePoints);
+    } catch {
+      return '🌍';
+    }
+  };
+
+  const getDeviceName = () => {
+    const userAgent = navigator.userAgent;
+    
+    // Detect device type and OS
+    let deviceType = 'Desktop';
+    let os = 'Unknown';
+    
+    if (/Android/i.test(userAgent)) {
+      deviceType = 'Mobile';
+      os = 'Android';
+    } else if (/iPhone|iPad|iPod/i.test(userAgent)) {
+      deviceType = /iPad/i.test(userAgent) ? 'Tablet' : 'Mobile';
+      os = 'iOS';
+    } else if (/Windows/i.test(userAgent)) {
+      os = 'Windows';
+    } else if (/Mac/i.test(userAgent)) {
+      os = 'macOS';
+    } else if (/Linux/i.test(userAgent)) {
+      os = 'Linux';
+    }
+
+    // Detect browser
+    let browser = 'Unknown';
+    if (/Chrome/i.test(userAgent) && !/Edge/i.test(userAgent)) {
+      browser = 'Chrome';
+    } else if (/Firefox/i.test(userAgent)) {
+      browser = 'Firefox';
+    } else if (/Safari/i.test(userAgent) && !/Chrome/i.test(userAgent)) {
+      browser = 'Safari';
+    } else if (/Edge/i.test(userAgent)) {
+      browser = 'Edge';
+    }
+
+    return `${os} - ${browser}`;
+  };
+
+  const createCurrentSession = async () => {
+    if (!user) return;
+
+    try {
+      const deviceInfo = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        screenResolution: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+
+      // Get location info
+      const locationResponse = await fetch('https://ipapi.co/json/');
+      const locationData = await locationResponse.json();
+
+      const sessionData = {
+        user_id: user.id,
+        session_token: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        device_name: getDeviceName(),
+        device_type: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        browser: navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)/)?.[0] || 'Unknown',
+        os: navigator.platform,
+        ip_address: locationData.ip,
+        location: {
+          city: locationData.city,
+          region: locationData.region,
+          country: locationData.country_name,
+          country_code: locationData.country_code,
+          timezone: locationData.timezone
+        }
+      };
+
+      const { error } = await supabase
+        .from('user_sessions')
+        .insert(sessionData);
+
+      if (error) {
+        console.error('Error creating session:', error);
+      }
+    } catch (error) {
+      console.error('Error creating current session:', error);
+    }
+  };
+
   const fetchSecurityData = async () => {
     if (!user) return;
 
     try {
-      // Fetch recent activity logs
+      // Fetch recent activity logs - only after signup
       const { data: logsData, error: logsError } = await supabase
         .from('activity_logs')
         .select('*')
         .eq('user_id', user.id)
+        .gte('created_at', user.created_at) // Only show activity after account creation
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -64,6 +158,20 @@ const SecurityAuditPanel = () => {
 
       if (sessionsError) throw sessionsError;
       setUserSessions(sessionsData || []);
+
+      // If no current session exists, create one
+      if (!sessionsData || sessionsData.length === 0) {
+        await createCurrentSession();
+        // Refetch sessions after creating current one
+        const { data: newSessionsData } = await supabase
+          .from('user_sessions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .order('last_activity', { ascending: false });
+        
+        setUserSessions(newSessionsData || []);
+      }
 
     } catch (error) {
       console.error('Error fetching security data:', error);
@@ -129,9 +237,10 @@ const SecurityAuditPanel = () => {
   const getLocationString = (location: Json): string => {
     if (location && typeof location === 'object' && location !== null) {
       const loc = location as Record<string, any>;
-      return `${loc.city || 'Unknown'}, ${loc.country || 'Unknown'}`;
+      const flag = getCountryFlag(loc.country_code);
+      return `${flag} ${loc.city || 'Unknown'}, ${loc.country || 'Unknown'}`;
     }
-    return 'Unknown';
+    return '🌍 Unknown';
   };
 
   if (loading) {
@@ -169,7 +278,7 @@ const SecurityAuditPanel = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             {activityLogs.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No recent activity</p>
+              <p className="text-gray-500 text-center py-4">No recent activity since account creation</p>
             ) : (
               activityLogs.map((log) => (
                 <div key={log.id} className="flex items-start justify-between p-3 border rounded-lg">
@@ -289,7 +398,7 @@ const SecurityAuditPanel = () => {
                 Set up alerts for account activities and transactions.
               </p>
               <Button size="sm" variant="outline">
-                manage Alerts
+                Manage Alerts
               </Button>
             </div>
           </div>

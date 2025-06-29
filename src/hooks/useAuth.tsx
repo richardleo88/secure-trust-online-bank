@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const getLocationInfo = async () => {
     try {
-      // Get IP-based location (you could use a service like ipapi.co)
       const response = await fetch('https://ipapi.co/json/');
       const data = await response.json();
       return {
@@ -59,11 +58,55 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         city: data.city,
         region: data.region,
         country: data.country_name,
+        country_code: data.country_code,
         timezone: data.timezone
       };
     } catch (error) {
       console.log('Could not get location info:', error);
       return null;
+    }
+  };
+
+  const initializeUserSession = async (userId: string) => {
+    try {
+      const deviceInfo = getDeviceInfo();
+      const locationInfo = await getLocationInfo();
+
+      // Create user session
+      const sessionData = {
+        user_id: userId,
+        session_token: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        device_name: `${navigator.platform} - ${navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)/)?.[0] || 'Unknown'}`,
+        device_type: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        browser: navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)/)?.[0] || 'Unknown',
+        os: navigator.platform,
+        ip_address: locationInfo?.ip,
+        location: locationInfo ? {
+          city: locationInfo.city,
+          region: locationInfo.region,
+          country: locationInfo.country,
+          country_code: locationInfo.country_code,
+          timezone: locationInfo.timezone
+        } : null
+      };
+
+      await supabase.from('user_sessions').insert(sessionData);
+
+      // Set initial balance to 5000 for new users
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('balance')
+        .eq('id', userId)
+        .single();
+
+      if (profile?.balance === 0 || profile?.balance === null) {
+        await supabase
+          .from('profiles')
+          .update({ balance: 5000.00 })
+          .eq('id', userId);
+      }
+    } catch (error) {
+      console.error('Error initializing user session:', error);
     }
   };
 
@@ -164,7 +207,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           const deviceInfo = getDeviceInfo();
           const locationInfo = await getLocationInfo();
           
-          // Use a simpler approach that doesn't require user authentication
           console.log('Failed login attempt:', {
             email,
             error: error.message,
@@ -193,6 +235,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signOut = async () => {
     try {
       await logActivity('logout');
+      
+      // Deactivate current session
+      if (user) {
+        await supabase
+          .from('user_sessions')
+          .update({ is_active: false })
+          .eq('user_id', user.id)
+          .eq('is_active', true);
+      }
+      
       await supabase.auth.signOut();
       toast({
         title: "Signed Out",
@@ -212,9 +264,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Log authentication events
+        // Log authentication events and initialize session
         if (event === 'SIGNED_IN' && session?.user) {
           setTimeout(async () => {
+            await initializeUserSession(session.user.id);
+            
             const deviceInfo = getDeviceInfo();
             const locationInfo = await getLocationInfo();
             
