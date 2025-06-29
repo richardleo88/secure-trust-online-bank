@@ -64,46 +64,78 @@ export const useTransactions = () => {
     if (!user) return { error: 'User not authenticated' };
 
     try {
-      // Generate reference number using the database function
+      // First check current balance
+      const { data: profile, error: balanceError } = await supabase
+        .from('profiles')
+        .select('balance')
+        .eq('id', user.id)
+        .single();
+
+      if (balanceError) throw balanceError;
+
+      const totalAmount = transactionData.amount + (transactionData.fee || 0);
+      
+      if (profile.balance < totalAmount) {
+        toast({
+          title: "Insufficient Funds",
+          description: "Your account balance is insufficient for this transaction.",
+          variant: "destructive",
+        });
+        return { error: 'Insufficient funds' };
+      }
+
+      // Generate reference number
       const { data: refData, error: refError } = await supabase
         .rpc('generate_reference_number', { transaction_type: transactionData.transaction_type });
 
       if (refError) throw refError;
 
-      const { data, error } = await supabase
+      // Create transaction and immediately deduct from balance
+      const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
         .insert({
           user_id: user.id,
           ...transactionData,
           reference_number: refData,
-          status: 'pending'
+          status: 'completed' // Immediately complete the transaction
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (transactionError) throw transactionError;
 
-      // Log the transaction creation
-      await logActivity('transaction_create', 'transaction', data.id, {
+      // Deduct from balance immediately
+      const newBalance = profile.balance - totalAmount;
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ balance: newBalance })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      // Log the transaction creation and balance update
+      await logActivity('transaction_create', 'transaction', transaction.id, {
         transaction_type: transactionData.transaction_type,
         amount: transactionData.amount,
-        recipient: transactionData.recipient_name
+        recipient: transactionData.recipient_name,
+        old_balance: profile.balance,
+        new_balance: newBalance
       });
 
       // Refresh transactions list
       await fetchTransactions();
 
       toast({
-        title: "Transaction Created",
-        description: `Transaction ${data.reference_number} has been submitted successfully.`,
+        title: "Transfer Successful",
+        description: `$${transactionData.amount.toFixed(2)} transferred to ${transactionData.recipient_name}. Reference: ${refData}`,
       });
 
-      return { data, error: null };
+      return { data: transaction, error: null };
     } catch (error: any) {
       console.error('Transaction creation error:', error);
       toast({
-        title: "Transaction Failed",
-        description: error.message || "Failed to create transaction",
+        title: "Transfer Failed",
+        description: error.message || "Failed to process transfer",
         variant: "destructive",
       });
       return { error: error.message };

@@ -34,7 +34,7 @@ const AccountOverview = () => {
   const accounts = [
     { 
       type: "Checking", 
-      balance: userProfile?.balance || 5000.00, 
+      balance: userProfile?.balance || 0, 
       change: 0, 
       trend: "neutral",
       icon: Wallet,
@@ -67,7 +67,8 @@ const AccountOverview = () => {
     amount: -transaction.amount, // Outgoing transactions are negative
     date: new Date(transaction.created_at).toLocaleDateString(),
     description: `To ${transaction.recipient_name}`,
-    category: transaction.transaction_type.replace('_', ' ')
+    category: transaction.transaction_type.replace('_', ' '),
+    status: transaction.status
   }));
 
   return (
@@ -76,9 +77,9 @@ const AccountOverview = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Account Overview
+            Real Account Overview
           </h2>
-          <p className="text-slate-600 mt-1">Your real banking account</p>
+          <p className="text-slate-600 mt-1">Your live banking account with immediate processing</p>
         </div>
         <Button
           variant="outline"
@@ -106,7 +107,7 @@ const AccountOverview = () => {
                         <IconComponent className="h-5 w-5 text-white" />
                       </div>
                       <CardTitle className="text-lg font-semibold text-slate-700">
-                        {account.type}
+                        {account.type} {index === 0 && <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full ml-2">ACTIVE</span>}
                       </CardTitle>
                     </div>
                   </div>
@@ -119,20 +120,9 @@ const AccountOverview = () => {
                         <span className="text-red-500 text-lg ml-2">CR</span>
                       )}
                     </div>
-                    {balancesVisible && account.change !== 0 && (
-                      <div className="flex items-center text-sm">
-                        {account.trend === "up" ? (
-                          <div className="flex items-center text-emerald-600">
-                            <TrendingUp className="h-4 w-4 mr-1" />
-                            <span>+${Math.abs(account.change).toFixed(2)}</span>
-                          </div>
-                        ) : account.trend === "down" ? (
-                          <div className="flex items-center text-red-500">
-                            <TrendingDown className="h-4 w-4 mr-1" />
-                            <span>-${Math.abs(account.change).toFixed(2)}</span>
-                          </div>
-                        ) : null}
-                        {account.change !== 0 && <span className="text-slate-500 ml-2">this month</span>}
+                    {balancesVisible && index === 0 && (
+                      <div className="text-sm text-green-600 font-medium">
+                        Real-time balance • Updates immediately
                       </div>
                     )}
                   </div>
@@ -149,7 +139,7 @@ const AccountOverview = () => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-xl">Recent Transactions</CardTitle>
-              <p className="text-blue-100 text-sm mt-1">Your latest account activity</p>
+              <p className="text-blue-100 text-sm mt-1">Live transaction history - All transfers processed immediately</p>
             </div>
             <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0">
               <Plus className="h-4 w-4 mr-2" />
@@ -161,7 +151,7 @@ const AccountOverview = () => {
           {recentTransactions.length === 0 ? (
             <div className="p-8 text-center text-slate-500">
               <p>No transactions yet</p>
-              <p className="text-sm mt-1">Start making transactions to see your activity here</p>
+              <p className="text-sm mt-1">Start making transfers to see your activity here</p>
             </div>
           ) : (
             <div className="divide-y divide-slate-100">
@@ -173,7 +163,7 @@ const AccountOverview = () => {
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                           transaction.amount > 0 
                             ? 'bg-emerald-100 text-emerald-600' 
-                            : 'bg-slate-100 text-slate-600'
+                            : 'bg-red-100 text-red-600'
                           }`}>
                           {transaction.amount > 0 ? '+' : '-'}
                         </div>
@@ -185,13 +175,20 @@ const AccountOverview = () => {
                             <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
                               {transaction.category}
                             </span>
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              transaction.status === 'completed' 
+                                ? 'bg-green-100 text-green-700' 
+                                : 'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {transaction.status}
+                            </span>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className={`font-bold text-lg ${
-                        transaction.amount > 0 ? "text-emerald-600" : "text-slate-700"
+                        transaction.amount > 0 ? "text-emerald-600" : "text-red-600"
                       }`}>
                         {transaction.amount > 0 ? "+" : ""}${Math.abs(transaction.amount).toFixed(2)}
                       </div>

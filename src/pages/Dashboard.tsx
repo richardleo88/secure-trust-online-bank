@@ -16,6 +16,7 @@ import ATMCard from "@/components/dashboard/ATMCard";
 import Profile from "@/components/dashboard/Profile";
 import TransactionHistory from "@/components/dashboard/TransactionHistory";
 import SecurityAuditPanel from "@/components/dashboard/SecurityAuditPanel";
+import UserProfileHeader from "@/components/dashboard/UserProfileHeader";
 import { Menu, CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
@@ -29,7 +30,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (user) {
       logActivity('dashboard_access', 'page', 'dashboard');
-      console.log('User successfully accessed dashboard with full features');
+      console.log('User successfully accessed REAL banking dashboard with full features');
     }
   }, [user, logActivity]);
 
@@ -94,15 +95,11 @@ const Dashboard = () => {
                     </h1>
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   </div>
-                  <p className="text-banking-slate text-sm">Full access to transfers, security, notifications & transaction history</p>
+                  <p className="text-banking-slate text-sm">Real Banking Account - All transfers are processed immediately</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 banking-gradient rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">
-                    {user?.user_metadata?.full_name?.charAt(0) || 'U'}
-                  </span>
-                </div>
+                <UserProfileHeader />
               </div>
             </header>
 
