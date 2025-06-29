@@ -99,6 +99,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_templates: {
+        Row: {
+          created_at: string | null
+          html_content: string
+          id: string
+          subject: string
+          template_name: string
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          html_content: string
+          id?: string
+          subject: string
+          template_name: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          html_content?: string
+          id?: string
+          subject?: string
+          template_name?: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
+      }
       fraud_alerts: {
         Row: {
           alert_type: string
@@ -202,6 +232,7 @@ export type Database = {
           employment_status: string | null
           full_name: string | null
           id: string
+          is_admin: boolean | null
           middle_name: string | null
           mother_maiden_name: string | null
           phone: string | null
@@ -230,6 +261,7 @@ export type Database = {
           employment_status?: string | null
           full_name?: string | null
           id: string
+          is_admin?: boolean | null
           middle_name?: string | null
           mother_maiden_name?: string | null
           phone?: string | null
@@ -258,6 +290,7 @@ export type Database = {
           employment_status?: string | null
           full_name?: string | null
           id?: string
+          is_admin?: boolean | null
           middle_name?: string | null
           mother_maiden_name?: string | null
           phone?: string | null

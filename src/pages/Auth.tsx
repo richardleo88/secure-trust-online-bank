@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield, Lock, Eye, EyeOff, UserCheck } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import BankRegistrationForm from '@/components/auth/BankRegistrationForm';
 
@@ -20,7 +19,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
   
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -29,102 +28,38 @@ const Auth = () => {
 
   const handleAdminAccess = async () => {
     setLoading(true);
-    // Use proper email format (lowercase)
     const adminEmail = 'richard@gmail.com';
     const adminPassword = '123456789';
 
     try {
-      console.log('Starting admin account setup process...');
+      console.log('Starting admin login process...');
       
-      // First, try to sign up the admin user
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: adminEmail,
-        password: adminPassword,
-        options: {
-          data: {
-            full_name: 'Richard Admin'
-          },
-          emailRedirectTo: `${window.location.origin}/`
-        }
-      });
-
-      // If signup succeeds or user already exists, try to sign in
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: adminEmail,
-        password: adminPassword,
-      });
-
-      if (signInError) {
-        console.error('Admin sign in failed:', signInError);
+      const result = await signIn(adminEmail, adminPassword);
+      
+      if (!result.error) {
+        console.log('Admin login successful');
+        
+        // Wait a moment for admin status to be set
+        setTimeout(() => {
+          toast({
+            title: "Admin Access Granted! 🔐",
+            description: "Welcome to the admin dashboard!",
+          });
+          navigate('/admin', { replace: true });
+        }, 1000);
+      } else {
+        console.error('Admin login failed:', result.error);
         toast({
           title: "Admin Login Failed",
-          description: signInError.message,
+          description: result.error.message,
           variant: "destructive",
         });
-        setLoading(false);
-        return;
       }
-
-      console.log('Admin signed in successfully');
-
-      // Get the current user
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      
-      if (userError || !userData.user) {
-        console.error('Failed to get user data:', userError);
-        setLoading(false);
-        return;
-      }
-
-      // Create admin record in admin_users table
-      const { error: adminError } = await supabase
-        .from('admin_users')
-        .upsert({
-          user_id: userData.user.id,
-          admin_role: 'super_admin',
-          is_active: true
-        }, {
-          onConflict: 'user_id'
-        });
-
-      if (adminError) {
-        console.error('Error creating admin user:', adminError);
-      } else {
-        console.log('Admin user record created/updated successfully');
-      }
-
-      // Ensure profile exists with proper data
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: userData.user.id,
-          email: adminEmail,
-          full_name: 'Richard Admin',
-          balance: 50000.00,
-          account_number: 'ADMIN-' + Math.random().toString(36).substr(2, 8).toUpperCase()
-        }, {
-          onConflict: 'id'
-        });
-
-      if (profileError) {
-        console.error('Error creating admin profile:', profileError);
-      } else {
-        console.log('Admin profile created/updated successfully');
-      }
-
-      toast({
-        title: "Admin Access Granted",
-        description: "Welcome to the admin dashboard!",
-      });
-      
-      // Navigate to admin dashboard
-      navigate('/admin', { replace: true });
-
     } catch (error) {
-      console.error('Admin setup error:', error);
+      console.error('Admin login error:', error);
       toast({
-        title: "Admin Setup Failed",
-        description: "Unable to create admin account. Please try again.",
+        title: "Admin Login Failed",
+        description: "Unable to access admin account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -141,8 +76,19 @@ const Auth = () => {
       const result = await signIn(email, password);
       
       if (!result.error) {
-        console.log('User login successful, redirecting to dashboard');
-        navigate('/dashboard', { replace: true });
+        console.log('User login successful');
+        
+        // Wait a moment for admin status to be checked
+        setTimeout(() => {
+          // Redirect based on admin status
+          if (isAdmin) {
+            console.log('User is admin, redirecting to admin dashboard');
+            navigate('/admin', { replace: true });
+          } else {
+            console.log('User is regular user, redirecting to dashboard');
+            navigate('/dashboard', { replace: true });
+          }
+        }, 500);
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -154,8 +100,8 @@ const Auth = () => {
   const handleRegistrationSuccess = () => {
     setIsSignIn(true);
     toast({
-      title: "Registration Complete!",
-      description: "Your account has been created successfully. Please sign in to continue.",
+      title: "Registration Complete! 🎉",
+      description: "Your account has been created successfully. Check your email for account details, then sign in to continue.",
     });
   };
 
@@ -215,7 +161,7 @@ const Auth = () => {
                       disabled={loading}
                     >
                       <Lock className="h-4 w-4 mr-2" />
-                      {loading ? 'Setting Up Admin Access...' : 'Access Admin Dashboard'}
+                      {loading ? 'Accessing Admin Dashboard...' : 'Access Admin Dashboard'}
                     </Button>
                   </div>
                 </div>

@@ -14,15 +14,19 @@ import Footer from "@/components/Footer";
 import LiveChat from "@/components/LiveChat";
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect authenticated users to dashboard
+    // Redirect authenticated users based on their role
     if (!loading && user) {
-      navigate('/dashboard');
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, isAdmin, navigate]);
 
   if (loading) {
     return (

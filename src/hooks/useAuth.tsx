@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isAdmin: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
 
   const getDeviceInfo = () => {
@@ -67,7 +68,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const initializeUserSession = async (userId: string) => {
+  const checkAdminStatus = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
+      return profile?.is_admin || false;
+    } catch (error) {
+      console.error('Error in checkAdminStatus:', error);
+      return false;
+    }
+  };
+
+  const sendWelcomeEmail = async (userId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-welcome-email', {
+        body: { userId }
+      });
+
+      if (error) {
+        console.error('Error sending welcome email:', error);
+      } else {
+        console.log('Welcome email sent successfully');
+      }
+    } catch (error) {
+      console.error('Failed to send welcome email:', error);
+    }
+  };
+
+  const initializeUserSession = async (userId: string, isNewUser: boolean = false) => {
     try {
       const deviceInfo = getDeviceInfo();
       const locationInfo = await getLocationInfo();
@@ -92,7 +129,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       await supabase.from('user_sessions').insert(sessionData);
 
-      // Set initial balance to 5000 for new users
+      // Check and set admin status
+      const adminStatus = await checkAdminStatus(userId);
+      setIsAdmin(adminStatus);
+
+      // Send welcome email for new users
+      if (isNewUser) {
+        setTimeout(() => {
+          sendWelcomeEmail(userId);
+        }, 2000); // Delay to ensure profile is fully created
+      }
+
+      // Set initial balance to 5000 for new users (if not already set)
       const { data: profile } = await supabase
         .from('profiles')
         .select('balance, email')
@@ -107,7 +155,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       // Check if this is the admin user and create admin entry
-      if (profile?.email === 'Richard@gmail.com') {
+      if (profile?.email === 'richard@gmail.com') {
         const { error: adminError } = await supabase
           .from('admin_users')
           .upsert({
@@ -120,6 +168,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           console.error('Error creating admin user:', adminError);
         } else {
           console.log('Admin user created successfully');
+          setIsAdmin(true);
         }
       }
     } catch (error) {
@@ -169,7 +218,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         options: {
           data: {
             full_name: fullName
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/dashboard`
         }
       });
 
@@ -185,9 +235,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         console.log('Signup successful');
         toast({
-          title: "Account Created Successfully!",
-          description: "You can now sign in to access your dashboard.",
+          title: "Account Created Successfully! 🎉",
+          description: "Please check your email for account details and confirmation.",
         });
+        
+        // If user is immediately signed in (email confirmation disabled)
+        if (data.user && data.session) {
+          setTimeout(() => {
+            initializeUserSession(data.user!.id, true);
+          }, 1000);
+        }
       }
 
       return { error };
@@ -207,7 +264,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -234,8 +291,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           console.error('Failed to log failed login:', logError);
         }
       } else {
+        // Check admin status after successful login
+        if (data.user) {
+          const adminStatus = await checkAdminStatus(data.user.id);
+          setIsAdmin(adminStatus);
+        }
+        
         toast({
-          title: "Welcome Back!",
+          title: "Welcome Back! 🎉",
           description: "You have successfully signed in.",
         });
       }
@@ -262,6 +325,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           .eq('is_active', true);
       }
       
+      setIsAdmin(false);
       await supabase.auth.signOut();
       toast({
         title: "Signed Out",
@@ -284,6 +348,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Log authentication events and initialize session
         if (event === 'SIGNED_IN' && session?.user) {
           setTimeout(async () => {
+            const adminStatus = await checkAdminStatus(session.user.id);
+            setIsAdmin(adminStatus);
+            
             await initializeUserSession(session.user.id);
             
             const deviceInfo = getDeviceInfo();
@@ -304,6 +371,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             }
           }, 0);
         }
+
+        if (event === 'SIGNED_OUT') {
+          setIsAdmin(false);
+        }
       }
     );
 
@@ -312,6 +383,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log('Initial session check:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        checkAdminStatus(session.user.id).then(setIsAdmin);
+      }
+      
       setLoading(false);
     });
 
@@ -322,6 +398,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     session,
     loading,
+    isAdmin,
     signUp,
     signIn,
     signOut,
