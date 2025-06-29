@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Set initial balance to 5000 for new users
       const { data: profile } = await supabase
         .from('profiles')
-        .select('balance')
+        .select('balance, email')
         .eq('id', userId)
         .single();
 
@@ -104,6 +104,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           .from('profiles')
           .update({ balance: 5000.00 })
           .eq('id', userId);
+      }
+
+      // Check if this is the admin user and create admin entry
+      if (profile?.email === 'Richard@gmail.com') {
+        const { error: adminError } = await supabase
+          .from('admin_users')
+          .upsert({
+            user_id: userId,
+            admin_role: 'super_admin',
+            is_active: true
+          });
+
+        if (adminError) {
+          console.error('Error creating admin user:', adminError);
+        } else {
+          console.log('Admin user created successfully');
+        }
       }
     } catch (error) {
       console.error('Error initializing user session:', error);

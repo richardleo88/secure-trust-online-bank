@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, LogOut, Settings, MapPin, Mail, Phone } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,9 +56,13 @@ const UserProfileHeader = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarFallback className="banking-gradient text-white font-semibold">
-              {getUserInitials()}
-            </AvatarFallback>
+            {userProfile?.profile_picture_url ? (
+              <AvatarImage src={userProfile.profile_picture_url} />
+            ) : (
+              <AvatarFallback className="banking-gradient text-white font-semibold">
+                {getUserInitials()}
+              </AvatarFallback>
+            )}
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -67,16 +71,20 @@ const UserProfileHeader = () => {
           {/* Profile Header */}
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12">
-              <AvatarFallback className="banking-gradient text-white font-semibold text-lg">
-                {getUserInitials()}
-              </AvatarFallback>
+              {userProfile?.profile_picture_url ? (
+                <AvatarImage src={userProfile.profile_picture_url} />
+              ) : (
+                <AvatarFallback className="banking-gradient text-white font-semibold text-lg">
+                  {getUserInitials()}
+                </AvatarFallback>
+              )}
             </Avatar>
             <div className="flex-1">
               <p className="text-sm font-medium leading-none">
                 {userProfile?.full_name || 'User'}
               </p>
               <p className="text-xs leading-none text-muted-foreground mt-1">
-                Premium Account Holder
+                Professional Account Holder
               </p>
               <p className="text-xs leading-none text-muted-foreground mt-1">
                 Account: {userProfile?.account_number}

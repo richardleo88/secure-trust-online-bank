@@ -188,40 +188,85 @@ export type Database = {
           account_number: string | null
           account_type: string | null
           address: Json | null
+          annual_income: number | null
           balance: number | null
+          citizenship_status: string | null
           created_at: string | null
           date_of_birth: string | null
+          document_expiry_date: string | null
+          document_number: string | null
+          document_type: string | null
+          document_url: string | null
           email: string | null
+          employer_name: string | null
+          employment_status: string | null
           full_name: string | null
           id: string
+          middle_name: string | null
+          mother_maiden_name: string | null
           phone: string | null
+          profile_picture_url: string | null
+          secondary_phone: string | null
+          ssn_last_four: string | null
+          state_of_birth: string | null
           updated_at: string | null
+          verification_status: string | null
         }
         Insert: {
           account_number?: string | null
           account_type?: string | null
           address?: Json | null
+          annual_income?: number | null
           balance?: number | null
+          citizenship_status?: string | null
           created_at?: string | null
           date_of_birth?: string | null
+          document_expiry_date?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          document_url?: string | null
           email?: string | null
+          employer_name?: string | null
+          employment_status?: string | null
           full_name?: string | null
           id: string
+          middle_name?: string | null
+          mother_maiden_name?: string | null
           phone?: string | null
+          profile_picture_url?: string | null
+          secondary_phone?: string | null
+          ssn_last_four?: string | null
+          state_of_birth?: string | null
           updated_at?: string | null
+          verification_status?: string | null
         }
         Update: {
           account_number?: string | null
           account_type?: string | null
           address?: Json | null
+          annual_income?: number | null
           balance?: number | null
+          citizenship_status?: string | null
           created_at?: string | null
           date_of_birth?: string | null
+          document_expiry_date?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          document_url?: string | null
           email?: string | null
+          employer_name?: string | null
+          employment_status?: string | null
           full_name?: string | null
           id?: string
+          middle_name?: string | null
+          mother_maiden_name?: string | null
           phone?: string | null
+          profile_picture_url?: string | null
+          secondary_phone?: string | null
+          ssn_last_four?: string | null
+          state_of_birth?: string | null
           updated_at?: string | null
+          verification_status?: string | null
         }
         Relationships: []
       }
