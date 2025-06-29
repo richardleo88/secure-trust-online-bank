@@ -48,6 +48,95 @@ const resources = {
   no: { translation: no }
 };
 
+// Country to language mapping for location-based detection
+const countryToLanguage: { [key: string]: string } = {
+  // English-speaking countries
+  'US': 'en', 'GB': 'en', 'CA': 'en', 'AU': 'en', 'NZ': 'en', 'IE': 'en', 'ZA': 'en',
+  // Spanish-speaking countries
+  'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'PE': 'es', 'VE': 'es', 'CL': 'es',
+  'EC': 'es', 'GT': 'es', 'CU': 'es', 'BO': 'es', 'DO': 'es', 'HN': 'es', 'PY': 'es',
+  'SV': 'es', 'NI': 'es', 'CR': 'es', 'PA': 'es', 'UY': 'es',
+  // French-speaking countries
+  'FR': 'fr', 'BE': 'fr', 'CH': 'fr', 'CA': 'fr', 'LU': 'fr', 'MC': 'fr',
+  // German-speaking countries
+  'DE': 'de', 'AT': 'de', 'CH': 'de', 'LI': 'de',
+  // Italian-speaking countries
+  'IT': 'it', 'CH': 'it', 'SM': 'it', 'VA': 'it',
+  // Portuguese-speaking countries
+  'PT': 'pt', 'BR': 'pt', 'AO': 'pt', 'MZ': 'pt', 'GW': 'pt', 'CV': 'pt', 'ST': 'pt', 'TL': 'pt',
+  // Russian-speaking countries
+  'RU': 'ru', 'BY': 'ru', 'KZ': 'ru', 'KG': 'ru', 'TJ': 'ru',
+  // Chinese-speaking countries/regions
+  'CN': 'zh', 'TW': 'zh', 'HK': 'zh', 'SG': 'zh',
+  // Japanese
+  'JP': 'ja',
+  // Korean
+  'KR': 'ko',
+  // Arabic-speaking countries
+  'SA': 'ar', 'AE': 'ar', 'EG': 'ar', 'MA': 'ar', 'DZ': 'ar', 'TN': 'ar', 'LY': 'ar',
+  'SD': 'ar', 'IQ': 'ar', 'SY': 'ar', 'JO': 'ar', 'LB': 'ar', 'KW': 'ar', 'QA': 'ar',
+  'BH': 'ar', 'OM': 'ar', 'YE': 'ar',
+  // Hindi
+  'IN': 'hi',
+  // Thai
+  'TH': 'th',
+  // Vietnamese
+  'VN': 'vi',
+  // Turkish
+  'TR': 'tr',
+  // Polish
+  'PL': 'pl',
+  // Dutch
+  'NL': 'nl',
+  // Swedish
+  'SE': 'sv',
+  // Danish
+  'DK': 'da',
+  // Norwegian
+  'NO': 'no'
+};
+
+// Custom language detector that includes location-based detection
+const customLanguageDetector = {
+  name: 'customDetector',
+  lookup: async (): Promise<string | undefined> => {
+    // First, check if user has manually selected a language
+    const storedLanguage = localStorage.getItem('preferredLanguage');
+    if (storedLanguage) {
+      console.log('Using stored language:', storedLanguage);
+      return storedLanguage;
+    }
+
+    // Try to detect location-based language
+    try {
+      const response = await fetch('https://ipapi.co/json/');
+      const data = await response.json();
+      const countryCode = data.country_code;
+      const detectedLanguage = countryToLanguage[countryCode];
+      
+      if (detectedLanguage) {
+        console.log('Detected country:', countryCode, 'Language:', detectedLanguage);
+        return detectedLanguage;
+      }
+    } catch (error) {
+      console.log('Location detection failed, falling back to browser detection');
+    }
+
+    // Fall back to browser language detection
+    const browserLanguage = navigator.language.split('-')[0];
+    if (Object.keys(resources).includes(browserLanguage)) {
+      console.log('Using browser language:', browserLanguage);
+      return browserLanguage;
+    }
+
+    // Default to English
+    return 'en';
+  },
+  cacheUserLanguage: (lng: string) => {
+    localStorage.setItem('preferredLanguage', lng);
+  }
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -56,7 +145,7 @@ i18n
     fallbackLng: 'en',
     debug: false,
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
+      order: ['customDetector', 'localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
       lookupLocalStorage: 'preferredLanguage'
     },
@@ -64,5 +153,8 @@ i18n
       escapeValue: false
     }
   });
+
+// Add custom detector
+i18n.services.languageDetector.addDetector(customLanguageDetector);
 
 export default i18n;

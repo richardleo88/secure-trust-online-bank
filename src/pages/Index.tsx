@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
@@ -17,6 +17,7 @@ import LanguageWelcomeModal from "@/components/LanguageWelcomeModal";
 const Index = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
     // Redirect authenticated users based on their role
@@ -29,6 +30,18 @@ const Index = () => {
     }
   }, [user, loading, isAdmin, navigate]);
 
+  useEffect(() => {
+    // Listen for language changes to force re-render
+    const handleLanguageChange = () => {
+      setKey(prev => prev + 1);
+    };
+
+    window.addEventListener('languageChanged', handleLanguageChange);
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -38,7 +51,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div key={key} className="min-h-screen bg-white">
       <Header />
       <HeroSection />
       <FeaturesPreview />

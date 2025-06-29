@@ -58,8 +58,19 @@ const Header = () => {
 
   const handleLanguageChange = (value: string) => {
     console.log("Language changed to:", value);
+    // Change language immediately
     i18n.changeLanguage(value);
+    // Store in localStorage to persist across sessions
     localStorage.setItem("preferredLanguage", value);
+    // Force re-render of entire app by triggering a small delay
+    setTimeout(() => {
+      window.dispatchEvent(new Event('languageChanged'));
+    }, 100);
+  };
+
+  const getCurrentLanguage = () => {
+    const current = languages.find(lang => lang.code === i18n.language);
+    return current || languages[0];
   };
 
   return (
@@ -96,7 +107,13 @@ const Header = () => {
         <div className="flex items-center space-x-2 md:space-x-4">
           <Select value={i18n.language} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-24 md:w-32 h-8 text-sm">
-              <SelectValue />
+              <SelectValue>
+                <span className="flex items-center gap-2">
+                  <span>{getCurrentLanguage().flag}</span>
+                  <span className="hidden md:inline">{getCurrentLanguage().name}</span>
+                  <span className="md:hidden">{getCurrentLanguage().code.toUpperCase()}</span>
+                </span>
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
               {languages.map((lang) => (
