@@ -51,17 +51,17 @@ const resources = {
 // Country to language mapping for location-based detection
 const countryToLanguage: { [key: string]: string } = {
   // English-speaking countries
-  'US': 'en', 'GB': 'en', 'CA': 'en', 'AU': 'en', 'NZ': 'en', 'IE': 'en', 'ZA': 'en',
+  'US': 'en', 'GB': 'en', 'AU': 'en', 'NZ': 'en', 'IE': 'en', 'ZA': 'en',
   // Spanish-speaking countries
   'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'PE': 'es', 'VE': 'es', 'CL': 'es',
   'EC': 'es', 'GT': 'es', 'CU': 'es', 'BO': 'es', 'DO': 'es', 'HN': 'es', 'PY': 'es',
   'SV': 'es', 'NI': 'es', 'CR': 'es', 'PA': 'es', 'UY': 'es',
   // French-speaking countries
-  'FR': 'fr', 'BE': 'fr', 'CH': 'fr', 'CA': 'fr', 'LU': 'fr', 'MC': 'fr',
+  'FR': 'fr', 'MC': 'fr', 'LU': 'fr',
   // German-speaking countries
-  'DE': 'de', 'AT': 'de', 'CH': 'de', 'LI': 'de',
+  'DE': 'de', 'AT': 'de', 'LI': 'de',
   // Italian-speaking countries
-  'IT': 'it', 'CH': 'it', 'SM': 'it', 'VA': 'it',
+  'IT': 'it', 'SM': 'it', 'VA': 'it',
   // Portuguese-speaking countries
   'PT': 'pt', 'BR': 'pt', 'AO': 'pt', 'MZ': 'pt', 'GW': 'pt', 'CV': 'pt', 'ST': 'pt', 'TL': 'pt',
   // Russian-speaking countries
@@ -93,7 +93,11 @@ const countryToLanguage: { [key: string]: string } = {
   // Danish
   'DK': 'da',
   // Norwegian
-  'NO': 'no'
+  'NO': 'no',
+  // Multi-language countries (using primary language)
+  'CA': 'en', // Canada - English as primary
+  'BE': 'nl', // Belgium - Dutch as primary
+  'CH': 'de'  // Switzerland - German as primary
 };
 
 // Custom language detector that includes location-based detection
