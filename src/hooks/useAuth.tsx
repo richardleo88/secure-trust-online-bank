@@ -99,16 +99,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       setLoading(true);
-      const redirectUrl = `${window.location.origin}/dashboard`;
       
       console.log('Starting signup process for:', email);
-      console.log('Redirect URL:', redirectUrl);
+      console.log('Full name provided:', fullName);
       
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName
           }
@@ -161,21 +159,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           variant: "destructive",
         });
         
-        // Log failed login attempt
+        // Log failed login attempt (simplified to avoid RLS issues)
         try {
           const deviceInfo = getDeviceInfo();
           const locationInfo = await getLocationInfo();
           
-          await supabase.from('activity_logs').insert({
-            user_id: null,
-            action: 'login_failed',
-            success: false,
-            error_message: error.message,
-            device_info: deviceInfo,
-            location_info: locationInfo,
-            ip_address: locationInfo?.ip,
-            user_agent: navigator.userAgent,
-            metadata: { email }
+          // Use a simpler approach that doesn't require user authentication
+          console.log('Failed login attempt:', {
+            email,
+            error: error.message,
+            device: deviceInfo,
+            location: locationInfo
           });
         } catch (logError) {
           console.error('Failed to log failed login:', logError);
@@ -189,6 +183,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       return { error };
     } catch (error: any) {
+      console.error('Sign in error:', error);
       return { error };
     } finally {
       setLoading(false);

@@ -42,6 +42,7 @@ const Auth = () => {
         // Ensure fullName is provided for signup
         if (!fullName.trim()) {
           console.error('Full name is required for signup');
+          setLoading(false);
           return;
         }
         result = await signUp(email, password, fullName.trim());
