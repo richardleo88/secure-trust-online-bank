@@ -31,14 +31,17 @@ const Auth = () => {
       let result;
       if (isSignIn) {
         result = await signIn(email, password);
-        // Navigate to dashboard immediately after successful sign in
+        // Navigate to dashboard immediately after successful sign in with full access
         if (!result.error) {
+          console.log('Sign in successful, redirecting to dashboard with full features');
           navigate('/dashboard', { replace: true });
         }
       } else {
         result = await signUp(email, password, fullName);
-        // For sign up, user will need to confirm email first
-        // The success toast is already shown in the signUp function
+        // For sign up, show success message - user will get email confirmation
+        if (!result.error) {
+          console.log('Sign up successful, user will receive email confirmation');
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -65,8 +68,8 @@ const Auth = () => {
             </CardTitle>
             <CardDescription className="text-center">
               {isSignIn 
-                ? 'Sign in to access your secure banking dashboard' 
-                : 'Join UnionTrust Bank for secure banking services'
+                ? 'Sign in to access your secure banking dashboard with transfers, security, and full account management' 
+                : 'Join UnionTrust Bank for complete banking services with transfers, security monitoring, and account management'
               }
             </CardDescription>
           </CardHeader>
@@ -144,7 +147,7 @@ const Auth = () => {
                   disabled={loading}
                 >
                   <Lock className="h-4 w-4 mr-2" />
-                  {loading ? 'Processing...' : isSignIn ? 'Sign In Securely' : 'Create Account'}
+                  {loading ? 'Processing...' : isSignIn ? 'Access Full Dashboard' : 'Create Banking Account'}
                 </Button>
               </form>
 
@@ -164,7 +167,7 @@ const Auth = () => {
             <div className="mt-6 text-center text-sm text-gray-600">
               <div className="flex items-center justify-center space-x-1">
                 <Shield className="h-4 w-4" />
-                <span>Bank-level security with 256-bit encryption</span>
+                <span>Full access to transfers, security, notifications & transaction history</span>
               </div>
             </div>
           </CardContent>

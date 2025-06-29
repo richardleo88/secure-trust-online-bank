@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -14,11 +15,23 @@ import WesternUnion from "@/components/dashboard/WesternUnion";
 import ATMCard from "@/components/dashboard/ATMCard";
 import Profile from "@/components/dashboard/Profile";
 import TransactionHistory from "@/components/dashboard/TransactionHistory";
-import { Menu } from "lucide-react";
+import SecurityAuditPanel from "@/components/dashboard/SecurityAuditPanel";
+import { Menu, CheckCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, logActivity } = useAuth();
+
+  // Log dashboard access
+  useEffect(() => {
+    if (user) {
+      logActivity('dashboard_access', 'page', 'dashboard');
+      console.log('User successfully accessed dashboard with full features');
+    }
+  }, [user, logActivity]);
 
   const renderContent = () => {
     switch (activeSection) {
@@ -28,6 +41,8 @@ const Dashboard = () => {
         return <ActionsPanel />;
       case "security":
         return <SecurityPanel />;
+      case "security-audit":
+        return <SecurityAuditPanel />;
       case "notifications":
         return <NotificationsCenter />;
       case "wire-transfer":
@@ -73,13 +88,20 @@ const Dashboard = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
                 <div>
-                  <h1 className="text-2xl font-bold text-banking-navy">Welcome back, John</h1>
-                  <p className="text-banking-slate text-sm">Manage your finances with confidence</p>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-banking-navy">
+                      Welcome back, {user?.user_metadata?.full_name || 'User'}
+                    </h1>
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </div>
+                  <p className="text-banking-slate text-sm">Full access to transfers, security, notifications & transaction history</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 banking-gradient rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">J</span>
+                  <span className="text-white font-bold">
+                    {user?.user_metadata?.full_name?.charAt(0) || 'U'}
+                  </span>
                 </div>
               </div>
             </header>

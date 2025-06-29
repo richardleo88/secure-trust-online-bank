@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -16,7 +15,8 @@ import {
   ChevronDown,
   ChevronRight,
   RefreshCw,
-  Smartphone
+  Smartphone,
+  Eye
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -161,6 +161,14 @@ const DashboardSidebar = ({ isOpen, onClose, activeSection, setActiveSection }: 
             >
               <Shield className="h-4 w-4 mr-2" />
               Security
+            </Button>
+            <Button
+              variant={activeSection === "security-audit" ? "default" : "ghost"}
+              className="w-full justify-start"
+              onClick={() => setActiveSection("security-audit")}
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Security & Audit
             </Button>
             <Button
               variant={activeSection === "notifications" ? "default" : "ghost"}
