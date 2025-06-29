@@ -18,6 +18,53 @@
     "getStarted": "Get Started Today",
     "learnMore": "Learn More"
   },
+  "features": {
+    "title": "Why Choose UnionTrust?",
+    "subtitle": "Experience banking like never before with our cutting-edge features",
+    "secure": {
+      "title": "Bank-Grade Security",
+      "description": "Your funds and data are protected with military-grade encryption and multi-factor authentication."
+    },
+    "instant": {
+      "title": "Instant Transfers", 
+      "description": "Send money anywhere in the world instantly with our advanced payment network."
+    },
+    "support": {
+      "title": "24/7 Support",
+      "description": "Get help whenever you need it with our round-the-clock customer support team."
+    }
+  },
+  "security": {
+    "title": "Your Security is Our Priority",
+    "subtitle": "We use the latest technology to keep your money and data safe",
+    "encryption": "256-bit SSL Encryption",
+    "insurance": "FDIC Insured up to $250,000",
+    "monitoring": "24/7 Fraud Monitoring",
+    "authentication": "Multi-Factor Authentication"
+  },
+  "testimonials": {
+    "title": "What Our Customers Say",
+    "subtitle": "Join thousands of satisfied customers who trust us with their finances"
+  },
+  "footer": {
+    "banking": "Banking",
+    "personalBanking": "Personal Banking",
+    "businessBanking": "Business Banking",
+    "investmentServices": "Investment Services",
+    "loansMortgages": "Loans & Mortgages",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "contactUs": "Contact Us",
+    "branchLocations": "Branch Locations",
+    "securityCenter": "Security Center",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "fdicInsurance": "FDIC Insurance",
+    "accessibility": "Accessibility",
+    "copyright": "© 2024 UnionTrust Capital. All rights reserved.",
+    "description": "Your trusted partner for secure, modern banking solutions."
+  },
   "auth": {
     "welcome": "Welcome Back",
     "signInSubtitle": "Sign in to your account to continue",
@@ -47,15 +94,48 @@
     "loginToContinue": "You can now sign in with your credentials",
     "selectCountry": "Select Country",
     "selectCity": "Select City",
-    "firstSelectCountry": "First select a country"
+    "firstSelectCountry": "First select a country",
+    "processing": "Processing...",
+    "accessDashboard": "Access Dashboard",
+    "userLogin": "User Login",
+    "adminLogin": "Admin Login",
+    "administratorAccess": "Administrator Access",
+    "oneClickAccess": "One-click access to admin dashboard with full privileges",
+    "accessAdminDashboard": "Access Admin Dashboard",
+    "accessingAdminDashboard": "Accessing Admin Dashboard...",
+    "secureAuthentication": "Secure authentication with role-based access",
+    "agreeToTerms": "By creating an account, you agree to our Terms of Service and Privacy Policy.",
+    "needHelp": "Need help? Contact support at",
+    "supportEmail": "support@uniontrust.com"
   },
   "languageWelcome": {
     "title": "Choose Your Language",
     "subtitle": "Make yourself at home in your own language.",
-    "description": "Your selection will stay with you everywhere - signup, dashboard, and beyond."
+    "description": "Your selection will stay with you everywhere - signup, dashboard, and beyond.",
+    "detectedLocation": "Detected location",
+    "skip": "Skip",
+    "confirm": "Confirm",
+    "detecting": "Detecting..."
   },
   "dashboard": {
     "welcome": "Welcome back",
     "realBankingAccount": "Real Banking Account - All transfers are processed immediately"
+  },
+  "rates": {
+    "title": "Competitive Rates",
+    "subtitle": "Get the best value for your money",
+    "savingsRate": "Savings Rate",
+    "checkingRate": "Checking Rate",
+    "loanRate": "Loan Rate"
+  },
+  "cards": {
+    "title": "Premium Banking Cards",
+    "subtitle": "Choose the card that fits your lifestyle",
+    "features": {
+      "contactless": "Contactless Payment",
+      "rewards": "Cashback Rewards",
+      "security": "Advanced Security",
+      "worldwide": "Worldwide Acceptance"
+    }
   }
 }

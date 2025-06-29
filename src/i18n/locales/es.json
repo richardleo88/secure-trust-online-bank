@@ -18,6 +18,53 @@
     "getStarted": "Comienza Hoy",
     "learnMore": "Saber Más"
   },
+  "features": {
+    "title": "¿Por qué elegir UnionTrust?",
+    "subtitle": "Experimenta la banca como nunca antes con nuestras características de vanguardia",
+    "secure": {
+      "title": "Seguridad de Grado Bancario",
+      "description": "Tus fondos y datos están protegidos con encriptación de grado militar y autenticación multifactor."
+    },
+    "instant": {
+      "title": "Transferencias Instantáneas",
+      "description": "Envía dinero a cualquier parte del mundo instantáneamente con nuestra red de pagos avanzada."
+    },
+    "support": {
+      "title": "Soporte 24/7",
+      "description": "Obtén ayuda cuando la necesites con nuestro equipo de atención al cliente las 24 horas."
+    }
+  },
+  "security": {
+    "title": "Tu Seguridad es Nuestra Prioridad",
+    "subtitle": "Usamos la última tecnología para mantener tu dinero y datos seguros",
+    "encryption": "Encriptación SSL de 256 bits",
+    "insurance": "Asegurado por FDIC hasta $250,000",
+    "monitoring": "Monitoreo contra Fraude 24/7",
+    "authentication": "Autenticación Multifactor"
+  },
+  "testimonials": {
+    "title": "Lo que Dicen Nuestros Clientes",
+    "subtitle": "Únete a miles de clientes satisfechos que confían en nosotros con sus finanzas"
+  },
+  "footer": {
+    "banking": "Banca",
+    "personalBanking": "Banca Personal",
+    "businessBanking": "Banca Empresarial",
+    "investmentServices": "Servicios de Inversión",
+    "loansMortgages": "Préstamos e Hipotecas",
+    "support": "Soporte",
+    "helpCenter": "Centro de Ayuda",
+    "contactUs": "Contáctanos",
+    "branchLocations": "Ubicaciones de Sucursales",
+    "securityCenter": "Centro de Seguridad",
+    "legal": "Legal",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "fdicInsurance": "Seguro FDIC",
+    "accessibility": "Accesibilidad",
+    "copyright": "© 2024 UnionTrust Capital. Todos los derechos reservados.",
+    "description": "Tu socio de confianza para soluciones bancarias seguras y modernas."
+  },
   "auth": {
     "welcome": "Bienvenido de Vuelta",
     "signInSubtitle": "Inicia sesión en tu cuenta para continuar",
@@ -47,15 +94,53 @@
     "loginToContinue": "Ahora puedes iniciar sesión con tus credenciales",
     "selectCountry": "Seleccionar País",
     "selectCity": "Seleccionar Ciudad",
-    "firstSelectCountry": "Primero selecciona un país"
+    "firstSelectCountry": "Primero selecciona un país",
+    "processing": "Procesando...",
+    "accessDashboard": "Acceder al Panel",
+    "userLogin": "Inicio de Usuario",
+    "adminLogin": "Inicio de Administrador",
+    "administratorAccess": "Acceso de Administrador",
+    "oneClickAccess": "Acceso con un clic al panel de administrador con privilegios completos",
+    "accessAdminDashboard": "Acceder al Panel de Administrador",
+    "accessingAdminDashboard": "Accediendo al Panel de Administrador...",
+    "secureAuthentication": "Autenticación segura con acceso basado en roles",
+    "agreeToTerms": "Al crear una cuenta, aceptas nuestros Términos de Servicio y Política de Privacidad.",
+    "needHelp": "¿Necesitas ayuda? Contacta al soporte en",
+    "supportEmail": "support@uniontrust.com",
+    "enterEmail": "Ingresa tu correo electrónico",
+    "enterPassword": "Ingresa tu contraseña",
+    "enterFullName": "Ingresa tu nombre completo",
+    "createPassword": "Crea una contraseña",
+    "createOneNow": "Crea una ahora"
   },
   "languageWelcome": {
     "title": "Elige tu Idioma",
     "subtitle": "Siéntete como en casa en tu propio idioma.",
-    "description": "Tu selección te acompañará en todas partes: registro, panel de control y más allá."
+    "description": "Tu selección te acompañará en todas partes: registro, panel de control y más allá.",
+    "detectedLocation": "Ubicación detectada",
+    "skip": "Omitir",
+    "confirm": "Confirmar",
+    "detecting": "Detectando..."
   },
   "dashboard": {
     "welcome": "Bienvenido de vuelta",
     "realBankingAccount": "Cuenta Bancaria Real - Todas las transferencias se procesan inmediatamente"
+  },
+  "rates": {
+    "title": "Tasas Competitivas",
+    "subtitle": "Obtén el mejor valor por tu dinero",
+    "savingsRate": "Tasa de Ahorros",
+    "checkingRate": "Tasa de Cuenta Corriente",  
+    "loanRate": "Tasa de Préstamo"
+  },
+  "cards": {
+    "title": "Tarjetas Bancarias Premium",
+    "subtitle": "Elige la tarjeta que se adapte a tu estilo de vida",
+    "features": {
+      "contactless": "Pago Sin Contacto",
+      "rewards": "Recompensas en Efectivo",
+      "security": "Seguridad Avanzada",
+      "worldwide": "Aceptación Mundial"
+    }
   }
 }

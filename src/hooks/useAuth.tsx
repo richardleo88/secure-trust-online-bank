@@ -70,18 +70,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkAdminStatus = async (userId: string) => {
     try {
-      const { data: profile, error } = await supabase
+      console.log('Checking admin status for user:', userId);
+      
+      // First check profiles table
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('is_admin')
+        .select('is_admin, email')
         .eq('id', userId)
         .single();
       
-      if (error) {
-        console.error('Error checking admin status:', error);
-        return false;
+      if (profileError) {
+        console.error('Error checking profile admin status:', profileError);
       }
       
-      return profile?.is_admin || false;
+      // Also check admin_users table
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('admin_role, is_active')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .maybeSingle();
+      
+      if (adminError) {
+        console.error('Error checking admin_users:', adminError);
+      }
+      
+      const isAdminUser = profile?.is_admin || adminUser?.admin_role || profile?.email === 'richard@gmail.com';
+      console.log('Admin status result:', { profileAdmin: profile?.is_admin, adminUser: adminUser?.admin_role, email: profile?.email, finalResult: isAdminUser });
+      
+      return Boolean(isAdminUser);
     } catch (error) {
       console.error('Error in checkAdminStatus:', error);
       return false;
@@ -137,25 +154,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (isNewUser) {
         setTimeout(() => {
           sendWelcomeEmail(userId);
-        }, 2000); // Delay to ensure profile is fully created
+        }, 2000);
       }
 
-      // Set initial balance to 5000 for new users (if not already set)
+      // Get user profile to check balance
       const { data: profile } = await supabase
         .from('profiles')
         .select('balance, email')
         .eq('id', userId)
         .single();
 
-      if (profile?.balance === 0 || profile?.balance === null) {
+      // Set initial balance for new users
+      if (isNewUser || profile?.balance === 0 || profile?.balance === null) {
         await supabase
           .from('profiles')
           .update({ balance: 5000.00 })
           .eq('id', userId);
       }
 
-      // Check if this is the admin user and create admin entry
+      // Special handling for admin user
       if (profile?.email === 'richard@gmail.com') {
+        console.log('Setting up admin user richard@gmail.com');
+        
+        // Update profile to mark as admin
+        await supabase
+          .from('profiles')
+          .update({ is_admin: true })
+          .eq('id', userId);
+
+        // Create admin user entry
         const { error: adminError } = await supabase
           .from('admin_users')
           .upsert({
@@ -236,7 +263,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log('Signup successful');
         toast({
           title: "Account Created Successfully! 🎉",
-          description: "Please check your email for account details and confirmation.",
+          description: "Please check your email for confirmation. You can now sign in with your credentials.",
         });
         
         // If user is immediately signed in (email confirmation disabled)
@@ -264,19 +291,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
+      console.log('Attempting sign in for:', email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error('Sign in error:', error);
         toast({
           title: "Sign In Failed",
           description: error.message,
           variant: "destructive",
         });
         
-        // Log failed login attempt (simplified to avoid RLS issues)
+        // Log failed login attempt
         try {
           const deviceInfo = getDeviceInfo();
           const locationInfo = await getLocationInfo();
@@ -291,10 +321,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           console.error('Failed to log failed login:', logError);
         }
       } else {
+        console.log('Sign in successful for user:', data.user?.id);
+        
         // Check admin status after successful login
         if (data.user) {
           const adminStatus = await checkAdminStatus(data.user.id);
+          console.log('Admin status for signed in user:', adminStatus);
           setIsAdmin(adminStatus);
+          
+          // Initialize session
+          await initializeUserSession(data.user.id);
         }
         
         toast({
@@ -305,7 +341,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       return { error };
     } catch (error: any) {
-      console.error('Sign in error:', error);
+      console.error('Sign in catch error:', error);
+      toast({
+        title: "Sign In Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
       return { error };
     } finally {
       setLoading(false);
@@ -337,6 +378,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
+    console.log('Setting up auth state listener...');
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -347,11 +390,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Log authentication events and initialize session
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('User signed in, initializing session...');
+          
           setTimeout(async () => {
             const adminStatus = await checkAdminStatus(session.user.id);
+            console.log('Setting admin status:', adminStatus);
             setIsAdmin(adminStatus);
             
-            await initializeUserSession(session.user.id);
+            // Only initialize session if not already done
+            if (event === 'SIGNED_IN') {
+              await initializeUserSession(session.user.id);
+            }
             
             const deviceInfo = getDeviceInfo();
             const locationInfo = await getLocationInfo();
@@ -369,10 +418,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             } catch (error) {
               console.error('Failed to log login activity:', error);
             }
-          }, 0);
+          }, 100);
         }
 
         if (event === 'SIGNED_OUT') {
+          console.log('User signed out');
           setIsAdmin(false);
         }
       }
@@ -385,13 +435,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        checkAdminStatus(session.user.id).then(setIsAdmin);
+        checkAdminStatus(session.user.id).then((adminStatus) => {
+          console.log('Initial admin status check:', adminStatus);
+          setIsAdmin(adminStatus);
+        });
       }
       
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('Cleaning up auth subscription');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const value = {

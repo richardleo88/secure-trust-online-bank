@@ -9,12 +9,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield, Lock, Eye, EyeOff, UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import BankRegistrationForm from '@/components/auth/BankRegistrationForm';
 
 const Auth = () => {
+  const { t } = useTranslation();
   const [isSignIn, setIsSignIn] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
@@ -42,15 +45,15 @@ const Auth = () => {
         // Wait a moment for admin status to be set
         setTimeout(() => {
           toast({
-            title: "Admin Access Granted! 🔐",
-            description: "Welcome to the admin dashboard!",
+            title: t('auth.adminAccessGranted') || "Admin Access Granted! 🔐",
+            description: t('auth.welcomeAdmin') || "Welcome to the admin dashboard!",
           });
           navigate('/admin', { replace: true });
         }, 1000);
       } else {
         console.error('Admin login failed:', result.error);
         toast({
-          title: "Admin Login Failed",
+          title: t('auth.adminLoginFailed') || "Admin Login Failed",
           description: result.error.message,
           variant: "destructive",
         });
@@ -58,8 +61,8 @@ const Auth = () => {
     } catch (error) {
       console.error('Admin login error:', error);
       toast({
-        title: "Admin Login Failed",
-        description: "Unable to access admin account. Please try again.",
+        title: t('auth.adminLoginFailed') || "Admin Login Failed",
+        description: t('auth.adminLoginErrorDesc') || "Unable to access admin account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -72,23 +75,43 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting user sign in...');
-      const result = await signIn(email, password);
-      
-      if (!result.error) {
-        console.log('User login successful');
+      if (isSignIn) {
+        console.log('Attempting user sign in...');
+        const result = await signIn(email, password);
         
-        // Wait a moment for admin status to be checked
-        setTimeout(() => {
-          // Redirect based on admin status
-          if (isAdmin) {
-            console.log('User is admin, redirecting to admin dashboard');
-            navigate('/admin', { replace: true });
-          } else {
-            console.log('User is regular user, redirecting to dashboard');
-            navigate('/dashboard', { replace: true });
-          }
-        }, 500);
+        if (!result.error) {
+          console.log('User login successful');
+          
+          // Wait a moment for admin status to be checked
+          setTimeout(() => {
+            // Redirect based on admin status
+            if (isAdmin) {
+              console.log('User is admin, redirecting to admin dashboard');
+              navigate('/admin', { replace: true });
+            } else {
+              console.log('User is regular user, redirecting to dashboard');
+              navigate('/dashboard', { replace: true });
+            }
+          }, 500);
+        }
+      } else {
+        // Handle sign up
+        console.log('Attempting user sign up...');
+        const result = await signUp(email, password, fullName);
+        
+        if (!result.error) {
+          console.log('User signup successful');
+          toast({
+            title: t('auth.accountCreated') || "Account Created Successfully! 🎉",
+            description: t('auth.checkEmail') || "Please check your email for confirmation and then sign in.",
+          });
+          // Switch to sign in tab
+          setIsSignIn(true);
+          // Clear form
+          setEmail('');
+          setPassword('');
+          setFullName('');
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -100,8 +123,8 @@ const Auth = () => {
   const handleRegistrationSuccess = () => {
     setIsSignIn(true);
     toast({
-      title: "Registration Complete! 🎉",
-      description: "Your account has been created successfully. Check your email for account details, then sign in to continue.",
+      title: t('auth.registrationComplete') || "Registration Complete! 🎉",
+      description: t('auth.registrationSuccessDesc') || "Your account has been created successfully. Check your email for account details, then sign in to continue.",
     });
   };
 
@@ -113,7 +136,7 @@ const Auth = () => {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">UnionTrust Bank</h1>
-          <p className="text-gray-600 mt-2">Professional Banking Services</p>
+          <p className="text-gray-600 mt-2">{t('auth.professionalBanking') || 'Professional Banking Services'}</p>
         </div>
 
         {!isSignIn ? (
@@ -122,10 +145,10 @@ const Auth = () => {
           <Card className="max-w-md mx-auto">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl text-center">
-                Welcome Back
+                {t('auth.welcome')}
               </CardTitle>
               <CardDescription className="text-center">
-                Sign in to access your secure banking dashboard
+                {t('auth.signInSubtitle')}
               </CardDescription>
             </CardHeader>
 
@@ -137,7 +160,7 @@ const Auth = () => {
                   className="flex-1"
                   onClick={() => setIsAdminLogin(false)}
                 >
-                  User Login
+                  {t('auth.userLogin')}
                 </Button>
                 <Button
                   type="button"
@@ -146,100 +169,160 @@ const Auth = () => {
                   onClick={() => setIsAdminLogin(true)}
                 >
                   <UserCheck className="h-4 w-4" />
-                  Admin Login
+                  {t('auth.adminLogin')}
                 </Button>
               </div>
 
               {isAdminLogin ? (
                 <div className="space-y-4">
                   <div className="bg-blue-50 p-4 rounded-lg text-center">
-                    <p className="font-medium text-blue-800 mb-2">Administrator Access</p>
-                    <p className="text-sm text-blue-700 mb-4">One-click access to admin dashboard with full privileges</p>
+                    <p className="font-medium text-blue-800 mb-2">{t('auth.administratorAccess')}</p>
+                    <p className="text-sm text-blue-700 mb-4">{t('auth.oneClickAccess')}</p>
                     <Button
                       onClick={handleAdminAccess}
                       className="w-full banking-gradient text-white"
                       disabled={loading}
                     >
                       <Lock className="h-4 w-4 mr-2" />
-                      {loading ? 'Accessing Admin Dashboard...' : 'Access Admin Dashboard'}
+                      {loading ? t('auth.accessingAdminDashboard') : t('auth.accessAdminDashboard')}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <Tabs value={isSignIn ? 'signin' : 'signup'} onValueChange={(value) => setIsSignIn(value === 'signin')}>
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="signin">Sign In</TabsTrigger>
-                    <TabsTrigger value="signup">Create Account</TabsTrigger>
+                    <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
+                    <TabsTrigger value="signup">{t('auth.createAccount')}</TabsTrigger>
                   </TabsList>
 
-                  <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <div className="relative">
+                  <TabsContent value="signin">
+                    <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">{t('auth.email')}</Label>
                         <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter your password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          id="email"
+                          type="email"
+                          placeholder={t('auth.enterEmail') || 'Enter your email'}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           required
-                          minLength={6}
                         />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </Button>
                       </div>
-                    </div>
 
-                    <Button
-                      type="submit"
-                      className="w-full banking-gradient text-white"
-                      disabled={loading}
-                    >
-                      <Lock className="h-4 w-4 mr-2" />
-                      {loading ? 'Processing...' : 'Access Dashboard'}
-                    </Button>
-                  </form>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">{t('auth.password')}</Label>
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t('auth.enterPassword') || 'Enter your password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength={6}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
 
-                  <div className="mt-4 text-center">
-                    <Button 
-                      variant="link" 
-                      className="text-blue-600 hover:underline text-sm"
-                      onClick={() => navigate('/')}
-                    >
-                      ← Back to Home
-                    </Button>
-                  </div>
+                      <Button
+                        type="submit"
+                        className="w-full banking-gradient text-white"
+                        disabled={loading}
+                      >
+                        <Lock className="h-4 w-4 mr-2" />
+                        {loading ? t('auth.processing') : t('auth.accessDashboard')}
+                      </Button>
+                    </form>
+                  </TabsContent>
+
+                  <TabsContent value="signup">
+                    <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName">{t('auth.fullName')}</Label>
+                        <Input
+                          id="fullName"
+                          type="text"
+                          placeholder={t('auth.enterFullName') || 'Enter your full name'}
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="signupEmail">{t('auth.email')}</Label>
+                        <Input
+                          id="signupEmail"
+                          type="email"
+                          placeholder={t('auth.enterEmail') || 'Enter your email'}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="signupPassword">{t('auth.password')}</Label>
+                        <div className="relative">
+                          <Input
+                            id="signupPassword"
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t('auth.createPassword') || 'Create a password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength={6}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="w-full banking-gradient text-white"
+                        disabled={loading}
+                      >
+                        <Lock className="h-4 w-4 mr-2" />
+                        {loading ? t('auth.processing') : t('auth.createAccount')}
+                      </Button>
+                    </form>
+                  </TabsContent>
                 </Tabs>
               )}
 
-              <div className="mt-6 text-center text-sm text-gray-600">
-                <div className="flex items-center justify-center space-x-1">
-                  <Shield className="h-4 w-4" />
-                  <span>Secure authentication with role-based access</span>
-                </div>
+              <div className="mt-4 text-center">
+                <Button 
+                  variant="link" 
+                  className="text-blue-600 hover:underline text-sm"
+                  onClick={() => navigate('/')}
+                >
+                  {t('auth.backToHome')}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -252,19 +335,17 @@ const Auth = () => {
               onClick={() => setIsSignIn(false)}
               className="text-blue-600 hover:underline"
             >
-              Don't have an account? Create one now
+              {t('auth.dontHaveAccount')} {t('auth.createOneNow') || 'Create one now'}
             </Button>
           </div>
         )}
 
         <div className="text-center mt-6 text-sm text-gray-500">
-          <p>
-            By creating an account, you agree to our Terms of Service and Privacy Policy.
-          </p>
+          <p>{t('auth.agreeToTerms')}</p>
           <p className="mt-2">
-            Need help? Contact support at{' '}
+            {t('auth.needHelp')} {' '}
             <a href="mailto:support@uniontrust.com" className="text-blue-600 hover:underline">
-              support@uniontrust.com
+              {t('auth.supportEmail')}
             </a>
           </p>
         </div>

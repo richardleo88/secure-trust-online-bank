@@ -54,11 +54,11 @@ const LanguageWelcomeModal = () => {
       const data = await response.json();
       setDetectedLocation(`${data.city}, ${data.country_name}`);
       
-      // Country to language mapping
+      // Country to language mapping (simplified version)
       const countryToLanguage: { [key: string]: string } = {
         'US': 'en', 'GB': 'en', 'CA': 'en', 'AU': 'en',
         'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es',
-        'FR': 'fr', 'BE': 'fr', 'CH': 'fr',
+        'FR': 'fr', 'BE': 'nl', 'CH': 'de',
         'DE': 'de', 'AT': 'de',
         'IT': 'it', 'PT': 'pt', 'BR': 'pt',
         'RU': 'ru', 'CN': 'zh', 'JP': 'ja', 'KR': 'ko',
@@ -119,7 +119,7 @@ const LanguageWelcomeModal = () => {
             {detectedLocation && (
               <div className="flex items-center justify-center gap-2 text-sm text-banking-slate bg-blue-50 p-2 rounded-md">
                 <MapPin className="h-4 w-4" />
-                <span>Detected location: {detectedLocation}</span>
+                <span>{t('languageWelcome.detectedLocation')}: {detectedLocation}</span>
               </div>
             )}
           </div>
@@ -151,14 +151,14 @@ const LanguageWelcomeModal = () => {
               onClick={handleSkip}
               className="flex-1"
             >
-              Skip
+              {t('languageWelcome.skip')}
             </Button>
             <Button 
               onClick={handleConfirm}
               className="flex-1 banking-gradient text-white hover:opacity-90"
               disabled={isDetecting}
             >
-              {isDetecting ? 'Detecting...' : 'Confirm'}
+              {isDetecting ? t('languageWelcome.detecting') : t('languageWelcome.confirm')}
             </Button>
           </div>
         </div>
