@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,7 +19,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
   
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -33,46 +32,133 @@ const Auth = () => {
     const adminPassword = '123456789';
 
     try {
-      console.log('Attempting admin sign in...');
-      const result = await signIn(adminEmail, adminPassword);
+      console.log('Attempting admin sign in with:', adminEmail);
       
-      if (!result.error) {
-        const { data: user } = await supabase.auth.getUser();
-        if (user.user && user.user.email === adminEmail) {
-          // Ensure admin record exists
-          const { data: adminData, error: adminCheckError } = await supabase
-            .from('admin_users')
-            .select('admin_role, is_active')
-            .eq('user_id', user.user.id)
-            .eq('is_active', true)
-            .single();
+      // First, try to sign in
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: adminEmail,
+        password: adminPassword,
+      });
 
-          if (adminCheckError && adminCheckError.code === 'PGRST116') {
-            // Admin record doesn't exist, create it
-            const { error: createAdminError } = await supabase
-              .from('admin_users')
-              .insert({
-                user_id: user.user.id,
-                admin_role: 'super_admin',
-                is_active: true
-              });
-
-            if (createAdminError) {
-              console.error('Error creating admin user:', createAdminError);
-              toast({
-                title: "Admin Setup Error",
-                description: "Failed to set up admin privileges. Please try again.",
-                variant: "destructive",
-              });
-              setLoading(false);
-              return;
+      if (signInError) {
+        console.log('Sign in failed, attempting to create admin account:', signInError.message);
+        
+        // If sign in fails, try to create the admin account
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: adminEmail,
+          password: adminPassword,
+          options: {
+            data: {
+              full_name: 'Richard Admin'
             }
           }
+        });
 
-          console.log('Admin login successful, redirecting to admin dashboard');
-          navigate('/admin', { replace: true });
+        if (signUpError) {
+          console.error('Failed to create admin account:', signUpError);
+          toast({
+            title: "Admin Setup Failed",
+            description: "Unable to create admin account. Please try again.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
+        console.log('Admin account created, attempting sign in again');
+        
+        // Now try to sign in with the newly created account
+        const { data: retrySignIn, error: retryError } = await supabase.auth.signInWithPassword({
+          email: adminEmail,
+          password: adminPassword,
+        });
+
+        if (retryError) {
+          console.error('Retry sign in failed:', retryError);
+          toast({
+            title: "Admin Login Failed",
+            description: "Unable to sign in to admin account. Please try again.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
         }
       }
+
+      // Get the current user
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !userData.user) {
+        console.error('Failed to get user data:', userError);
+        toast({
+          title: "Admin Access Error",
+          description: "Unable to verify admin credentials.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
+      console.log('User authenticated, setting up admin privileges');
+
+      // Ensure admin record exists in admin_users table
+      const { data: adminData, error: adminCheckError } = await supabase
+        .from('admin_users')
+        .select('admin_role, is_active')
+        .eq('user_id', userData.user.id)
+        .single();
+
+      if (adminCheckError && adminCheckError.code === 'PGRST116') {
+        // Admin record doesn't exist, create it
+        console.log('Creating admin user record');
+        const { error: createAdminError } = await supabase
+          .from('admin_users')
+          .insert({
+            user_id: userData.user.id,
+            admin_role: 'super_admin',
+            is_active: true
+          });
+
+        if (createAdminError) {
+          console.error('Error creating admin user:', createAdminError);
+          // Try to continue anyway, the user might still be able to access
+        }
+      } else if (adminCheckError) {
+        console.error('Error checking admin status:', adminCheckError);
+      }
+
+      // Also ensure profile exists
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userData.user.id)
+        .single();
+
+      if (profileError && profileError.code === 'PGRST116') {
+        // Profile doesn't exist, create it
+        console.log('Creating admin profile');
+        const { error: createProfileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userData.user.id,
+            email: adminEmail,
+            full_name: 'Richard Admin',
+            balance: 50000.00 // Give admin a high balance
+          });
+
+        if (createProfileError) {
+          console.error('Error creating admin profile:', createProfileError);
+        }
+      }
+
+      console.log('Admin login successful, redirecting to admin dashboard');
+      toast({
+        title: "Admin Access Granted",
+        description: "Welcome to the admin dashboard!",
+      });
+      
+      navigate('/admin', { replace: true });
+
     } catch (error) {
       console.error('Admin auth error:', error);
       toast({
@@ -90,7 +176,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting sign in...');
+      console.log('Attempting user sign in...');
       const result = await signIn(email, password);
       
       if (!result.error) {
@@ -168,7 +254,7 @@ const Auth = () => {
                       disabled={loading}
                     >
                       <Lock className="h-4 w-4 mr-2" />
-                      {loading ? 'Accessing...' : 'Access Admin Dashboard'}
+                      {loading ? 'Accessing Admin...' : 'Access Admin Dashboard'}
                     </Button>
                   </div>
                 </div>
