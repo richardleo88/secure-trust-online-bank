@@ -10,6 +10,8 @@ import { Upload, FileText, User, Briefcase, Shield, Camera } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import CountryPhoneInput from './CountryPhoneInput';
+import CountryStateSelect from './CountryStateSelect';
 
 interface BankRegistrationFormProps {
   onSuccess: () => void;
@@ -27,12 +29,11 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
     dateOfBirth: '',
     ssn: '',
     phone: '',
-    secondaryPhone: '',
-    motherMaidenName: '',
     
     // Address Information
     streetAddress: '',
     city: '',
+    country: '',
     state: '',
     zipCode: '',
     stateOfBirth: '',
@@ -166,18 +167,17 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
           .update({
             middle_name: formData.middleName,
             phone: formData.phone,
-            secondary_phone: formData.secondaryPhone,
             date_of_birth: formData.dateOfBirth,
             ssn_last_four: formData.ssn.slice(-4),
             address: {
               street: formData.streetAddress,
               city: formData.city,
               state: formData.state,
+              country: formData.country,
               zip: formData.zipCode
             },
             state_of_birth: formData.stateOfBirth,
             citizenship_status: formData.citizenshipStatus,
-            mother_maiden_name: formData.motherMaidenName,
             employment_status: formData.employmentStatus,
             employer_name: formData.employerName,
             annual_income: parseFloat(formData.annualIncome),
@@ -261,28 +261,6 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
           />
         </div>
         <div>
-          <Label htmlFor="phone">Primary Phone *</Label>
-          <Input
-            id="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="secondaryPhone">Secondary Phone</Label>
-          <Input
-            id="secondaryPhone"
-            type="tel"
-            value={formData.secondaryPhone}
-            onChange={(e) => handleInputChange('secondaryPhone', e.target.value)}
-          />
-        </div>
-        <div>
           <Label htmlFor="dateOfBirth">Date of Birth *</Label>
           <Input
             id="dateOfBirth"
@@ -294,27 +272,23 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="ssn">Social Security Number *</Label>
-          <Input
-            id="ssn"
-            type="password"
-            placeholder="XXX-XX-XXXX"
-            value={formData.ssn}
-            onChange={(e) => handleInputChange('ssn', e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="motherMaidenName">Mother's Maiden Name *</Label>
-          <Input
-            id="motherMaidenName"
-            value={formData.motherMaidenName}
-            onChange={(e) => handleInputChange('motherMaidenName', e.target.value)}
-            required
-          />
-        </div>
+      <CountryPhoneInput
+        value={formData.phone}
+        onChange={(value) => handleInputChange('phone', value)}
+        label="Phone Number"
+        required
+      />
+
+      <div>
+        <Label htmlFor="ssn">Social Security Number *</Label>
+        <Input
+          id="ssn"
+          type="password"
+          placeholder="XXX-XX-XXXX"
+          value={formData.ssn}
+          onChange={(e) => handleInputChange('ssn', e.target.value)}
+          required
+        />
       </div>
     </div>
   );
@@ -336,7 +310,7 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="city">City *</Label>
           <Input
@@ -345,22 +319,6 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
             onChange={(e) => handleInputChange('city', e.target.value)}
             required
           />
-        </div>
-        <div>
-          <Label htmlFor="state">State *</Label>
-          <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select State" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="AL">Alabama</SelectItem>
-              <SelectItem value="CA">California</SelectItem>
-              <SelectItem value="FL">Florida</SelectItem>
-              <SelectItem value="NY">New York</SelectItem>
-              <SelectItem value="TX">Texas</SelectItem>
-              {/* Add more states as needed */}
-            </SelectContent>
-          </Select>
         </div>
         <div>
           <Label htmlFor="zipCode">ZIP Code *</Label>
@@ -372,6 +330,13 @@ const BankRegistrationForm = ({ onSuccess }: BankRegistrationFormProps) => {
           />
         </div>
       </div>
+
+      <CountryStateSelect
+        selectedCountry={formData.country}
+        selectedState={formData.state}
+        onCountryChange={(country) => handleInputChange('country', country)}
+        onStateChange={(state) => handleInputChange('state', state)}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>

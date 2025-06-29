@@ -27,6 +27,64 @@ const Auth = () => {
   
   const from = location.state?.from?.pathname || '/dashboard';
 
+  const handleAdminAccess = async () => {
+    setLoading(true);
+    const adminEmail = 'Richard@gmail.com';
+    const adminPassword = '123456789';
+
+    try {
+      console.log('Attempting admin sign in...');
+      const result = await signIn(adminEmail, adminPassword);
+      
+      if (!result.error) {
+        const { data: user } = await supabase.auth.getUser();
+        if (user.user && user.user.email === adminEmail) {
+          // Ensure admin record exists
+          const { data: adminData, error: adminCheckError } = await supabase
+            .from('admin_users')
+            .select('admin_role, is_active')
+            .eq('user_id', user.user.id)
+            .eq('is_active', true)
+            .single();
+
+          if (adminCheckError && adminCheckError.code === 'PGRST116') {
+            // Admin record doesn't exist, create it
+            const { error: createAdminError } = await supabase
+              .from('admin_users')
+              .insert({
+                user_id: user.user.id,
+                admin_role: 'super_admin',
+                is_active: true
+              });
+
+            if (createAdminError) {
+              console.error('Error creating admin user:', createAdminError);
+              toast({
+                title: "Admin Setup Error",
+                description: "Failed to set up admin privileges. Please try again.",
+                variant: "destructive",
+              });
+              setLoading(false);
+              return;
+            }
+          }
+
+          console.log('Admin login successful, redirecting to admin dashboard');
+          navigate('/admin', { replace: true });
+        }
+      }
+    } catch (error) {
+      console.error('Admin auth error:', error);
+      toast({
+        title: "Admin Login Failed",
+        description: "Unable to access admin dashboard. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -36,58 +94,8 @@ const Auth = () => {
       const result = await signIn(email, password);
       
       if (!result.error) {
-        // Check if user is admin after successful login
-        if (isAdminLogin) {
-          const { data: user } = await supabase.auth.getUser();
-          if (user.user) {
-            // Check if this is the specific admin email
-            if (user.user.email === 'Richard@gmail.com') {
-              // Ensure admin record exists
-              const { data: adminData, error: adminCheckError } = await supabase
-                .from('admin_users')
-                .select('admin_role, is_active')
-                .eq('user_id', user.user.id)
-                .eq('is_active', true)
-                .single();
-
-              if (adminCheckError && adminCheckError.code === 'PGRST116') {
-                // Admin record doesn't exist, create it
-                const { error: createAdminError } = await supabase
-                  .from('admin_users')
-                  .insert({
-                    user_id: user.user.id,
-                    admin_role: 'super_admin',
-                    is_active: true
-                  });
-
-                if (createAdminError) {
-                  console.error('Error creating admin user:', createAdminError);
-                  toast({
-                    title: "Admin Setup Error",
-                    description: "Failed to set up admin privileges. Please try again.",
-                    variant: "destructive",
-                  });
-                  setLoading(false);
-                  return;
-                }
-              }
-
-              console.log('Admin login successful, redirecting to admin dashboard');
-              navigate('/admin', { replace: true });
-            } else {
-              toast({
-                title: "Access Denied",
-                description: "You don't have administrator privileges.",
-                variant: "destructive",
-              });
-              setLoading(false);
-              return;
-            }
-          }
-        } else {
-          console.log('User login successful, redirecting to dashboard');
-          navigate('/dashboard', { replace: true });
-        }
+        console.log('User login successful, redirecting to dashboard');
+        navigate('/dashboard', { replace: true });
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -149,80 +157,90 @@ const Auth = () => {
                 </Button>
               </div>
 
-              <Tabs value={isSignIn ? 'signin' : 'signup'} onValueChange={(value) => setIsSignIn(value === 'signin')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Create Account</TabsTrigger>
-                </TabsList>
-
-                <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder={isAdminLogin ? "Admin email address" : "Enter your email"}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+              {isAdminLogin ? (
+                <div className="space-y-4">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <p className="font-medium text-blue-800 mb-2">Administrator Access</p>
+                    <p className="text-sm text-blue-700 mb-4">Click to access the admin dashboard with full privileges</p>
+                    <Button
+                      onClick={handleAdminAccess}
+                      className="w-full banking-gradient text-white"
+                      disabled={loading}
+                    >
+                      <Lock className="h-4 w-4 mr-2" />
+                      {loading ? 'Accessing...' : 'Access Admin Dashboard'}
+                    </Button>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength={6}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {isAdminLogin && (
-                    <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700">
-                      <p className="font-medium">Admin Access</p>
-                      <p>Enter your administrator credentials to access the admin dashboard</p>
-                    </div>
-                  )}
-
-                  <Button
-                    type="submit"
-                    className="w-full banking-gradient text-white"
-                    disabled={loading}
-                  >
-                    <Lock className="h-4 w-4 mr-2" />
-                    {loading ? 'Processing...' : isAdminLogin ? 'Access Admin Dashboard' : 'Access Dashboard'}
-                  </Button>
-                </form>
-
-                <div className="mt-4 text-center">
-                  <Button 
-                    variant="link" 
-                    className="text-blue-600 hover:underline text-sm"
-                    onClick={() => navigate('/')}
-                  >
-                    ← Back to Home
-                  </Button>
                 </div>
-              </Tabs>
+              ) : (
+                <Tabs value={isSignIn ? 'signin' : 'signup'} onValueChange={(value) => setIsSignIn(value === 'signin')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="signin">Sign In</TabsTrigger>
+                    <TabsTrigger value="signup">Create Account</TabsTrigger>
+                  </TabsList>
+
+                  <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          minLength={6}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full banking-gradient text-white"
+                      disabled={loading}
+                    >
+                      <Lock className="h-4 w-4 mr-2" />
+                      {loading ? 'Processing...' : 'Access Dashboard'}
+                    </Button>
+                  </form>
+
+                  <div className="mt-4 text-center">
+                    <Button 
+                      variant="link" 
+                      className="text-blue-600 hover:underline text-sm"
+                      onClick={() => navigate('/')}
+                    >
+                      ← Back to Home
+                    </Button>
+                  </div>
+                </Tabs>
+              )}
 
               <div className="mt-6 text-center text-sm text-gray-600">
                 <div className="flex items-center justify-center space-x-1">
@@ -234,7 +252,7 @@ const Auth = () => {
           </Card>
         )}
 
-        {isSignIn && (
+        {isSignIn && !isAdminLogin && (
           <div className="text-center mt-6">
             <Button
               variant="link"
