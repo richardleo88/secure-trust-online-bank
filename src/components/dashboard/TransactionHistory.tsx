@@ -3,86 +3,54 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { History, Download, Eye, Filter, Search, Calendar } from "lucide-react";
+import { History, Download, Eye, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import TransactionDetailModal from "./TransactionDetailModal";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
-  // Get transactions from localStorage (real user transactions)
-  const getStoredTransactions = () => {
-    const stored = localStorage.getItem('userTransactions');
-    return stored ? JSON.parse(stored) : [];
-  };
-
-  const [transactions] = useState(() => {
-    const storedTransactions = getStoredTransactions();
-    
-    // If no stored transactions, show sample data
-    if (storedTransactions.length === 0) {
-      return [
-        {
-          id: "TXN001",
-          type: "Wire Transfer",
-          recipient: "John Smith",
-          amount: "$2,500.00",
-          status: "Completed",
-          date: "2024-01-15",
-          time: "2:30 PM",
-          reference: "INT-WIRE-001",
-          method: "International Wire",
-          account: "****1234",
-          fee: "$25.00"
-        },
-        {
-          id: "TXN002", 
-          type: "ACH Transfer",
-          recipient: "Sarah Johnson",
-          amount: "$1,200.00",
-          status: "Completed",
-          date: "2024-01-14",
-          time: "10:15 AM",
-          reference: "ACH-DOM-002",
-          method: "Domestic ACH",
-          account: "****5678",
-          fee: "$3.00"
-        },
-        {
-          id: "TXN003",
-          type: "Local Transfer",
-          recipient: "Michael Brown",
-          amount: "$350.00",
-          status: "Completed",
-          date: "2024-01-13",
-          time: "4:45 PM",
-          reference: "LOCAL-003",
-          method: "Zelle",
-          account: "****9012",
-          fee: "$0.00"
-        }
-      ];
-    }
-    
-    return storedTransactions;
-  });
+  
+  const { transactions, loading } = useTransactions();
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Completed": return "bg-green-100 text-green-800";
-      case "Pending": return "bg-yellow-100 text-yellow-800";
-      case "Failed": return "bg-red-100 text-red-800";
+    switch (status.toLowerCase()) {
+      case "completed": return "bg-green-100 text-green-800";
+      case "pending": return "bg-yellow-100 text-yellow-800";
+      case "failed": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = transaction.recipient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (transaction.recipient_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         transaction.reference_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         transaction.transaction_type.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === "all" || transaction.status.toLowerCase() === filterStatus;
     return matchesSearch && matchesFilter;
   });
@@ -91,6 +59,22 @@ const TransactionHistory = () => {
     setSelectedTransaction(transaction);
     setIsDetailModalOpen(true);
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-banking-navy">Transaction History</h2>
+        </div>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading transactions...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -163,30 +147,35 @@ const TransactionHistory = () => {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-banking-navy">{transaction.type}</h3>
+                      <h3 className="font-semibold text-banking-navy capitalize">
+                        {transaction.transaction_type.replace('_', ' ')}
+                      </h3>
                       <Badge className={getStatusColor(transaction.status)}>
                         {transaction.status}
                       </Badge>
                     </div>
-                    <p className="text-gray-600 text-sm">To: {transaction.recipient}</p>
+                    <p className="text-gray-600 text-sm">
+                      To: {transaction.recipient_name || 'N/A'}
+                    </p>
                     <p className="text-gray-500 text-xs mt-1">
-                      {transaction.date} at {transaction.time} • {transaction.reference}
+                      {formatDate(transaction.created_at)} at {formatTime(transaction.created_at)} • {transaction.reference_number}
                     </p>
                     <p className="text-gray-500 text-xs">
-                      Method: {transaction.method} • Account: {transaction.account}
+                      Method: {transaction.transaction_type.replace('_', ' ')}
+                      {transaction.recipient_account && ` • Account: ${transaction.recipient_account}`}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-banking-navy mb-2">
-                    {transaction.amount}
+                    {formatAmount(transaction.amount)}
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => handleViewDetails(transaction)}>
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
-                    {transaction.status === "Completed" && (
+                    {transaction.status.toLowerCase() === "completed" && (
                       <Button variant="outline" size="sm" onClick={() => handleViewDetails(transaction)}>
                         <Download className="h-4 w-4 mr-2" />
                         Receipt
@@ -200,7 +189,7 @@ const TransactionHistory = () => {
         ))}
       </div>
 
-      {filteredTransactions.length === 0 && (
+      {filteredTransactions.length === 0 && !loading && (
         <Card>
           <CardContent className="p-8 text-center">
             <History className="h-12 w-12 text-gray-400 mx-auto mb-4" />

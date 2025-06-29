@@ -26,7 +26,10 @@ export const useTransactions = () => {
   const { toast } = useToast();
 
   const fetchTransactions = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -61,7 +64,7 @@ export const useTransactions = () => {
     if (!user) return { error: 'User not authenticated' };
 
     try {
-      // Generate reference number
+      // Generate reference number using the database function
       const { data: refData, error: refError } = await supabase
         .rpc('generate_reference_number', { transaction_type: transactionData.transaction_type });
 
@@ -97,6 +100,7 @@ export const useTransactions = () => {
 
       return { data, error: null };
     } catch (error: any) {
+      console.error('Transaction creation error:', error);
       toast({
         title: "Transaction Failed",
         description: error.message || "Failed to create transaction",
