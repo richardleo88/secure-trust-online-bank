@@ -40,14 +40,38 @@ const Auth = () => {
         if (isAdminLogin) {
           const { data: user } = await supabase.auth.getUser();
           if (user.user) {
-            const { data: adminData } = await supabase
-              .from('admin_users')
-              .select('admin_role, is_active')
-              .eq('user_id', user.user.id)
-              .eq('is_active', true)
-              .single();
+            // Check if this is the specific admin email
+            if (user.user.email === 'Richard@gmail.com') {
+              // Ensure admin record exists
+              const { data: adminData, error: adminCheckError } = await supabase
+                .from('admin_users')
+                .select('admin_role, is_active')
+                .eq('user_id', user.user.id)
+                .eq('is_active', true)
+                .single();
 
-            if (adminData) {
+              if (adminCheckError && adminCheckError.code === 'PGRST116') {
+                // Admin record doesn't exist, create it
+                const { error: createAdminError } = await supabase
+                  .from('admin_users')
+                  .insert({
+                    user_id: user.user.id,
+                    admin_role: 'super_admin',
+                    is_active: true
+                  });
+
+                if (createAdminError) {
+                  console.error('Error creating admin user:', createAdminError);
+                  toast({
+                    title: "Admin Setup Error",
+                    description: "Failed to set up admin privileges. Please try again.",
+                    variant: "destructive",
+                  });
+                  setLoading(false);
+                  return;
+                }
+              }
+
               console.log('Admin login successful, redirecting to admin dashboard');
               navigate('/admin', { replace: true });
             } else {
@@ -174,9 +198,8 @@ const Auth = () => {
 
                   {isAdminLogin && (
                     <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700">
-                      <p className="font-medium">Admin Login</p>
-                      <p>Use your administrator credentials to access the admin dashboard</p>
-                      <p className="text-xs mt-1">Default: Richard@gmail.com / 123456789</p>
+                      <p className="font-medium">Admin Access</p>
+                      <p>Enter your administrator credentials to access the admin dashboard</p>
                     </div>
                   )}
 
