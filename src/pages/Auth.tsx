@@ -39,12 +39,18 @@ const Auth = () => {
         }
       } else {
         console.log('Attempting sign up...');
-        result = await signUp(email, password, fullName);
+        // Ensure fullName is provided for signup
+        if (!fullName.trim()) {
+          console.error('Full name is required for signup');
+          return;
+        }
+        result = await signUp(email, password, fullName.trim());
         // For sign up, if successful, switch to sign in tab
         if (!result.error) {
           console.log('Sign up successful, switching to sign in');
           setIsSignIn(true);
           setPassword(''); // Clear password for security
+          setFullName(''); // Clear full name
         }
       }
     } catch (error) {
