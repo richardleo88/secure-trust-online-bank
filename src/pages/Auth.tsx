@@ -42,14 +42,13 @@ const Auth = () => {
       if (!result.error) {
         console.log('Admin login successful');
         
-        // Wait a moment for admin status to be set
-        setTimeout(() => {
-          toast({
-            title: t('auth.adminAccessGranted') || "Admin Access Granted! 🔐",
-            description: t('auth.welcomeAdmin') || "Welcome to the admin dashboard!",
-          });
-          navigate('/admin', { replace: true });
-        }, 1000);
+        toast({
+          title: t('auth.adminAccessGranted') || "Admin Access Granted! 🔐",
+          description: t('auth.welcomeAdmin') || "Welcome to the admin dashboard!",
+        });
+        
+        // Navigate to admin dashboard immediately
+        navigate('/admin', { replace: true });
       } else {
         console.error('Admin login failed:', result.error);
         toast({
@@ -82,17 +81,19 @@ const Auth = () => {
         if (!result.error) {
           console.log('User login successful');
           
-          // Wait a moment for admin status to be checked
-          setTimeout(() => {
-            // Redirect based on admin status
-            if (isAdmin) {
-              console.log('User is admin, redirecting to admin dashboard');
-              navigate('/admin', { replace: true });
-            } else {
-              console.log('User is regular user, redirecting to dashboard');
-              navigate('/dashboard', { replace: true });
-            }
-          }, 500);
+          toast({
+            title: t('auth.welcomeBack') || "Welcome Back! 🎉",
+            description: t('auth.loginSuccess') || "You have successfully signed in.",
+          });
+          
+          // Navigate based on user type
+          navigate(from, { replace: true });
+        } else {
+          toast({
+            title: t('auth.loginFailed') || "Login Failed",
+            description: result.error.message,
+            variant: "destructive",
+          });
         }
       } else {
         // Handle sign up
@@ -111,10 +112,21 @@ const Auth = () => {
           setEmail('');
           setPassword('');
           setFullName('');
+        } else {
+          toast({
+            title: t('auth.signupFailed') || "Sign Up Failed",
+            description: result.error.message,
+            variant: "destructive",
+          });
         }
       }
     } catch (error) {
       console.error('Auth error:', error);
+      toast({
+        title: t('auth.error') || "Error",
+        description: t('auth.unexpectedError') || "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -180,7 +192,7 @@ const Auth = () => {
                     <p className="text-sm text-blue-700 mb-4">{t('auth.oneClickAccess')}</p>
                     <Button
                       onClick={handleAdminAccess}
-                      className="w-full banking-gradient text-white"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                       disabled={loading}
                     >
                       <Lock className="h-4 w-4 mr-2" />
@@ -239,7 +251,7 @@ const Auth = () => {
 
                       <Button
                         type="submit"
-                        className="w-full banking-gradient text-white"
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                         disabled={loading}
                       >
                         <Lock className="h-4 w-4 mr-2" />
@@ -304,7 +316,7 @@ const Auth = () => {
 
                       <Button
                         type="submit"
-                        className="w-full banking-gradient text-white"
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                         disabled={loading}
                       >
                         <Lock className="h-4 w-4 mr-2" />
