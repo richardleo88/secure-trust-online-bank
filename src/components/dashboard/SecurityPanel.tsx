@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Shield, Smartphone, Monitor, AlertTriangle, CheckCircle, Trash2, MapPin, Clock } from "lucide-react";
+import { Shield, Smartphone, Monitor, AlertTriangle, CheckCircle, MapPin, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,14 +13,14 @@ interface UserSession {
   device_type: string;
   browser: string;
   os: string;
-  ip_address: string;
+  ip_address: string | null;
   location: {
     city: string;
     region: string;
     country: string;
     country_code: string;
     timezone: string;
-  };
+  } | null;
   is_active: boolean;
   last_activity: string;
   created_at: string;
@@ -32,7 +32,7 @@ const SecurityPanel = () => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [smsAlerts, setSmsAlerts] = useState(false);
-  const [userSessions, setUserSessions] = useState<UserSession[]>([]);
+  const [currentSession, setCurrentSession] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   const getCountryFlag = (countryCode: string) => {
@@ -73,32 +73,41 @@ const SecurityPanel = () => {
     return { deviceName, deviceType };
   };
 
-  const fetchUserSessions = async () => {
+  const fetchCurrentSession = async () => {
     if (!user) return;
 
     try {
       setLoading(true);
+      const { deviceName } = getCurrentDeviceInfo();
+
+      // Try to find the current device session
       const { data: sessions, error } = await supabase
         .from('user_sessions')
         .select('*')
         .eq('user_id', user.id)
         .eq('is_active', true)
-        .order('last_activity', { ascending: false });
+        .eq('device_name', deviceName)
+        .order('last_activity', { ascending: false })
+        .limit(1);
 
       if (error) {
-        console.error('Error fetching sessions:', error);
+        console.error('Error fetching current session:', error);
         return;
       }
 
-      // If no sessions exist, create current session
-      if (!sessions || sessions.length === 0) {
+      if (sessions && sessions.length > 0) {
+        const session = sessions[0];
+        setCurrentSession({
+          ...session,
+          ip_address: typeof session.ip_address === 'string' ? session.ip_address : null,
+          location: session.location && typeof session.location === 'object' ? session.location as any : null
+        });
+      } else {
+        // If no current session exists, create one
         await createCurrentSession();
-        return;
       }
-
-      setUserSessions(sessions || []);
     } catch (error) {
-      console.error('Error in fetchUserSessions:', error);
+      console.error('Error in fetchCurrentSession:', error);
     } finally {
       setLoading(false);
     }
@@ -108,7 +117,6 @@ const SecurityPanel = () => {
     if (!user) return;
 
     try {
-      // Get current device info
       const { deviceName, deviceType } = getCurrentDeviceInfo();
       
       // Get location info
@@ -139,44 +147,12 @@ const SecurityPanel = () => {
       if (error) {
         console.error('Error creating session:', error);
       } else {
-        // Refetch sessions after creating
-        await fetchUserSessions();
+        // Refetch current session after creating
+        await fetchCurrentSession();
       }
     } catch (error) {
       console.error('Error creating current session:', error);
     }
-  };
-
-  const terminateSession = async (sessionId: string) => {
-    try {
-      const { error } = await supabase
-        .from('user_sessions')
-        .update({ is_active: false })
-        .eq('id', sessionId)
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
-
-      await logActivity('session_terminated', 'session', sessionId);
-      
-      toast({
-        title: "Session Terminated",
-        description: "The selected session has been terminated successfully.",
-      });
-
-      fetchUserSessions();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to terminate session",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const isCurrentSession = (session: UserSession) => {
-    const currentDevice = getCurrentDeviceInfo();
-    return session.device_name === currentDevice.deviceName;
   };
 
   const getDeviceIcon = (deviceType: string) => {
@@ -191,7 +167,7 @@ const SecurityPanel = () => {
   };
 
   useEffect(() => {
-    fetchUserSessions();
+    fetchCurrentSession();
   }, [user]);
 
   const securityScore = 75;
@@ -323,82 +299,70 @@ const SecurityPanel = () => {
           </CardContent>
         </Card>
 
-        {/* Device Management - All Active Sessions */}
+        {/* Current Device Info */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Monitor className="h-5 w-5" />
-              Device Management
+              Current Device
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-4">Loading sessions...</div>
-            ) : (
-              <>
-                <div className="space-y-3 mb-4">
-                  {userSessions.map((session) => (
-                    <div 
-                      key={session.id}
-                      className={`flex items-center justify-between p-3 rounded-lg ${
-                        isCurrentSession(session) 
-                          ? 'bg-green-50 ring-2 ring-green-200' 
-                          : 'bg-gray-50 border border-gray-200'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {getDeviceIcon(session.device_type)}
-                        <div>
-                          <div className="font-medium text-sm flex items-center gap-2">
-                            {session.device_name}
-                            {isCurrentSession(session) && (
-                              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                                Current Device
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xs text-gray-600 flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            {getCountryFlag(session.location?.country_code)} {session.location?.city}, {session.location?.country}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {session.browser} • {session.os}
-                          </div>
-                        </div>
+              <div className="text-center py-4">Loading device info...</div>
+            ) : currentSession ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 ring-2 ring-green-200">
+                  <div className="flex items-center gap-3">
+                    {getDeviceIcon(currentSession.device_type)}
+                    <div>
+                      <div className="font-medium text-sm flex items-center gap-2">
+                        {currentSession.device_name}
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                          Current Device
+                        </span>
                       </div>
-                      <div className="text-right">
-                        <div className="text-xs text-gray-500 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {new Date(session.last_activity).toLocaleDateString()}
+                      {currentSession.location && (
+                        <div className="text-xs text-gray-600 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {getCountryFlag(currentSession.location.country_code)} {currentSession.location.city}, {currentSession.location.country}
                         </div>
-                        {isCurrentSession(session) ? (
-                          <CheckCircle className="h-4 w-4 text-green-500 ml-auto mt-1" />
-                        ) : (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => terminateSession(session.id)}
-                            className="text-red-600 hover:text-red-700 mt-1"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        )}
+                      )}
+                      <div className="text-xs text-gray-500">
+                        {currentSession.browser} • {currentSession.os}
                       </div>
+                      {currentSession.ip_address && (
+                        <div className="text-xs text-gray-500">
+                          IP: {currentSession.ip_address}
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {new Date(currentSession.last_activity).toLocaleDateString()}
+                    </div>
+                    <CheckCircle className="h-4 w-4 text-green-500 ml-auto mt-1" />
+                  </div>
                 </div>
                 
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1" 
-                    onClick={handleActivateCurrentDevice}
-                  >
-                    <Shield className="h-4 w-4 mr-2" />
-                    Trust This Device
-                  </Button>
-                </div>
-              </>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => toast({
+                    title: "Device Already Trusted",
+                    description: "Current device is already set as trusted.",
+                  })}
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Trust This Device
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center py-4 text-gray-500">
+                No current session found
+              </div>
             )}
           </CardContent>
         </Card>
