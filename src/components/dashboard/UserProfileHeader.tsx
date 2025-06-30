@@ -11,28 +11,29 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, LogOut, Settings, MapPin, Mail, Phone } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 
 const UserProfileHeader = () => {
   const { user, signOut } = useAuth();
   const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!user) return;
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (data) {
-        setUserProfile(data);
-      }
-    };
-
-    fetchUserProfile();
+    // Create dummy profile data based on authenticated user
+    if (user) {
+      const dummyProfile = {
+        id: user.id,
+        full_name: user.user_metadata?.full_name || 'User',
+        email: user.email,
+        phone: '+1 (555) 123-4567',
+        address: {
+          city: 'New York',
+          state: 'NY'
+        },
+        account_number: '****1234',
+        balance: 5000.00,
+        profile_picture_url: null
+      };
+      setUserProfile(dummyProfile);
+    }
   }, [user]);
 
   const getUserInitials = () => {
