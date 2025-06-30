@@ -1,7 +1,5 @@
-
 const Footer = () => {
-  return (
-    <footer className="bg-banking-navy text-white py-16">
+  return <footer className="bg-banking-navy text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           <div>
@@ -40,15 +38,7 @@ const Footer = () => {
             </ul>
           </div>
           
-          <div>
-            <h4 className="font-semibold text-lg mb-4">Legal</h4>
-            <ul className="space-y-2 text-blue-200">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">FDIC Insurance</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Accessibility</a></li>
-            </ul>
-          </div>
+          
         </div>
         
         <div className="border-t border-blue-800 pt-8 flex flex-col md:flex-row justify-between items-center">
@@ -61,8 +51,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
