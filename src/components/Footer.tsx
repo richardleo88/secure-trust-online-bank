@@ -18,15 +18,7 @@ const Footer = () => {
             </p>
           </div>
           
-          <div>
-            <h4 className="font-semibold text-lg mb-4">Banking</h4>
-            <ul className="space-y-2 text-blue-200">
-              <li><a href="#" className="hover:text-white transition-colors">Personal Banking</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Business Banking</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Investment Services</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Loans & Mortgages</a></li>
-            </ul>
-          </div>
+          
           
           
           
