@@ -11,6 +11,11 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./pages/Login";
+import Personal from "./pages/Personal";
+import Business from "./pages/Business";
+import Investments from "./pages/Investments";
+import Loans from "./pages/Loans";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +31,11 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/personal" element={<Personal />} />
+              <Route path="/business" element={<Business />} />
+              <Route path="/investments" element={<Investments />} />
+              <Route path="/loans" element={<Loans />} />
+              <Route path="/support" element={<Support />} />
               <Route 
                 path="/dashboard" 
                 element={

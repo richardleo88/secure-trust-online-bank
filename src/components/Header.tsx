@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -47,13 +46,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log("Login clicked, navigating to auth");
-    navigate("/auth");
+    console.log("Login clicked, navigating to login");
+    navigate("/login");
   };
 
   const handleRegister = () => {
-    console.log("Register clicked, navigating to auth");
-    navigate("/auth");
+    console.log("Register clicked, navigating to login");
+    navigate("/login");
   };
 
   const handleLanguageChange = (value: string) => {
@@ -76,7 +75,7 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <div className="w-10 h-10 banking-gradient rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xl">U</span>
           </div>
@@ -84,24 +83,24 @@ const Header = () => {
             <h1 className="text-xl font-bold text-banking-navy">UnionTrust</h1>
             <p className="text-xs text-banking-slate">Capital</p>
           </div>
-        </div>
+        </Link>
 
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#personal" className="text-banking-slate hover:text-banking-navy transition-colors">
+          <Link to="/personal" className="text-banking-slate hover:text-banking-navy transition-colors">
             {t('header.personal')}
-          </a>
-          <a href="#business" className="text-banking-slate hover:text-banking-navy transition-colors">
+          </Link>
+          <Link to="/business" className="text-banking-slate hover:text-banking-navy transition-colors">
             {t('header.business')}
-          </a>
-          <a href="#investments" className="text-banking-slate hover:text-banking-navy transition-colors">
+          </Link>
+          <Link to="/investments" className="text-banking-slate hover:text-banking-navy transition-colors">
             {t('header.investments')}
-          </a>
-          <a href="#loans" className="text-banking-slate hover:text-banking-navy transition-colors">
+          </Link>
+          <Link to="/loans" className="text-banking-slate hover:text-banking-navy transition-colors">
             {t('header.loans')}
-          </a>
-          <a href="#support" className="text-banking-slate hover:text-banking-navy transition-colors">
+          </Link>
+          <Link to="/support" className="text-banking-slate hover:text-banking-navy transition-colors">
             {t('header.support')}
-          </a>
+          </Link>
         </nav>
 
         <div className="flex items-center space-x-2 md:space-x-4">
@@ -152,21 +151,21 @@ const Header = () => {
               <div className="flex flex-col space-y-4 mt-6">
                 {/* Mobile Navigation */}
                 <div className="space-y-3">
-                  <a href="#personal" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                  <Link to="/personal" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
                     {t('header.personal')}
-                  </a>
-                  <a href="#business" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                  </Link>
+                  <Link to="/business" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
                     {t('header.business')}
-                  </a>
-                  <a href="#investments" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                  </Link>
+                  <Link to="/investments" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
                     {t('header.investments')}
-                  </a>
-                  <a href="#loans" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                  </Link>
+                  <Link to="/loans" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
                     {t('header.loans')}
-                  </a>
-                  <a href="#support" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
+                  </Link>
+                  <Link to="/support" className="block text-lg text-banking-slate hover:text-banking-navy transition-colors">
                     {t('header.support')}
-                  </a>
+                  </Link>
                 </div>
 
                 {/* Mobile Login/Register */}
