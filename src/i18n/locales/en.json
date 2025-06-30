@@ -19,32 +19,121 @@
     "learnMore": "Learn More"
   },
   "features": {
-    "title": "Why Choose UnionTrust?",
-    "subtitle": "Experience banking like never before with our cutting-edge features",
-    "secure": {
-      "title": "Bank-Grade Security",
-      "description": "Your funds and data are protected with military-grade encryption and multi-factor authentication."
+    "title": "Banking Made Simple",
+    "subtitle": "Experience modern banking with features designed to make your financial life easier and more secure.",
+    "digitalBanking": {
+      "title": "Digital Banking 24/7",
+      "description": "Access your accounts anytime, anywhere with our secure mobile and web platforms."
     },
-    "instant": {
-      "title": "Instant Transfers", 
-      "description": "Send money anywhere in the world instantly with our advanced payment network."
+    "accounts": {
+      "title": "Personal & Business Accounts",
+      "description": "Comprehensive banking solutions for individuals, families, and businesses of all sizes."
     },
-    "support": {
-      "title": "24/7 Support",
-      "description": "Get help whenever you need it with our round-the-clock customer support team."
+    "transfers": {
+      "title": "Instant Transfers",
+      "description": "Send money instantly to friends, family, or pay bills with our lightning-fast transfer system."
+    },
+    "international": {
+      "title": "International Payments",
+      "description": "Send money globally with competitive exchange rates and low fees."
     }
   },
   "security": {
     "title": "Your Security is Our Priority",
-    "subtitle": "We use the latest technology to keep your money and data safe",
-    "encryption": "256-bit SSL Encryption",
-    "insurance": "FDIC Insured up to $250,000",
-    "monitoring": "24/7 Fraud Monitoring",
-    "authentication": "Multi-Factor Authentication"
+    "subtitle": "We employ the latest security technologies and best practices to ensure your financial information remains safe and secure at all times.",
+    "bankLevel": {
+      "title": "Bank-Level Security",
+      "description": "256-bit SSL encryption and multi-layered security protocols protect your data."
+    },
+    "twoFactor": {
+      "title": "Two-Factor Authentication",
+      "description": "Additional security layer with SMS, email, or authenticator app verification."
+    },
+    "monitoring": {
+      "title": "24/7 Monitoring",
+      "description": "Continuous fraud monitoring and real-time transaction alerts."
+    },
+    "notifications": {
+      "title": "Instant Notifications",
+      "description": "Immediate alerts for all account activities and suspicious transactions."
+    },
+    "fdic": "FDIC Insured • Member FDIC",
+    "fdicDescription": "Your deposits are insured up to $250,000 per depositor, per insured bank, for each account ownership category by the Federal Deposit Insurance Corporation."
+  },
+  "cards": {
+    "title": "Your Premium Banking Card",
+    "subtitle": "Experience the future of banking with our premium debit and credit cards, designed for security and convenience.",
+    "premiumAccount": "Premium Account",
+    "validThru": "VALID THRU",
+    "cardholder": "CARDHOLDER",
+    "cardProperty": "This card is property of UnionTrust Capital",
+    "cardReturn": "If found, please return to any branch",
+    "customerService": "Customer Service: 1-800-UNION-TC",
+    "clickCard": "Click the card to see both sides"
+  },
+  "rates": {
+    "title": "Competitive Rates",
+    "subtitle": "Get the most out of your money with our industry-leading rates and terms.",
+    "savings": {
+      "title": "Savings Account",
+      "rate": "4.25%",
+      "apy": "APY",
+      "description": "High-yield savings with no minimum balance",
+      "learnMore": "Learn More →"
+    },
+    "cd": {
+      "title": "Certificate of Deposit",
+      "rate": "5.15%",
+      "apy": "APY",
+      "description": "12-month CD with guaranteed returns",
+      "learnMore": "Learn More →"
+    },
+    "mortgage": {
+      "title": "Home Mortgage",
+      "rate": "6.75%",
+      "apr": "APR",
+      "description": "30-year fixed rate mortgage",
+      "learnMore": "Learn More →"
+    },
+    "personalLoan": {
+      "title": "Personal Loan",
+      "rate": "8.99%",
+      "apr": "APR",
+      "description": "Unsecured personal loans up to $50,000",
+      "learnMore": "Learn More →"
+    },
+    "disclaimer": "Rates are subject to change. Terms and conditions apply."
+  },
+  "gallery": {
+    "title": "Experience UnionTrust Capital",
+    "subtitle": "See how we're revolutionizing banking with modern technology and personal service.",
+    "modernBanking": "Modern Banking Experience",
+    "modernBankingDesc": "State-of-the-art digital banking solutions",
+    "professionalService": "Professional Service",
+    "professionalServiceDesc": "Expert financial advisors at your service",
+    "digitalFirst": "Digital First Approach",
+    "digitalFirstDesc": "Banking that fits your lifestyle",
+    "comfortable": "Comfortable Banking",
+    "comfortableDesc": "Relax while we handle your finances"
   },
   "testimonials": {
     "title": "What Our Customers Say",
-    "subtitle": "Join thousands of satisfied customers who trust us with their finances"
+    "subtitle": "Join thousands of satisfied customers who trust UnionTrust Capital with their financial future.",
+    "customer1": {
+      "quote": "UnionTrust Capital has been instrumental in growing my business. Their business banking solutions and personal service are unmatched.",
+      "name": "Sarah Johnson",
+      "title": "Small Business Owner"
+    },
+    "customer2": {
+      "quote": "The mobile app is incredibly intuitive and secure. I can manage all my finances on the go without any hassle.",
+      "name": "Michael Chen",
+      "title": "Software Engineer"
+    },
+    "customer3": {
+      "quote": "Their investment advisory services helped me plan for retirement effectively. The team is knowledgeable and trustworthy.",
+      "name": "Emily Rodriguez",
+      "title": "Marketing Director"
+    }
   },
   "footer": {
     "banking": "Banking",
@@ -63,9 +152,11 @@
     "fdicInsurance": "FDIC Insurance",
     "accessibility": "Accessibility",
     "copyright": "© 2024 UnionTrust Capital. All rights reserved.",
-    "description": "Your trusted partner for secure, modern banking solutions."
+    "description": "Empowering your financial future with secure, modern banking solutions tailored to your needs."
   },
   "auth": {
+    "bankName": "UnionTrust Bank",
+    "professionalBanking": "Professional Banking Services",
     "welcome": "Welcome Back",
     "signInSubtitle": "Sign in to your account to continue",
     "signUpTitle": "Create Your Account",
@@ -85,6 +176,7 @@
     "dontHaveAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "createAccount": "Create Account",
+    "signIn": "Sign In",
     "backToHome": "← Back to Home",
     "accountCreated": "Account Created Successfully!",
     "accountDetails": "Your Account Details",
@@ -106,7 +198,12 @@
     "secureAuthentication": "Secure authentication with role-based access",
     "agreeToTerms": "By creating an account, you agree to our Terms of Service and Privacy Policy.",
     "needHelp": "Need help? Contact support at",
-    "supportEmail": "support@uniontrust.com"
+    "supportEmail": "support@uniontrust.com",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password",
+    "enterFullName": "Enter your full name",
+    "createPassword": "Create a password",
+    "createOneNow": "Create one now"
   },
   "languageWelcome": {
     "title": "Choose Your Language",
@@ -120,22 +217,5 @@
   "dashboard": {
     "welcome": "Welcome back",
     "realBankingAccount": "Real Banking Account - All transfers are processed immediately"
-  },
-  "rates": {
-    "title": "Competitive Rates",
-    "subtitle": "Get the best value for your money",
-    "savingsRate": "Savings Rate",
-    "checkingRate": "Checking Rate",
-    "loanRate": "Loan Rate"
-  },
-  "cards": {
-    "title": "Premium Banking Cards",
-    "subtitle": "Choose the card that fits your lifestyle",
-    "features": {
-      "contactless": "Contactless Payment",
-      "rewards": "Cashback Rewards",
-      "security": "Advanced Security",
-      "worldwide": "Worldwide Acceptance"
-    }
   }
 }

@@ -135,8 +135,8 @@ const Auth = () => {
           <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">UnionTrust Bank</h1>
-          <p className="text-gray-600 mt-2">{t('auth.professionalBanking') || 'Professional Banking Services'}</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('auth.bankName')}</h1>
+          <p className="text-gray-600 mt-2">{t('auth.professionalBanking')}</p>
         </div>
 
         {!isSignIn ? (
@@ -202,7 +202,7 @@ const Auth = () => {
                         <Input
                           id="email"
                           type="email"
-                          placeholder={t('auth.enterEmail') || 'Enter your email'}
+                          placeholder={t('auth.enterEmail')}
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
@@ -215,7 +215,7 @@ const Auth = () => {
                           <Input
                             id="password"
                             type={showPassword ? "text" : "password"}
-                            placeholder={t('auth.enterPassword') || 'Enter your password'}
+                            placeholder={t('auth.enterPassword')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -255,7 +255,7 @@ const Auth = () => {
                         <Input
                           id="fullName"
                           type="text"
-                          placeholder={t('auth.enterFullName') || 'Enter your full name'}
+                          placeholder={t('auth.enterFullName')}
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           required
@@ -267,7 +267,7 @@ const Auth = () => {
                         <Input
                           id="signupEmail"
                           type="email"
-                          placeholder={t('auth.enterEmail') || 'Enter your email'}
+                          placeholder={t('auth.enterEmail')}
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
@@ -280,7 +280,7 @@ const Auth = () => {
                           <Input
                             id="signupPassword"
                             type={showPassword ? "text" : "password"}
-                            placeholder={t('auth.createPassword') || 'Create a password'}
+                            placeholder={t('auth.createPassword')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -335,7 +335,7 @@ const Auth = () => {
               onClick={() => setIsSignIn(false)}
               className="text-blue-600 hover:underline"
             >
-              {t('auth.dontHaveAccount')} {t('auth.createOneNow') || 'Create one now'}
+              {t('auth.dontHaveAccount')} {t('auth.createOneNow')}
             </Button>
           </div>
         )}

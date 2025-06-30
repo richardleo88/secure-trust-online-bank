@@ -19,32 +19,121 @@
     "learnMore": "Saber Más"
   },
   "features": {
-    "title": "¿Por qué elegir UnionTrust?",
-    "subtitle": "Experimenta la banca como nunca antes con nuestras características de vanguardia",
-    "secure": {
-      "title": "Seguridad de Grado Bancario",
-      "description": "Tus fondos y datos están protegidos con encriptación de grado militar y autenticación multifactor."
+    "title": "Banca Hecha Simple",
+    "subtitle": "Experimenta la banca moderna con características diseñadas para hacer tu vida financiera más fácil y segura.",
+    "digitalBanking": {
+      "title": "Banca Digital 24/7",
+      "description": "Accede a tus cuentas en cualquier momento y lugar con nuestras plataformas móviles y web seguras."
     },
-    "instant": {
+    "accounts": {
+      "title": "Cuentas Personales y Comerciales",
+      "description": "Soluciones bancarias integrales para individuos, familias y empresas de todos los tamaños."
+    },
+    "transfers": {
       "title": "Transferencias Instantáneas",
-      "description": "Envía dinero a cualquier parte del mundo instantáneamente con nuestra red de pagos avanzada."
+      "description": "Envía dinero instantáneamente a amigos, familia o paga facturas con nuestro sistema de transferencia ultrarrápido."
     },
-    "support": {
-      "title": "Soporte 24/7",
-      "description": "Obtén ayuda cuando la necesites con nuestro equipo de atención al cliente las 24 horas."
+    "international": {
+      "title": "Pagos Internacionales",
+      "description": "Envía dinero globalmente con tasas de cambio competitivas y tarifas bajas."
     }
   },
   "security": {
     "title": "Tu Seguridad es Nuestra Prioridad",
-    "subtitle": "Usamos la última tecnología para mantener tu dinero y datos seguros",
-    "encryption": "Encriptación SSL de 256 bits",
-    "insurance": "Asegurado por FDIC hasta $250,000",
-    "monitoring": "Monitoreo contra Fraude 24/7",
-    "authentication": "Autenticación Multifactor"
+    "subtitle": "Empleamos las últimas tecnologías de seguridad y mejores prácticas para asegurar que tu información financiera permanezca segura en todo momento.",
+    "bankLevel": {
+      "title": "Seguridad de Nivel Bancario",
+      "description": "Encriptación SSL de 256 bits y protocolos de seguridad multicapa protegen tus datos."
+    },
+    "twoFactor": {
+      "title": "Autenticación de Dos Factores",
+      "description": "Capa adicional de seguridad con verificación por SMS, email o aplicación autenticadora."
+    },
+    "monitoring": {
+      "title": "Monitoreo 24/7",
+      "description": "Monitoreo continuo contra fraudes y alertas de transacciones en tiempo real."
+    },
+    "notifications": {
+      "title": "Notificaciones Instantáneas",
+      "description": "Alertas inmediatas para todas las actividades de cuenta y transacciones sospechosas."
+    },
+    "fdic": "Asegurado por FDIC • Miembro FDIC",
+    "fdicDescription": "Tus depósitos están asegurados hasta $250,000 por depositante, por banco asegurado, para cada categoría de propiedad de cuenta por la Corporación Federal de Seguro de Depósitos."
+  },
+  "cards": {
+    "title": "Tu Tarjeta Bancaria Premium",
+    "subtitle": "Experimenta el futuro de la banca con nuestras tarjetas de débito y crédito premium, diseñadas para seguridad y conveniencia.",
+    "premiumAccount": "Cuenta Premium",
+    "validThru": "VÁLIDA HASTA",
+    "cardholder": "TITULAR",
+    "cardProperty": "Esta tarjeta es propiedad de UnionTrust Capital",
+    "cardReturn": "Si la encuentras, por favor devuélvela a cualquier sucursal",
+    "customerService": "Servicio al Cliente: 1-800-UNION-TC",
+    "clickCard": "Haz clic en la tarjeta para ver ambos lados"
+  },
+  "rates": {
+    "title": "Tasas Competitivas",
+    "subtitle": "Obtén el máximo provecho de tu dinero con nuestras tasas y términos líderes en la industria.",
+    "savings": {
+      "title": "Cuenta de Ahorros",
+      "rate": "4.25%",
+      "apy": "APY",
+      "description": "Ahorros de alto rendimiento sin saldo mínimo",
+      "learnMore": "Saber Más →"
+    },
+    "cd": {
+      "title": "Certificado de Depósito",
+      "rate": "5.15%",
+      "apy": "APY",
+      "description": "CD de 12 meses con retornos garantizados",
+      "learnMore": "Saber Más →"
+    },
+    "mortgage": {
+      "title": "Hipoteca de Casa",
+      "rate": "6.75%",
+      "apr": "APR",
+      "description": "Hipoteca de tasa fija a 30 años",
+      "learnMore": "Saber Más →"
+    },
+    "personalLoan": {
+      "title": "Préstamo Personal",
+      "rate": "8.99%",
+      "apr": "APR",
+      "description": "Préstamos personales sin garantía hasta $50,000",
+      "learnMore": "Saber Más →"
+    },
+    "disclaimer": "Las tasas están sujetas a cambios. Se aplican términos y condiciones."
+  },
+  "gallery": {
+    "title": "Experimenta UnionTrust Capital",
+    "subtitle": "Ve cómo estamos revolucionando la banca con tecnología moderna y servicio personal.",
+    "modernBanking": "Experiencia Bancaria Moderna",
+    "modernBankingDesc": "Soluciones bancarias digitales de última generación",
+    "professionalService": "Servicio Profesional",
+    "professionalServiceDesc": "Asesores financieros expertos a tu servicio",
+    "digitalFirst": "Enfoque Digital Primero",
+    "digitalFirstDesc": "Banca que se adapta a tu estilo de vida",
+    "comfortable": "Banca Cómoda",
+    "comfortableDesc": "Relájate mientras manejamos tus finanzas"
   },
   "testimonials": {
     "title": "Lo que Dicen Nuestros Clientes",
-    "subtitle": "Únete a miles de clientes satisfechos que confían en nosotros con sus finanzas"
+    "subtitle": "Únete a miles de clientes satisfechos que confían en UnionTrust Capital con su futuro financiero.",
+    "customer1": {
+      "quote": "UnionTrust Capital ha sido fundamental para hacer crecer mi negocio. Sus soluciones bancarias comerciales y servicio personal son incomparables.",
+      "name": "Sarah Johnson",
+      "title": "Propietaria de Pequeña Empresa"
+    },
+    "customer2": {
+      "quote": "La aplicación móvil es increíblemente intuitiva y segura. Puedo manejar todas mis finanzas sobre la marcha sin problemas.",
+      "name": "Michael Chen",
+      "title": "Ingeniero de Software"
+    },
+    "customer3": {
+      "quote": "Sus servicios de asesoría de inversiones me ayudaron a planificar efectivamente para la jubilación. El equipo es conocedor y confiable.",
+      "name": "Emily Rodriguez",
+      "title": "Directora de Marketing"
+    }
   },
   "footer": {
     "banking": "Banca",
@@ -63,9 +152,11 @@
     "fdicInsurance": "Seguro FDIC",
     "accessibility": "Accesibilidad",
     "copyright": "© 2024 UnionTrust Capital. Todos los derechos reservados.",
-    "description": "Tu socio de confianza para soluciones bancarias seguras y modernas."
+    "description": "Empoderando tu futuro financiero con soluciones bancarias seguras y modernas adaptadas a tus necesidades."
   },
   "auth": {
+    "bankName": "Banco UnionTrust",
+    "professionalBanking": "Servicios Bancarios Profesionales",
     "welcome": "Bienvenido de Vuelta",
     "signInSubtitle": "Inicia sesión en tu cuenta para continuar",
     "signUpTitle": "Crea tu Cuenta",
@@ -85,6 +176,7 @@
     "dontHaveAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "createAccount": "Crear Cuenta",
+    "signIn": "Iniciar Sesión",
     "backToHome": "← Volver al Inicio",
     "accountCreated": "¡Cuenta Creada Exitosamente!",
     "accountDetails": "Detalles de tu Cuenta",
@@ -125,22 +217,5 @@
   "dashboard": {
     "welcome": "Bienvenido de vuelta",
     "realBankingAccount": "Cuenta Bancaria Real - Todas las transferencias se procesan inmediatamente"
-  },
-  "rates": {
-    "title": "Tasas Competitivas",
-    "subtitle": "Obtén el mejor valor por tu dinero",
-    "savingsRate": "Tasa de Ahorros",
-    "checkingRate": "Tasa de Cuenta Corriente",  
-    "loanRate": "Tasa de Préstamo"
-  },
-  "cards": {
-    "title": "Tarjetas Bancarias Premium",
-    "subtitle": "Elige la tarjeta que se adapte a tu estilo de vida",
-    "features": {
-      "contactless": "Pago Sin Contacto",
-      "rewards": "Recompensas en Efectivo",
-      "security": "Seguridad Avanzada",
-      "worldwide": "Aceptación Mundial"
-    }
   }
 }
