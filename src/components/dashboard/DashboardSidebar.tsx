@@ -118,7 +118,7 @@ const DashboardSidebar = ({
           </div>
 
           {/* Other Menu Items */}
-          {otherItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} className="w-full justify-start" onClick={() => handleMenuClick(item)}>
+          {otherItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} onClick={() => handleMenuClick(item)} className="w-full justify-start text-banking-navy font-semibold text-sm rounded-sm">
               <item.icon className="h-4 w-4 mr-2" />
               {item.label}
             </Button>)}

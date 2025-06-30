@@ -70,7 +70,7 @@ const AccountOverview = () => {
           <h2 className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent text-2xl font-bold">Account Overview</h2>
           <p className="text-slate-600 mt-1 text-xs font-thin">Your live banking account with immediate processing</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setBalancesVisible(!balancesVisible)} className="border-blue-200 hover:bg-blue-50 hover:border-blue-300">
+        <Button variant="outline" size="sm" onClick={() => setBalancesVisible(!balancesVisible)} className="border-blue-200 hover:bg-blue-50 hover:border-blue-300 font-medium text-xs">
           {balancesVisible ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
           {balancesVisible ? "Hide" : "Show"} Balances
         </Button>
