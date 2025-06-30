@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,7 +21,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
   
-  const { signIn, signUp, isAdmin } = useAuth();
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -43,25 +42,25 @@ const Auth = () => {
         console.log('Admin login successful');
         
         toast({
-          title: t('auth.adminAccessGranted') || "Admin Access Granted! 🔐",
-          description: t('auth.welcomeAdmin') || "Welcome to the admin dashboard!",
+          title: "Admin Access Granted! 🔐",
+          description: "Welcome to the admin dashboard!",
         });
         
-        // Navigate to admin dashboard immediately
+        // Navigate to admin dashboard
         navigate('/admin', { replace: true });
       } else {
         console.error('Admin login failed:', result.error);
         toast({
-          title: t('auth.adminLoginFailed') || "Admin Login Failed",
-          description: result.error.message,
+          title: "Admin Login Failed",
+          description: result.error.message || "Unable to authenticate admin credentials",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error('Admin login error:', error);
       toast({
-        title: t('auth.adminLoginFailed') || "Admin Login Failed",
-        description: t('auth.adminLoginErrorDesc') || "Unable to access admin account. Please try again.",
+        title: "Admin Login Failed",
+        description: "Unable to access admin account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -188,15 +187,15 @@ const Auth = () => {
               {isAdminLogin ? (
                 <div className="space-y-4">
                   <div className="bg-blue-50 p-4 rounded-lg text-center">
-                    <p className="font-medium text-blue-800 mb-2">{t('auth.administratorAccess')}</p>
-                    <p className="text-sm text-blue-700 mb-4">{t('auth.oneClickAccess')}</p>
+                    <p className="font-medium text-blue-800 mb-2">Administrator Access</p>
+                    <p className="text-sm text-blue-700 mb-4">Quick access to admin dashboard</p>
                     <Button
                       onClick={handleAdminAccess}
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                       disabled={loading}
                     >
                       <Lock className="h-4 w-4 mr-2" />
-                      {loading ? t('auth.accessingAdminDashboard') : t('auth.accessAdminDashboard')}
+                      {loading ? 'Accessing Admin Dashboard...' : 'Access Admin Dashboard'}
                     </Button>
                   </div>
                 </div>
