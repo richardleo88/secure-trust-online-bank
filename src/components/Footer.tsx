@@ -2,18 +2,7 @@ const Footer = () => {
   return <footer className="bg-banking-navy text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
-          <div>
-            <div className="flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">U</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">UnionTrust</h3>
-                <p className="text-sm text-blue-200">Capital</p>
-              </div>
-            </div>
-            
-          </div>
+          
           
           
           
