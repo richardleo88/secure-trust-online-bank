@@ -1,25 +1,23 @@
-
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
 const HeroSection = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const navigate = useNavigate();
-
   const handleGetStarted = () => {
     navigate("/auth");
   };
-
   const handleLearnMore = () => {
     const featuresSection = document.getElementById('features');
     if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: 'smooth' });
+      featuresSection.scrollIntoView({
+        behavior: 'smooth'
+      });
     }
   };
-
-  return (
-    <section className="relative pt-24 pb-16 banking-gradient overflow-hidden">
+  return <section className="relative pt-24 pb-16 banking-gradient overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent"></div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -35,19 +33,10 @@ const HeroSection = () => {
               {t('hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4" 
-                onClick={handleGetStarted}
-              >
+              <Button size="lg" className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4" onClick={handleGetStarted}>
                 {t('hero.getStarted')}
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-banking-navy text-lg px-8 py-4" 
-                onClick={handleLearnMore}
-              >
+              <Button size="lg" variant="outline" onClick={handleLearnMore} className="border-white text-white hover:text-banking-navy text-lg px-8 py-4 bg-stone-400 hover:bg-stone-300">
                 {t('hero.learnMore')}
               </Button>
             </div>
@@ -56,8 +45,6 @@ const HeroSection = () => {
       </div>
       
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
