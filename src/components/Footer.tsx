@@ -28,15 +28,7 @@ const Footer = () => {
             </ul>
           </div>
           
-          <div>
-            <h4 className="font-semibold text-lg mb-4">Support</h4>
-            <ul className="space-y-2 text-blue-200">
-              <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Branch Locations</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Security Center</a></li>
-            </ul>
-          </div>
+          
           
           
         </div>
