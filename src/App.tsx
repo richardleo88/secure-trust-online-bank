@@ -10,7 +10,7 @@ import ActivityLogger from "@/components/dashboard/ActivityLogger";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import Auth from "./pages/Auth";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +25,7 @@ const App = () => (
           <ActivityLogger>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/login" element={<Login />} />
               <Route 
                 path="/dashboard" 
                 element={

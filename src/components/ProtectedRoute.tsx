@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/auth', { 
+      navigate('/login', { 
         state: { from: location },
         replace: true 
       });

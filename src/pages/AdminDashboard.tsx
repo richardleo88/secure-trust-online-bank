@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -11,7 +12,6 @@ import Analytics from "@/components/admin/Analytics";
 import SupportTickets from "@/components/admin/SupportTickets";
 import AdminHeader from "@/components/admin/AdminHeader";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, AlertTriangle } from "lucide-react";
 import UserRequestsManagement from "@/components/admin/UserRequestsManagement";
@@ -19,47 +19,8 @@ import UserRequestsManagement from "@/components/admin/UserRequestsManagement";
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [adminRole, setAdminRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('admin_users')
-          .select('admin_role, is_active')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .single();
-
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error checking admin status:', error);
-          toast({
-            title: "Error",
-            description: "Failed to verify admin access",
-            variant: "destructive",
-          });
-        }
-
-        if (data) {
-          setAdminRole(data.admin_role);
-        }
-      } catch (error) {
-        console.error('Admin check error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAdminStatus();
-  }, [user, toast]);
 
   if (loading) {
     return (
@@ -69,7 +30,7 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!adminRole) {
+  if (!isAdmin || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
         <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
@@ -95,26 +56,26 @@ const AdminDashboard = () => {
               <Shield className="h-8 w-8 text-blue-600" />
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-gray-600">Role: {adminRole?.replace('_', ' ').toUpperCase()}</p>
+                <p className="text-gray-600">Role: SUPER ADMIN</p>
               </div>
             </div>
             <Analytics />
           </div>
         );
       case "users":
-        return <UserManagement adminRole={adminRole} />;
+        return <UserManagement adminRole="super_admin" />;
       case "requests":
-        return <UserRequestsManagement adminRole={adminRole} />;
+        return <UserRequestsManagement adminRole="super_admin" />;
       case "kyc":
-        return <KYCVerification adminRole={adminRole} />;
+        return <KYCVerification adminRole="super_admin" />;
       case "transactions":
-        return <TransactionLogs adminRole={adminRole} />;
+        return <TransactionLogs adminRole="super_admin" />;
       case "fraud":
-        return <FraudMonitoring adminRole={adminRole} />;
+        return <FraudMonitoring adminRole="super_admin" />;
       case "cms":
-        return <WebsiteCMS adminRole={adminRole} />;
+        return <WebsiteCMS adminRole="super_admin" />;
       case "support":
-        return <SupportTickets adminRole={adminRole} />;
+        return <SupportTickets adminRole="super_admin" />;
       default:
         return <Analytics />;
     }
@@ -129,13 +90,13 @@ const AdminDashboard = () => {
             onClose={() => setSidebarOpen(false)}
             activeSection={activeSection}
             setActiveSection={setActiveSection}
-            adminRole={adminRole}
+            adminRole="super_admin"
           />
           
           <main className="flex-1 flex flex-col">
             <AdminHeader 
               onSidebarToggle={() => setSidebarOpen(true)}
-              adminRole={adminRole}
+              adminRole="super_admin"
             />
             
             <div className="flex-1 p-6">

@@ -2,17 +2,17 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-// Dummy user type to replace Supabase User
+// Dummy user type
 interface DummyUser {
   id: string;
   email: string;
-  created_at?: string; // Add missing created_at property
+  created_at?: string;
   user_metadata?: {
     full_name?: string;
   };
 }
 
-// Dummy session type to replace Supabase Session
+// Dummy session type
 interface DummySession {
   access_token: string;
   user: DummyUser;
@@ -23,7 +23,6 @@ interface AuthContextType {
   session: DummySession | null;
   loading: boolean;
   isAdmin: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   logActivity: (action: string, resourceType?: string, resourceId?: string, metadata?: any) => Promise<void>;
@@ -47,16 +46,16 @@ interface AuthProviderProps {
 const DUMMY_USERS = [
   {
     id: 'admin-123',
-    email: 'richard@gmail.com',
-    password: '123456789',
-    full_name: 'Richard Admin',
+    email: 'admin@bank.com',
+    password: 'admin123',
+    full_name: 'Admin User',
     is_admin: true,
     created_at: '2024-01-01T00:00:00Z'
   },
   {
     id: 'user-456',
     email: 'user@example.com',
-    password: 'password123',
+    password: 'user123',
     full_name: 'John Doe',
     is_admin: false,
     created_at: '2024-01-01T00:00:00Z'
@@ -78,7 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const parsedSession = JSON.parse(storedSession);
         setSession(parsedSession);
         setUser(parsedSession.user);
-        setIsAdmin(parsedSession.user.email === 'richard@gmail.com');
+        setIsAdmin(parsedSession.user.email === 'admin@bank.com');
       } catch (error) {
         console.error('Error parsing stored session:', error);
         localStorage.removeItem('dummy_session');
@@ -93,55 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     resourceId?: string, 
     metadata?: any
   ) => {
-    // Dummy activity logging
     console.log('Activity logged:', { action, resourceType, resourceId, metadata, user: user?.email });
-  };
-
-  const signUp = async (email: string, password: string, fullName: string) => {
-    try {
-      setLoading(true);
-      
-      // Check if user already exists
-      const existingUser = DUMMY_USERS.find(u => u.email === email);
-      if (existingUser) {
-        const error = { message: 'User already registered' };
-        toast({
-          title: "Sign Up Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-        return { error };
-      }
-
-      // Create new dummy user
-      const newUser = {
-        id: `user-${Date.now()}`,
-        email,
-        password,
-        full_name: fullName,
-        is_admin: false,
-        created_at: new Date().toISOString()
-      };
-
-      DUMMY_USERS.push(newUser);
-
-      toast({
-        title: "Account Created Successfully! 🎉",
-        description: "You can now sign in with your credentials.",
-      });
-
-      return { error: null };
-    } catch (error: any) {
-      console.error('Signup error:', error);
-      toast({
-        title: "Sign Up Failed",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
-      return { error };
-    } finally {
-      setLoading(false);
-    }
   };
 
   const signIn = async (email: string, password: string) => {
@@ -153,11 +104,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       if (!foundUser) {
         const error = { message: 'Invalid login credentials' };
-        toast({
-          title: "Sign In Failed",
-          description: error.message,
-          variant: "destructive",
-        });
         return { error };
       }
 
@@ -185,19 +131,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       await logActivity('login');
 
-      toast({
-        title: "Welcome Back! 🎉",
-        description: "You have successfully signed in.",
-      });
-
       return { error: null };
     } catch (error: any) {
       console.error('Sign in error:', error);
-      toast({
-        title: "Sign In Failed",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
       return { error };
     } finally {
       setLoading(false);
@@ -228,7 +164,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     session,
     loading,
     isAdmin,
-    signUp,
     signIn,
     signOut,
     logActivity
