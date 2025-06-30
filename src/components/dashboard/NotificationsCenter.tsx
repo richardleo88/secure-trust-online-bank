@@ -1,77 +1,68 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, AlertTriangle, CheckCircle, Info, DollarSign, Shield, Trash2, Settings } from "lucide-react";
+import { Bell, AlertTriangle, CheckCircle, Info, DollarSign, Shield, Trash2, Settings, PartyPopper, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const NotificationsCenter = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "security",
-      title: "New Device Login",
-      message: "Your account was accessed from a new device in Boston, MA",
-      time: "10 minutes ago",
-      icon: AlertTriangle,
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-      unread: true,
-      category: "security"
-    },
-    {
-      id: 2,
-      type: "transaction",
-      title: "Wire Transfer Successful",
-      message: "Your wire transfer of $2,500 to John Smith has been completed",
-      time: "2 hours ago",
-      icon: CheckCircle,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      unread: true,
-      category: "transaction"
-    },
-    {
-      id: 3,
-      type: "security",
-      title: "Account Sign-in Alert",
-      message: "Someone signed in to your account from New York, NY",
-      time: "5 hours ago",
-      icon: Shield,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-      unread: true,
-      category: "security"
-    },
-    {
-      id: 4,
-      type: "transaction",
-      title: "ACH Transfer Completed",
-      message: "Your ACH transfer of $1,200 has been processed successfully",
-      time: "1 day ago",
-      icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      unread: false,
-      category: "transaction"
-    },
-    {
-      id: 5,
-      type: "security",
-      title: "Two-Factor Authentication Enabled",
-      message: "Two-factor authentication has been activated on your account",
-      time: "2 days ago",
-      icon: Shield,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      unread: false,
-      category: "security"
-    },
-  ]);
-
+  const [notifications, setNotifications] = useState([]);
   const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    if (user) {
+      initializeNotifications();
+    }
+  }, [user]);
+
+  const initializeNotifications = async () => {
+    if (!user) return;
+
+    try {
+      // Get user profile information
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, email, account_number, created_at, balance')
+        .eq('id', user.id)
+        .single();
+
+      if (profile) {
+        // Check if this is a new user (created within last 24 hours)
+        const accountAge = new Date().getTime() - new Date(profile.created_at).getTime();
+        const isNewUser = accountAge < 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+        if (isNewUser) {
+          // Create welcome notification for new users
+          const welcomeNotification = {
+            id: Date.now(),
+            type: "welcome",
+            title: "🎉 Welcome to UnionTrust Capital!",
+            message: `Congratulations ${profile.full_name}! Your account ${profile.account_number} has been successfully created with an initial balance of $${profile.balance?.toLocaleString() || '5,000'}.`,
+            time: "Just now",
+            icon: PartyPopper,
+            color: "text-green-600",
+            bgColor: "bg-green-50",
+            unread: true,
+            category: "welcome"
+          };
+
+          setNotifications([welcomeNotification]);
+        } else {
+          // For existing users, start with empty notifications
+          setNotifications([]);
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+      setNotifications([]);
+    }
+  };
+
   const unreadCount = notifications.filter(n => n.unread).length;
 
   const handleMarkAllRead = () => {
@@ -90,10 +81,28 @@ const NotificationsCenter = () => {
     });
   };
 
+  const addNewActivityNotification = (activityType, details) => {
+    const newNotification = {
+      id: Date.now(),
+      type: activityType,
+      title: details.title,
+      message: details.message,
+      time: "Just now",
+      icon: details.icon,
+      color: details.color,
+      bgColor: details.bgColor,
+      unread: true,
+      category: details.category
+    };
+
+    setNotifications(prev => [newNotification, ...prev]);
+  };
+
   const filteredNotifications = notifications.filter(notification => {
     if (filter === "all") return true;
     if (filter === "security") return notification.category === "security";
     if (filter === "transaction") return notification.category === "transaction";
+    if (filter === "welcome") return notification.category === "welcome";
     return true;
   });
 
@@ -109,10 +118,10 @@ const NotificationsCenter = () => {
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleMarkAllRead}>
+          <Button variant="outline" size="sm" onClick={handleMarkAllRead} disabled={unreadCount === 0}>
             Mark All Read
           </Button>
-          <Button variant="outline" size="sm" onClick={handleClearOldNotifications}>
+          <Button variant="outline" size="sm" onClick={handleClearOldNotifications} disabled={notifications.length === 0}>
             <Trash2 className="h-4 w-4 mr-2" />
             Clear Old
           </Button>
@@ -127,6 +136,14 @@ const NotificationsCenter = () => {
           onClick={() => setFilter("all")}
         >
           All Notifications
+        </Button>
+        <Button 
+          variant={filter === "welcome" ? "default" : "outline"} 
+          size="sm"
+          onClick={() => setFilter("welcome")}
+        >
+          <PartyPopper className="h-4 w-4 mr-2" />
+          Welcome
         </Button>
         <Button 
           variant={filter === "security" ? "default" : "outline"} 
@@ -181,7 +198,11 @@ const NotificationsCenter = () => {
           <CardContent className="p-8 text-center">
             <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications</h3>
-            <p className="text-gray-600">You're all caught up! No new notifications to show.</p>
+            <p className="text-gray-600">
+              {notifications.length === 0 
+                ? "Welcome! Your notifications will appear here as you use your account." 
+                : "You're all caught up! No new notifications to show."}
+            </p>
           </CardContent>
         </Card>
       )}
