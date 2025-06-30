@@ -5,130 +5,72 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Search, UserPlus, Edit, Trash2, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAdminUsers } from "@/hooks/useAdminUsers";
+import { Search, UserPlus, Edit, Trash2, Shield, CheckCircle, XCircle, DollarSign } from "lucide-react";
 
 interface UserManagementProps {
   adminRole: string;
 }
 
-interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  account_number: string;
-  balance: number;
-  created_at: string;
-  is_admin?: boolean;
-  admin_role?: string;
-}
-
 const UserManagement = ({ adminRole }: UserManagementProps) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    users,
+    loading,
+    updateUser,
+    deleteUser,
+    toggleUserStatus,
+    updateUserVerification,
+    updateAdminRole,
+    adjustBalance,
+    searchUsers,
+    filterUsers,
+    fetchUsers
+  } = useAdminUsers();
+  
   const [searchTerm, setSearchTerm] = useState("");
-  const { toast } = useToast();
-
-  const fetchUsers = async () => {
-    try {
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (profilesError) throw profilesError;
-
-      // Get admin status for each user
-      const { data: adminUsers, error: adminError } = await supabase
-        .from('admin_users')
-        .select('user_id, admin_role, is_active');
-
-      if (adminError && adminError.code !== 'PGRST116') {
-        console.error('Admin users fetch error:', adminError);
-      }
-
-      const usersWithAdminStatus = profiles?.map(profile => ({
-        ...profile,
-        is_admin: adminUsers?.some(admin => admin.user_id === profile.id && admin.is_active),
-        admin_role: adminUsers?.find(admin => admin.user_id === profile.id && admin.is_active)?.admin_role
-      })) || [];
-
-      setUsers(usersWithAdminStatus);
-    } catch (error: any) {
-      console.error('Error fetching users:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load users",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [balanceAmount, setBalanceAmount] = useState<string>("");
+  const [balanceReason, setBalanceReason] = useState("");
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const filteredUsers = users.filter(user =>
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.account_number?.includes(searchTerm)
-  );
-
-  const makeAdmin = async (userId: string, role: 'support' | 'moderator' | 'admin' | 'super_admin' = 'support') => {
-    try {
-      const { error } = await supabase
-        .from('admin_users')
-        .upsert({
-          user_id: userId,
-          admin_role: role,
-          is_active: true
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "User admin status updated successfully",
-      });
-
+    if (searchTerm) {
+      searchUsers(searchTerm);
+    } else if (filterStatus !== "all") {
+      const filters: any = {};
+      if (filterStatus === "active") filters.is_active = true;
+      if (filterStatus === "inactive") filters.is_active = false;
+      if (filterStatus === "admin") filters.is_admin = true;
+      if (filterStatus === "pending") filters.verification_status = "pending";
+      filterUsers(filters);
+    } else {
       fetchUsers();
-    } catch (error: any) {
-      console.error('Error updating admin status:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update admin status",
-        variant: "destructive",
-      });
     }
+  }, [searchTerm, filterStatus]);
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setFilterStatus("all");
   };
 
-  const revokeAdmin = async (userId: string) => {
-    try {
-      const { error } = await supabase
-        .from('admin_users')
-        .update({ is_active: false })
-        .eq('user_id', userId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Admin access revoked successfully",
-      });
-
-      fetchUsers();
-    } catch (error: any) {
-      console.error('Error revoking admin access:', error);
-      toast({
-        title: "Error",
-        description: "Failed to revoke admin access",
-        variant: "destructive",
-      });
-    }
+  const handleFilter = (value: string) => {
+    setFilterStatus(value);
+    setSearchTerm("");
   };
+
+  const handleBalanceAdjustment = async (userId: string, amount: number, reason: string) => {
+    await adjustBalance(userId, amount, reason);
+    setBalanceAmount("");
+    setBalanceReason("");
+    setSelectedUser(null);
+    setIsEditDialogOpen(false);
+  };
+
+  const canManageUsers = ['admin', 'super_admin'].includes(adminRole);
+  const canManageBalance = ['admin', 'super_admin'].includes(adminRole);
 
   if (loading) {
     return (
@@ -142,10 +84,17 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-        <Button className="flex items-center gap-2">
-          <UserPlus className="h-4 w-4" />
-          Add User
-        </Button>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline">
+            Total: {users.length}
+          </Badge>
+          {canManageUsers && (
+            <Button className="flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
+              Add User
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card>
@@ -157,10 +106,22 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10"
               />
             </div>
+            <Select value={filterStatus} onValueChange={handleFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Users</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="admin">Admins</SelectItem>
+                <SelectItem value="pending">Pending Verification</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent>
@@ -169,15 +130,16 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
               <TableHeader>
                 <TableRow>
                   <TableHead>User</TableHead>
-                  <TableHead>Account Number</TableHead>
+                  <TableHead>Account</TableHead>
                   <TableHead>Balance</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
+                  <TableHead>Verification</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
+                {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <div>
@@ -187,6 +149,11 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
                     </TableCell>
                     <TableCell className="font-mono">{user.account_number}</TableCell>
                     <TableCell>${user.balance?.toFixed(2) || '0.00'}</TableCell>
+                    <TableCell>
+                      <Badge variant={user.is_active ? "default" : "secondary"}>
+                        {user.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       {user.is_admin ? (
                         <Badge variant="secondary" className="flex items-center gap-1">
@@ -198,31 +165,165 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {new Date(user.created_at).toLocaleDateString()}
+                      <Badge 
+                        variant={user.verification_status === 'approved' ? "default" : 
+                               user.verification_status === 'rejected' ? "destructive" : "secondary"}
+                      >
+                        {user.verification_status.toUpperCase()}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        {!user.is_admin && adminRole === 'super_admin' && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => setSelectedUser(user)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>Manage User: {user.full_name}</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-6">
+                              {/* User Status */}
+                              <div className="flex items-center justify-between p-4 border rounded-lg">
+                                <div>
+                                  <h4 className="font-medium">Account Status</h4>
+                                  <p className="text-sm text-gray-600">
+                                    Currently {user.is_active ? 'Active' : 'Inactive'}
+                                  </p>
+                                </div>
+                                {canManageUsers && (
+                                  <Button
+                                    variant={user.is_active ? "destructive" : "default"}
+                                    onClick={() => toggleUserStatus(user.id, !user.is_active)}
+                                  >
+                                    {user.is_active ? 'Deactivate' : 'Activate'}
+                                  </Button>
+                                )}
+                              </div>
+
+                              {/* Verification Status */}
+                              <div className="flex items-center justify-between p-4 border rounded-lg">
+                                <div>
+                                  <h4 className="font-medium">Verification Status</h4>
+                                  <p className="text-sm text-gray-600">
+                                    Currently {user.verification_status}
+                                  </p>
+                                </div>
+                                {canManageUsers && user.verification_status === 'pending' && (
+                                  <div className="flex gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="text-green-600"
+                                      onClick={() => updateUserVerification(user.id, true)}
+                                    >
+                                      <CheckCircle className="h-4 w-4 mr-1" />
+                                      Approve
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="text-red-600"
+                                      onClick={() => updateUserVerification(user.id, false)}
+                                    >
+                                      <XCircle className="h-4 w-4 mr-1" />
+                                      Reject
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Admin Role */}
+                              {adminRole === 'super_admin' && (
+                                <div className="flex items-center justify-between p-4 border rounded-lg">
+                                  <div>
+                                    <h4 className="font-medium">Admin Role</h4>
+                                    <p className="text-sm text-gray-600">
+                                      {user.is_admin ? `Currently ${user.admin_role}` : 'Not an admin'}
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    {!user.is_admin ? (
+                                      <Select onValueChange={(role) => updateAdminRole(user.id, role)}>
+                                        <SelectTrigger className="w-40">
+                                          <SelectValue placeholder="Make Admin" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="support">Support</SelectItem>
+                                          <SelectItem value="moderator">Moderator</SelectItem>
+                                          <SelectItem value="admin">Admin</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    ) : (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => updateAdminRole(user.id)}
+                                      >
+                                        Revoke Admin
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Balance Adjustment */}
+                              {canManageBalance && (
+                                <div className="p-4 border rounded-lg space-y-4">
+                                  <div>
+                                    <h4 className="font-medium">Balance Adjustment</h4>
+                                    <p className="text-sm text-gray-600">
+                                      Current balance: ${user.balance?.toFixed(2)}
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <Input
+                                      type="number"
+                                      placeholder="Amount (+/-)"
+                                      value={balanceAmount}
+                                      onChange={(e) => setBalanceAmount(e.target.value)}
+                                      className="flex-1"
+                                    />
+                                    <Input
+                                      placeholder="Reason"
+                                      value={balanceReason}
+                                      onChange={(e) => setBalanceReason(e.target.value)}
+                                      className="flex-1"
+                                    />
+                                    <Button
+                                      onClick={() => handleBalanceAdjustment(
+                                        user.id, 
+                                        parseFloat(balanceAmount), 
+                                        balanceReason
+                                      )}
+                                      disabled={!balanceAmount || !balanceReason}
+                                    >
+                                      <DollarSign className="h-4 w-4 mr-1" />
+                                      Adjust
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+
+                        {canManageUsers && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => makeAdmin(user.id)}
+                            className="text-red-600 hover:text-red-700"
+                            onClick={() => deleteUser(user.id)}
                           >
-                            Make Admin
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
-                        {user.is_admin && adminRole === 'super_admin' && (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => revokeAdmin(user.id)}
-                          >
-                            Revoke Admin
-                          </Button>
-                        )}
-                        <Button size="sm" variant="ghost">
-                          <Edit className="h-4 w-4" />
-                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

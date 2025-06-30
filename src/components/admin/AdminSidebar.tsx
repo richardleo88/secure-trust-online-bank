@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { 
@@ -10,7 +9,8 @@ import {
   HeadphonesIcon,
   BarChart3,
   X,
-  Home
+  Home,
+  MessageSquare
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -25,6 +25,7 @@ const AdminSidebar = ({ isOpen, onClose, activeSection, setActiveSection, adminR
   const menuItems = [
     { id: "overview", label: "Dashboard Overview", icon: Home, roles: ["support", "moderator", "admin", "super_admin"] },
     { id: "users", label: "User Management", icon: Users, roles: ["admin", "super_admin"] },
+    { id: "requests", label: "User Requests", icon: MessageSquare, roles: ["moderator", "admin", "super_admin"] },
     { id: "kyc", label: "KYC Verification", icon: FileCheck, roles: ["moderator", "admin", "super_admin"] },
     { id: "transactions", label: "Transaction Logs", icon: Activity, roles: ["moderator", "admin", "super_admin"] },
     { id: "fraud", label: "Fraud Monitoring", icon: Shield, roles: ["moderator", "admin", "super_admin"] },

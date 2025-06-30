@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -15,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, AlertTriangle } from "lucide-react";
+import UserRequestsManagement from "@/components/admin/UserRequestsManagement";
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -103,6 +103,8 @@ const AdminDashboard = () => {
         );
       case "users":
         return <UserManagement adminRole={adminRole} />;
+      case "requests":
+        return <UserRequestsManagement adminRole={adminRole} />;
       case "kyc":
         return <KYCVerification adminRole={adminRole} />;
       case "transactions":
