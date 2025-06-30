@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/hooks/useAuth';
 
 export interface AdminUser {
@@ -15,6 +14,7 @@ export interface AdminUser {
   verification_status: 'pending' | 'approved' | 'rejected';
   phone?: string;
   address?: any;
+  metadata?: any;
 }
 
 export interface UserRequest {
