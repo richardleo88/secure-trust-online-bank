@@ -25,21 +25,21 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (!isAdmin || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
-        <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
-          <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-red-700 mb-2">Access Denied</h1>
-          <p className="text-gray-600 mb-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
+        <div className="text-center p-6 sm:p-8 bg-white rounded-lg shadow-lg max-w-md w-full">
+          <AlertTriangle className="h-12 w-12 sm:h-16 sm:w-16 text-red-500 mx-auto mb-4" />
+          <h1 className="text-xl sm:text-2xl font-bold text-red-700 mb-2">Access Denied</h1>
+          <p className="text-gray-600 mb-4 text-sm sm:text-base">
             You don't have administrator privileges to access this area.
           </p>
-          <Button onClick={() => window.history.back()}>
+          <Button onClick={() => window.history.back()} className="w-full sm:w-auto">
             Go Back
           </Button>
         </div>
@@ -51,12 +51,12 @@ const AdminDashboard = () => {
     switch (activeSection) {
       case "overview":
         return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <Shield className="h-8 w-8 text-blue-600" />
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-gray-600">Role: SUPER ADMIN</p>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+                <p className="text-gray-600 text-sm sm:text-base">Role: SUPER ADMIN</p>
               </div>
             </div>
             <Analytics />
@@ -93,13 +93,13 @@ const AdminDashboard = () => {
             adminRole="super_admin"
           />
           
-          <main className="flex-1 flex flex-col">
+          <main className="flex-1 flex flex-col min-w-0">
             <AdminHeader 
               onSidebarToggle={() => setSidebarOpen(true)}
               adminRole="super_admin"
             />
             
-            <div className="flex-1 p-6">
+            <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-auto">
               {renderContent()}
             </div>
           </main>

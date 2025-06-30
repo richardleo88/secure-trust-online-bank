@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -20,16 +21,12 @@ import UserProfileHeader from "@/components/dashboard/UserProfileHeader";
 import { Menu, CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+
 const Dashboard = () => {
-  const {
-    t
-  } = useTranslation();
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {
-    user,
-    logActivity
-  } = useAuth();
+  const { user, logActivity } = useAuth();
 
   // Log dashboard access
   useEffect(() => {
@@ -38,6 +35,7 @@ const Dashboard = () => {
       console.log('User successfully accessed REAL banking dashboard with full features');
     }
   }, [user, logActivity]);
+
   const renderContent = () => {
     switch (activeSection) {
       case "overview":
@@ -68,35 +66,46 @@ const Dashboard = () => {
         return <AccountOverview />;
     }
   };
-  return <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
       <SidebarProvider>
         <div className="flex w-full min-h-screen">
-          <DashboardSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeSection={activeSection} setActiveSection={setActiveSection} />
+          <DashboardSidebar 
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+            activeSection={activeSection} 
+            setActiveSection={setActiveSection} 
+          />
           
-          <main className="flex-1 flex flex-col">
+          <main className="flex-1 flex flex-col min-w-0">
             {/* Header */}
-            <header className="bg-white/90 backdrop-blur-md shadow-sm border-b p-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} className="md:hidden">
+            <header className="bg-white/90 backdrop-blur-md shadow-sm border-b p-3 sm:p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setSidebarOpen(true)} 
+                  className="md:hidden flex-shrink-0"
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h1 className="text-banking-navy text-lg font-bold">
+                    <h1 className="text-banking-navy text-base sm:text-lg font-bold truncate">
                       {t('dashboard.welcome')}, {user?.user_metadata?.full_name || 'User'}
                     </h1>
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                   </div>
-                  
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                 <UserProfileHeader />
               </div>
             </header>
 
             {/* Content */}
-            <div className="flex-1 p-4 pb-20 md:pb-4">
+            <div className="flex-1 p-3 sm:p-4 pb-20 md:pb-4 overflow-auto">
               {renderContent()}
             </div>
           </main>
@@ -105,6 +114,8 @@ const Dashboard = () => {
         {/* Mobile Bottom Navigation */}
         <MobileBottomNav activeSection={activeSection} setActiveSection={setActiveSection} />
       </SidebarProvider>
-    </div>;
+    </div>
+  );
 };
+
 export default Dashboard;
