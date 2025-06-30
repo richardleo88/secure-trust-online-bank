@@ -15,16 +15,6 @@ const BankPhotosCarousel = () => {
       url: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1200&q=80",
       title: "Professional Service",
       description: "Expert financial advisors at your service"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
-      title: "Digital First Approach",
-      description: "Banking that fits your lifestyle"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?auto=format&fit=crop&w=1200&q=80",
-      title: "Comfortable Banking",
-      description: "Relax while we handle your finances"
     }
   ];
 
