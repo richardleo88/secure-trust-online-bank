@@ -1,6 +1,8 @@
 
 export interface UserSession {
   id: string;
+  user_id: string; // Add missing user_id property
+  session_token: string;
   device_name: string;
   device_type: string;
   browser: string;
@@ -16,6 +18,7 @@ export interface UserSession {
   is_active: boolean;
   last_activity: string;
   created_at: string;
+  expires_at: string | null;
 }
 
 export interface SecuritySettings {

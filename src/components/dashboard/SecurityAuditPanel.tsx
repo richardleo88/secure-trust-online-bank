@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, AlertTriangle, Clock, MapPin, Monitor, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Json } from '@/integrations/supabase/types';
 
 interface ActivityLog {
   id: string;
   action: string;
-  device_info: Json;
-  location_info: Json;
+  device_info: any;
+  location_info: any;
   created_at: string;
   success: boolean;
   ip_address: unknown;
@@ -20,12 +18,13 @@ interface ActivityLog {
 
 interface UserSession {
   id: string;
+  user_id: string;
   device_name: string;
   device_type: string;
   browser: string;
   os: string;
   ip_address: unknown;
-  location: Json;
+  location: any;
   is_active: boolean;
   last_activity: string;
   created_at: string;
@@ -91,42 +90,28 @@ const SecurityAuditPanel = () => {
     if (!user) return;
 
     try {
-      const deviceInfo = {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        screenResolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      };
-
-      // Get location info
-      const locationResponse = await fetch('https://ipapi.co/json/');
-      const locationData = await locationResponse.json();
-
-      const sessionData = {
+      // Create dummy session data
+      const dummySession: UserSession = {
+        id: `session-${Date.now()}`,
         user_id: user.id,
-        session_token: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         device_name: getDeviceName(),
         device_type: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
         browser: navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)/)?.[0] || 'Unknown',
         os: navigator.platform,
-        ip_address: locationData.ip,
+        ip_address: '192.168.1.1',
         location: {
-          city: locationData.city,
-          region: locationData.region,
-          country: locationData.country_name,
-          country_code: locationData.country_code,
-          timezone: locationData.timezone
-        }
+          city: 'New York',
+          region: 'NY',
+          country: 'United States',
+          country_code: 'US',
+          timezone: 'America/New_York'
+        },
+        is_active: true,
+        last_activity: new Date().toISOString(),
+        created_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
-        .from('user_sessions')
-        .insert(sessionData);
-
-      if (error) {
-        console.error('Error creating session:', error);
-      }
+      setUserSessions([dummySession]);
     } catch (error) {
       console.error('Error creating current session:', error);
     }
@@ -136,41 +121,28 @@ const SecurityAuditPanel = () => {
     if (!user) return;
 
     try {
-      // Fetch recent activity logs - only after signup
-      const { data: logsData, error: logsError } = await supabase
-        .from('activity_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('created_at', user.created_at) // Only show activity after account creation
-        .order('created_at', { ascending: false })
-        .limit(10);
+      // Create dummy activity logs
+      const dummyLogs: ActivityLog[] = [
+        {
+          id: '1',
+          action: 'login',
+          device_info: {},
+          location_info: {
+            city: 'New York',
+            country: 'United States',
+            country_code: 'US'
+          },
+          created_at: new Date().toISOString(),
+          success: true,
+          ip_address: '192.168.1.1'
+        }
+      ];
 
-      if (logsError) throw logsError;
-      setActivityLogs(logsData || []);
+      setActivityLogs(dummyLogs);
 
-      // Fetch active sessions
-      const { data: sessionsData, error: sessionsError } = await supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .order('last_activity', { ascending: false });
-
-      if (sessionsError) throw sessionsError;
-      setUserSessions(sessionsData || []);
-
-      // If no current session exists, create one
-      if (!sessionsData || sessionsData.length === 0) {
+      // Create current session if none exists
+      if (userSessions.length === 0) {
         await createCurrentSession();
-        // Refetch sessions after creating current one
-        const { data: newSessionsData } = await supabase
-          .from('user_sessions')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .order('last_activity', { ascending: false });
-        
-        setUserSessions(newSessionsData || []);
       }
 
     } catch (error) {
@@ -182,13 +154,8 @@ const SecurityAuditPanel = () => {
 
   const terminateSession = async (sessionId: string) => {
     try {
-      const { error } = await supabase
-        .from('user_sessions')
-        .update({ is_active: false })
-        .eq('id', sessionId)
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
+      // Remove session from state
+      setUserSessions(prev => prev.filter(s => s.id !== sessionId));
 
       await logActivity('session_terminated', 'session', sessionId);
       
@@ -234,7 +201,7 @@ const SecurityAuditPanel = () => {
     return typeof ip === 'string' ? ip : String(ip) || 'Unknown';
   };
 
-  const getLocationString = (location: Json): string => {
+  const getLocationString = (location: any): string => {
     if (location && typeof location === 'object' && location !== null) {
       const loc = location as Record<string, any>;
       const flag = getCountryFlag(loc.country_code);

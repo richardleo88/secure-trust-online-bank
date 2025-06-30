@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 interface DummyUser {
   id: string;
   email: string;
+  created_at?: string; // Add missing created_at property
   user_metadata?: {
     full_name?: string;
   };
@@ -49,14 +50,16 @@ const DUMMY_USERS = [
     email: 'richard@gmail.com',
     password: '123456789',
     full_name: 'Richard Admin',
-    is_admin: true
+    is_admin: true,
+    created_at: '2024-01-01T00:00:00Z'
   },
   {
     id: 'user-456',
     email: 'user@example.com',
     password: 'password123',
     full_name: 'John Doe',
-    is_admin: false
+    is_admin: false,
+    created_at: '2024-01-01T00:00:00Z'
   }
 ];
 
@@ -116,7 +119,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         email,
         password,
         full_name: fullName,
-        is_admin: false
+        is_admin: false,
+        created_at: new Date().toISOString()
       };
 
       DUMMY_USERS.push(newUser);
@@ -161,6 +165,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const dummyUser: DummyUser = {
         id: foundUser.id,
         email: foundUser.email,
+        created_at: foundUser.created_at,
         user_metadata: {
           full_name: foundUser.full_name
         }
