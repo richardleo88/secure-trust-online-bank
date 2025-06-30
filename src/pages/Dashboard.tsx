@@ -87,7 +87,7 @@ const Dashboard = () => {
                     </h1>
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   </div>
-                  <p className="text-banking-slate text-sm">{t('dashboard.realBankingAccount')}</p>
+                  
                 </div>
               </div>
               <div className="flex items-center gap-3">
