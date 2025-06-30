@@ -36,7 +36,7 @@ const HeroSection = () => {
               <Button size="lg" className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4" onClick={handleGetStarted}>
                 {t('hero.getStarted')}
               </Button>
-              <Button size="lg" variant="outline" onClick={handleLearnMore} className="border-white text-white hover:text-banking-navy text-lg px-8 py-4 bg-stone-400 hover:bg-stone-300">
+              <Button size="lg" variant="outline" onClick={handleLearnMore} className="border-white text-white hover:text-banking-navy text-lg px-8 py-4 bg-orange-50">
                 {t('hero.learnMore')}
               </Button>
             </div>
