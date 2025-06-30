@@ -94,14 +94,14 @@ const DashboardSidebar = ({
 
         <nav className="p-4 space-y-2">
           {/* Dashboard */}
-          {menuItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} onClick={() => handleMenuClick(item)} className="w-full justify-start bg-banking-navy">
+          {menuItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} onClick={() => handleMenuClick(item)} className="w-full justify-start bg-inherit text-banking-navy text-sm font-semibold">
               <item.icon className="h-4 w-4 mr-2" />
               {item.label}
             </Button>)}
 
           {/* Transfer Section */}
           <div>
-            <Button variant="ghost" className="w-full justify-between" onClick={() => setTransferMenuOpen(!transferMenuOpen)}>
+            <Button variant="ghost" onClick={() => setTransferMenuOpen(!transferMenuOpen)} className="w-full justify-between text-banking-navy text-sm font-semibold">
               <div className="flex items-center">
                 <Send className="h-4 w-4 mr-2" />
                 Transfer
@@ -124,12 +124,12 @@ const DashboardSidebar = ({
             </Button>)}
 
           <div className="pt-4 border-t mt-4">
-            <Button variant={activeSection === "security" ? "default" : "ghost"} className="w-full justify-start" onClick={() => setActiveSection("security")}>
+            <Button variant={activeSection === "security" ? "default" : "ghost"} onClick={() => setActiveSection("security")} className="w-full justify-start text-banking-navy font-semibold text-sm">
               <Shield className="h-4 w-4 mr-2" />
               Security
             </Button>
             
-            <Button variant={activeSection === "notifications" ? "default" : "ghost"} className="w-full justify-start" onClick={() => setActiveSection("notifications")}>
+            <Button variant={activeSection === "notifications" ? "default" : "ghost"} onClick={() => setActiveSection("notifications")} className="w-full justify-start font-semibold text-banking-navy text-sm">
               <Bell className="h-4 w-4 mr-2" />
               Notifications
             </Button>
