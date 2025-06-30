@@ -12,10 +12,7 @@ const Footer = () => {
                 <p className="text-sm text-blue-200">Capital</p>
               </div>
             </div>
-            <p className="text-blue-200 leading-relaxed">
-              Empowering your financial future with secure, modern banking solutions 
-              tailored to your needs.
-            </p>
+            
           </div>
           
           
