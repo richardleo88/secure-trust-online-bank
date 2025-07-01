@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import TransactionHistory from "@/components/dashboard/TransactionHistory";
 import SecurityAuditPanel from "@/components/dashboard/SecurityAuditPanel";
 import UserProfileHeader from "@/components/dashboard/UserProfileHeader";
 import DepositSection from "@/components/dashboard/DepositSection";
+import NotificationIcon from "@/components/dashboard/NotificationIcon";
 import { Menu, CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
@@ -103,6 +103,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                <NotificationIcon />
                 <UserProfileHeader />
               </div>
             </header>

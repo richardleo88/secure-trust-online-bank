@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { User, Mail, Phone, MapPin, Briefcase, Shield, LogOut, Calendar, CreditCard, FileText, Camera } from "lucide-react";
+import { User, Mail, Phone, MapPin, Briefcase, Shield, LogOut, Calendar, CreditCard, FileText, Camera, Edit, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,22 +114,29 @@ const Profile = () => {
 
       <Card>
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Avatar className="w-24 h-24">
+          <div className="flex justify-center mb-4 relative">
+            <Avatar className="w-32 h-32">
               {userProfile?.profile_picture_url ? (
-                <AvatarImage src={userProfile.profile_picture_url} />
+                <AvatarImage src={userProfile.profile_picture_url} className="object-cover" />
               ) : (
-                <AvatarFallback className="text-2xl banking-gradient text-white">
+                <AvatarFallback className="text-3xl banking-gradient text-white">
                   {getUserInitials()}
                 </AvatarFallback>
               )}
             </Avatar>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="absolute bottom-0 right-0 rounded-full w-10 h-10 p-0"
+            >
+              <Camera className="h-4 w-4" />
+            </Button>
           </div>
-          <CardTitle className="flex items-center justify-center gap-2">
+          <CardTitle className="flex items-center justify-center gap-2 text-xl">
             {userProfile?.full_name || 'User'}
             {getVerificationBadge(userProfile?.verification_status)}
           </CardTitle>
-          <CardDescription>Professional Banking Account Holder</CardDescription>
+          <CardDescription className="text-base">Professional Banking Account Holder</CardDescription>
           <div className="text-sm text-green-600 font-medium">
             Member Since: {formatDate(userProfile?.created_at)}
           </div>
@@ -138,12 +144,18 @@ const Profile = () => {
         <CardContent className="space-y-6">
           {/* Personal Information */}
           <div>
-            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <User className="h-5 w-5 text-blue-600" />
-              Personal Information
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <User className="h-5 w-5 text-blue-600" />
+                Personal Information
+              </h3>
+              <Button variant="outline" size="sm">
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+            </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-gray-50/50">
                 <User className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Full Name</p>
@@ -151,7 +163,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-gray-50/50">
                 <Calendar className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Date of Birth</p>
@@ -159,7 +171,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-gray-50/50">
                 <Mail className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Email</p>
@@ -167,33 +179,13 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-gray-50/50">
                 <Phone className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Primary Phone</p>
                   <p className="font-medium">{userProfile?.phone || 'Not provided'}</p>
                 </div>
               </div>
-
-              {userProfile?.secondary_phone && (
-                <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <Phone className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-500">Secondary Phone</p>
-                    <p className="font-medium">{userProfile.secondary_phone}</p>
-                  </div>
-                </div>
-              )}
-
-              {userProfile?.mother_maiden_name && (
-                <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <User className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-500">Mother's Maiden Name</p>
-                    <p className="font-medium">****** (Secured)</p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -204,15 +196,15 @@ const Profile = () => {
               Account Information
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-blue-50/50">
                 <CreditCard className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Account Number</p>
-                  <p className="font-medium">{userProfile?.account_number || 'Not assigned'}</p>
+                  <p className="font-bold text-blue-600">{userProfile?.account_number || 'Not assigned'}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-blue-50/50">
                 <Shield className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Account Type</p>
@@ -220,11 +212,11 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 border rounded-lg bg-green-50 md:col-span-2">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-green-50 md:col-span-2">
                 <Shield className="h-5 w-5 text-green-600" />
                 <div>
                   <p className="text-sm text-gray-500">Current Balance</p>
-                  <p className="font-bold text-green-600 text-lg">${userProfile?.balance?.toLocaleString() || '0.00'}</p>
+                  <p className="font-bold text-green-600 text-2xl">${userProfile?.balance?.toLocaleString() || '0.00'}</p>
                 </div>
               </div>
             </div>

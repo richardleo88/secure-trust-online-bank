@@ -60,7 +60,7 @@ const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavPro
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-sky-200/30 backdrop-blur-md border-t border-sky-300/20 shadow-2xl md:hidden z-40 safe-area-pb">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 backdrop-blur-md border-t border-sky-300/20 shadow-2xl md:hidden z-40 safe-area-pb">
       <div className="flex items-center justify-around py-4 px-2">
         {navItems.map((item) => (
           <Button

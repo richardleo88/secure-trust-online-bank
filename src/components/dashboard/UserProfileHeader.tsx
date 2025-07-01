@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, LogOut, Settings, MapPin, Mail, Phone } from "lucide-react";
+import { User, LogOut, Settings, MapPin, Mail, Phone, CreditCard, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const UserProfileHeader = () => {
@@ -58,7 +58,7 @@ const UserProfileHeader = () => {
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
             {userProfile?.profile_picture_url ? (
-              <AvatarImage src={userProfile.profile_picture_url} />
+              <AvatarImage src={userProfile.profile_picture_url} className="object-cover" />
             ) : (
               <AvatarFallback className="banking-gradient text-white font-semibold">
                 {getUserInitials()}
@@ -67,52 +67,53 @@ const UserProfileHeader = () => {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 p-4" align="end" forceMount>
+      <DropdownMenuContent className="w-96 p-4" align="end" forceMount>
         <div className="flex flex-col space-y-4">
-          {/* Profile Header */}
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12">
+          {/* Enhanced Profile Header */}
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-16 w-16">
               {userProfile?.profile_picture_url ? (
-                <AvatarImage src={userProfile.profile_picture_url} />
+                <AvatarImage src={userProfile.profile_picture_url} className="object-cover" />
               ) : (
-                <AvatarFallback className="banking-gradient text-white font-semibold text-lg">
+                <AvatarFallback className="banking-gradient text-white font-semibold text-xl">
                   {getUserInitials()}
                 </AvatarFallback>
               )}
             </Avatar>
             <div className="flex-1">
-              <p className="text-sm font-medium leading-none">
+              <p className="text-base font-semibold leading-none">
                 {userProfile?.full_name || 'User'}
               </p>
-              <p className="text-xs leading-none text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Professional Account Holder
               </p>
-              <p className="text-xs leading-none text-muted-foreground mt-1">
-                Account: {userProfile?.account_number}
-              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-xs text-green-600 font-medium">Account Active</span>
+              </div>
             </div>
           </div>
 
           <DropdownMenuSeparator />
 
-          {/* Profile Details */}
+          {/* Enhanced Profile Details */}
           <div className="space-y-3">
             {userProfile?.email && (
-              <div className="flex items-center space-x-2 text-sm">
+              <div className="flex items-center space-x-3 text-sm">
                 <Mail className="h-4 w-4 text-blue-600" />
-                <span className="text-gray-600">{userProfile.email}</span>
+                <span className="text-gray-600 truncate flex-1">{userProfile.email}</span>
               </div>
             )}
             
             {userProfile?.phone && (
-              <div className="flex items-center space-x-2 text-sm">
+              <div className="flex items-center space-x-3 text-sm">
                 <Phone className="h-4 w-4 text-blue-600" />
                 <span className="text-gray-600">{userProfile.phone}</span>
               </div>
             )}
 
             {userProfile?.address && (
-              <div className="flex items-center space-x-2 text-sm">
+              <div className="flex items-center space-x-3 text-sm">
                 <MapPin className="h-4 w-4 text-blue-600" />
                 <span className="text-gray-600">
                   {typeof userProfile.address === 'object' 
@@ -123,8 +124,19 @@ const UserProfileHeader = () => {
               </div>
             )}
 
-            <div className="text-xs text-gray-500">
-              Account Balance: ${userProfile?.balance?.toLocaleString() || '0.00'}
+            <div className="flex items-center space-x-3 text-sm">
+              <CreditCard className="h-4 w-4 text-blue-600" />
+              <span className="text-gray-600">
+                Account: {userProfile?.account_number}
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-3 text-sm bg-green-50 p-2 rounded-lg">
+              <Shield className="h-4 w-4 text-green-600" />
+              <div className="flex-1">
+                <span className="text-gray-600 text-xs">Current Balance</span>
+                <p className="font-bold text-green-600">${userProfile?.balance?.toLocaleString() || '0.00'}</p>
+              </div>
             </div>
           </div>
 
