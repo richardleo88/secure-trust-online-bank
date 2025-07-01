@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { Search, UserPlus, Edit, Trash2, Shield, CheckCircle, XCircle, DollarSign, CreditCard, Plus, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CreateUserDialog from "./CreateUserDialog";
 
 interface UserManagementProps {
   adminRole: string;
@@ -26,13 +27,15 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
     adjustBalance,
     searchUsers,
     filterUsers,
-    fetchUsers
+    fetchUsers,
+    createUser
   } = useAdminUsers();
   
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [balanceAmount, setBalanceAmount] = useState<string>("");
   const [balanceReason, setBalanceReason] = useState("");
   const [transactionType, setTransactionType] = useState<"credit" | "debit">("credit");
@@ -102,6 +105,15 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
     setIsEditDialogOpen(false);
   };
 
+  const handleCreateUser = async (userData: any) => {
+    try {
+      await createUser(userData);
+      setIsCreateDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
+
   const canManageUsers = ['admin', 'super_admin'].includes(adminRole);
   const canManageBalance = ['admin', 'super_admin'].includes(adminRole);
 
@@ -122,10 +134,23 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
             Total: {users.length}
           </Badge>
           {canManageUsers && (
-            <Button className="flex items-center gap-2 text-sm">
-              <UserPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Add User</span>
-            </Button>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-2 text-sm">
+                  <UserPlus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Add User</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create New User</DialogTitle>
+                </DialogHeader>
+                <CreateUserDialog 
+                  onSubmit={handleCreateUser}
+                  onCancel={() => setIsCreateDialogOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
           )}
         </div>
       </div>
