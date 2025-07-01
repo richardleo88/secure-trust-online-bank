@@ -18,6 +18,7 @@ import Profile from "@/components/dashboard/Profile";
 import TransactionHistory from "@/components/dashboard/TransactionHistory";
 import SecurityAuditPanel from "@/components/dashboard/SecurityAuditPanel";
 import UserProfileHeader from "@/components/dashboard/UserProfileHeader";
+import DepositSection from "@/components/dashboard/DepositSection";
 import { Menu, CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
@@ -57,7 +58,7 @@ const Dashboard = () => {
       case "western-union":
         return <WesternUnion />;
       case "atm":
-        return <ATMCard />;
+        return <DepositSection />;
       case "profile":
         return <Profile />;
       case "history":
