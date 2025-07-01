@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Eye, EyeOff } from 'lucide-react';
+import { Shield, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -19,8 +20,36 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Password strength validation
+  const validatePassword = (password: string) => {
+    const requirements = {
+      length: password.length >= 12,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      noCommon: !/(password|123456|qwerty|admin|letmein)/i.test(password)
+    };
+    
+    const score = Object.values(requirements).filter(Boolean).length;
+    return { requirements, score, isStrong: score >= 5 };
+  };
+
+  const passwordValidation = validatePassword(password);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check password strength for admin users
+    if (!passwordValidation.isStrong && password.length > 0) {
+      toast({
+        title: "Weak Password",
+        description: "Admin accounts require strong passwords meeting all security requirements.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -54,7 +83,7 @@ const AdminLogin = () => {
 
   const fillAdminCredentials = () => {
     setEmail('richard@gmail.com');
-    setPassword('123456789');
+    setPassword('AdminSecure2024!@#');
   };
 
   return (
@@ -115,7 +144,7 @@ const AdminLogin = () => {
                   <Input
                     id="admin-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter admin password"
+                    placeholder="Enter secure admin password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -135,12 +164,64 @@ const AdminLogin = () => {
                     )}
                   </Button>
                 </div>
+
+                {/* Password Strength Indicator */}
+                {password && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg border">
+                    <div className="flex items-center gap-2 mb-2">
+                      {passwordValidation.isStrong ? (
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-orange-500" />
+                      )}
+                      <span className="text-sm font-medium">
+                        Password Strength: {passwordValidation.isStrong ? 'Strong' : 'Weak'}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <div className={`flex items-center gap-2 ${passwordValidation.requirements.length ? 'text-green-600' : 'text-red-500'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        At least 12 characters
+                      </div>
+                      <div className={`flex items-center gap-2 ${passwordValidation.requirements.uppercase ? 'text-green-600' : 'text-red-500'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Contains uppercase letter
+                      </div>
+                      <div className={`flex items-center gap-2 ${passwordValidation.requirements.lowercase ? 'text-green-600' : 'text-red-500'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Contains lowercase letter
+                      </div>
+                      <div className={`flex items-center gap-2 ${passwordValidation.requirements.number ? 'text-green-600' : 'text-red-500'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Contains number
+                      </div>
+                      <div className={`flex items-center gap-2 ${passwordValidation.requirements.special ? 'text-green-600' : 'text-red-500'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Contains special character
+                      </div>
+                      <div className={`flex items-center gap-2 ${passwordValidation.requirements.noCommon ? 'text-green-600' : 'text-red-500'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Not a common password
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {!passwordValidation.isStrong && password.length > 0 && (
+                <Alert className="border-orange-200 bg-orange-50">
+                  <AlertCircle className="h-4 w-4 text-orange-600" />
+                  <AlertDescription className="text-orange-700">
+                    Admin accounts require strong passwords. Please meet all security requirements above.
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 font-medium"
-                disabled={loading}
+                disabled={loading || (!passwordValidation.isStrong && password.length > 0)}
               >
                 <Shield className="h-4 w-4 mr-2" />
                 {loading ? 'Authenticating...' : 'Access Admin Dashboard'}
@@ -170,7 +251,7 @@ const AdminLogin = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-red-200">
             <p className="font-medium text-red-800 mb-2">⚠️ Authorized Access Only</p>
             <p>This portal is restricted to authorized bank personnel.</p>
-            <p className="mt-2">Demo: richard@gmail.com / 123456789</p>
+            <p className="mt-2">Demo: richard@gmail.com / AdminSecure2024!@#</p>
           </div>
         </div>
       </div>
