@@ -5,6 +5,7 @@ import { Send, ArrowLeftRight, Receipt, Menu } from "lucide-react";
 interface MobileBottomNavProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
+  onMenuClick?: () => void;
 }
 
 // Custom Home icon component to match the image
@@ -41,7 +42,7 @@ const TransferIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavProps) => {
+const MobileBottomNav = ({ activeSection, setActiveSection, onMenuClick }: MobileBottomNavProps) => {
   const navItems = [
     { id: "overview", icon: HomeIcon, label: "Accounts" },
     { id: "wire-transfer", icon: TransferIcon, label: "Transfer" },
@@ -52,8 +53,10 @@ const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavPro
 
   const handleNavClick = (item: any) => {
     if (item.id === "menu") {
-      // For now, navigate to profile section when Menu is clicked
-      setActiveSection("profile");
+      // Call the onMenuClick callback to open sidebar
+      if (onMenuClick) {
+        onMenuClick();
+      }
     } else {
       setActiveSection(item.id);
     }
@@ -71,10 +74,9 @@ const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavPro
               activeSection === item.id || 
               (item.id === "wire-transfer" && ["wire-transfer", "ach-transfer", "western-union"].includes(activeSection)) ||
               (item.id === "local-transfer" && activeSection === "local-transfer") ||
-              (item.id === "deposit" && activeSection === "deposit") ||
-              (item.id === "menu" && activeSection === "profile")
-                ? 'text-banking-navy bg-white/40 shadow-lg backdrop-blur-sm border border-white/30' 
-                : 'text-slate-700 hover:text-banking-navy hover:bg-white/20'
+              (item.id === "deposit" && activeSection === "deposit")
+                ? 'text-[#4169E1] bg-white/40 shadow-lg backdrop-blur-sm border border-white/30' 
+                : 'text-[#4169E1] hover:text-[#4169E1] hover:bg-white/20'
             }`}
             onClick={() => handleNavClick(item)}
           >

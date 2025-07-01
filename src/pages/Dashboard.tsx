@@ -70,6 +70,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleMenuClick = () => {
+    setSidebarOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
       <SidebarProvider>
@@ -116,7 +120,11 @@ const Dashboard = () => {
         </div>
 
         {/* Mobile Bottom Navigation */}
-        <MobileBottomNav activeSection={activeSection} setActiveSection={setActiveSection} />
+        <MobileBottomNav 
+          activeSection={activeSection} 
+          setActiveSection={setActiveSection} 
+          onMenuClick={handleMenuClick}
+        />
       </SidebarProvider>
     </div>
   );
