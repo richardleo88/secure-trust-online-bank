@@ -1,14 +1,17 @@
+
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { ArrowRight, Shield, Zap, Users } from "lucide-react";
+
 const HeroSection = () => {
-  const {
-    t
-  } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
   const handleGetStarted = () => {
     navigate("/auth");
   };
+
   const handleLearnMore = () => {
     const featuresSection = document.getElementById('features');
     if (featuresSection) {
@@ -17,7 +20,22 @@ const HeroSection = () => {
       });
     }
   };
-  return <section className="relative pt-24 pb-16 banking-gradient overflow-hidden">
+
+  const handleExploreServices = () => {
+    const servicesSection = document.getElementById('services');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleContactUs = () => {
+    navigate("/support");
+  };
+
+  return (
+    <section className="relative pt-24 pb-16 banking-gradient overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent"></div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -32,19 +50,83 @@ const HeroSection = () => {
             <p className="text-xl text-blue-100 mb-8 leading-relaxed max-w-3xl mx-auto">
               {t('hero.subtitle')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4" onClick={handleGetStarted}>
+            
+            {/* Primary CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Button 
+                size="lg" 
+                className="gold-gradient text-white hover:opacity-90 text-lg px-8 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105" 
+                onClick={handleGetStarted}
+              >
                 {t('hero.getStarted')}
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" onClick={handleLearnMore} className="border-white px-8 py-4 bg-orange-50 text-lg font-normal text-blue-400">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={handleLearnMore} 
+                className="border-2 border-white/80 px-8 py-4 bg-white/10 backdrop-blur-sm text-lg font-medium text-white hover:bg-white/20 hover:border-white transition-all duration-300"
+              >
                 {t('hero.learnMore')}
               </Button>
+            </div>
+
+            {/* Secondary Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <Button 
+                variant="ghost" 
+                onClick={handleExploreServices}
+                className="text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-200 flex items-center gap-2"
+              >
+                <Zap className="h-4 w-4" />
+                Explore Our Services
+              </Button>
+              
+              <div className="hidden sm:block w-px h-6 bg-blue-300/50"></div>
+              
+              <Button 
+                variant="ghost" 
+                onClick={handleContactUs}
+                className="text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-200 flex items-center gap-2"
+              >
+                <Users className="h-4 w-4" />
+                Contact Support
+              </Button>
+              
+              <div className="hidden sm:block w-px h-6 bg-blue-300/50"></div>
+              
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate("/business")}
+                className="text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-200 flex items-center gap-2"
+              >
+                <Shield className="h-4 w-4" />
+                Business Banking
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-blue-200 text-sm">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                <span>FDIC Insured</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                <span>24/7 Support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>1M+ Customers</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
-    </section>;
+    </section>
+  );
 };
+
 export default HeroSection;

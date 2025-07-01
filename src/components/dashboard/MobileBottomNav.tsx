@@ -62,6 +62,13 @@ const MobileBottomNav = ({ activeSection, setActiveSection, onMenuClick }: Mobil
     }
   };
 
+  const isActive = (itemId: string) => {
+    return activeSection === itemId || 
+           (itemId === "wire-transfer" && ["wire-transfer", "ach-transfer", "western-union"].includes(activeSection)) ||
+           (itemId === "local-transfer" && activeSection === "local-transfer") ||
+           (itemId === "deposit" && activeSection === "deposit");
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 backdrop-blur-md border-t border-sky-300/20 shadow-2xl md:hidden z-40 safe-area-pb">
       <div className="flex items-center justify-around py-4 px-2">
@@ -70,18 +77,24 @@ const MobileBottomNav = ({ activeSection, setActiveSection, onMenuClick }: Mobil
             key={item.id}
             variant="ghost"
             size="lg"
-            className={`flex flex-col items-center gap-2 h-auto py-3 px-3 min-w-0 flex-1 rounded-xl transition-all duration-300 ${
-              activeSection === item.id || 
-              (item.id === "wire-transfer" && ["wire-transfer", "ach-transfer", "western-union"].includes(activeSection)) ||
-              (item.id === "local-transfer" && activeSection === "local-transfer") ||
-              (item.id === "deposit" && activeSection === "deposit")
-                ? 'text-[#4169E1] bg-white/40 shadow-lg backdrop-blur-sm border border-white/30' 
-                : 'text-[#4169E1] hover:text-[#4169E1] hover:bg-white/20'
+            className={`flex flex-col items-center gap-2 h-auto py-4 px-4 min-w-0 flex-1 rounded-2xl transition-all duration-300 relative ${
+              isActive(item.id)
+                ? 'bg-white/90 shadow-xl backdrop-blur-lg border border-white/50 text-slate-700 scale-105' 
+                : 'text-slate-600 hover:text-slate-700 hover:bg-white/30 hover:scale-102'
             }`}
             onClick={() => handleNavClick(item)}
           >
-            <item.icon className="h-6 w-6 flex-shrink-0" />
-            <span className="text-sm font-medium leading-tight truncate text-center">{item.label}</span>
+            {/* Premium selection background effect */}
+            {isActive(item.id) && (
+              <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/20 rounded-2xl blur-sm"></div>
+            )}
+            
+            <div className="relative z-10 flex flex-col items-center gap-2">
+              <item.icon className={`h-6 w-6 flex-shrink-0 ${isActive(item.id) ? 'text-slate-700' : 'text-slate-600'}`} />
+              <span className={`text-xs font-semibold leading-tight truncate text-center ${isActive(item.id) ? 'text-slate-700' : 'text-slate-600'}`}>
+                {item.label}
+              </span>
+            </div>
           </Button>
         ))}
       </div>
