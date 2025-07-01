@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Auth from "./pages/Auth";
+import AdminLogin from "./pages/AdminLogin";
 import Personal from "./pages/Personal";
 import Business from "./pages/Business";
 import Investments from "./pages/Investments";
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/personal" element={<Personal />} />
               <Route path="/business" element={<Business />} />
               <Route path="/investments" element={<Investments />} />

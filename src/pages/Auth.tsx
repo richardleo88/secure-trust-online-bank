@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -46,18 +45,9 @@ const Auth = () => {
             </CardHeader>
 
             <CardContent>
-              <LoginToggleButtons 
-                isAdminLogin={isAdminLogin} 
-                onToggle={setIsAdminLogin} 
-              />
+              <UserAuthTabs />
 
-              {isAdminLogin ? (
-                <AdminLoginSection />
-              ) : (
-                <UserAuthTabs />
-              )}
-
-              <div className="mt-4 text-center">
+              <div className="mt-4 text-center space-y-2">
                 <Button 
                   variant="link" 
                   className="text-blue-600 hover:underline text-sm"
@@ -65,12 +55,19 @@ const Auth = () => {
                 >
                   {t('auth.backToHome')}
                 </Button>
+                <Button 
+                  variant="link" 
+                  className="text-red-600 hover:underline text-sm"
+                  onClick={() => navigate('/admin-login')}
+                >
+                  Admin Portal Access
+                </Button>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {isSignIn && !isAdminLogin && (
+        {isSignIn && (
           <div className="text-center mt-6">
             <Button
               variant="link"
