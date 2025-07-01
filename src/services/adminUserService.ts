@@ -56,7 +56,8 @@ export class AdminUserService {
       return data?.map(user => ({
         ...user,
         is_active: true,
-        last_login: new Date().toISOString()
+        last_login: new Date().toISOString(),
+        verification_status: (user.verification_status as 'pending' | 'approved' | 'rejected') || 'pending'
       })) || [];
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -73,7 +74,13 @@ export class AdminUserService {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      return {
+        ...data,
+        is_active: true,
+        last_login: new Date().toISOString(),
+        verification_status: (data.verification_status as 'pending' | 'approved' | 'rejected') || 'pending'
+      };
     } catch (error) {
       console.error('Error fetching user:', error);
       return null;
@@ -88,7 +95,8 @@ export class AdminUserService {
         password: 'TempPassword123!',
         user_metadata: {
           full_name: userData.full_name
-        }
+        },
+        email_confirm: true
       });
 
       if (authError) throw authError;
@@ -117,7 +125,13 @@ export class AdminUserService {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      return {
+        ...data,
+        is_active: true,
+        last_login: new Date().toISOString(),
+        verification_status: (data.verification_status as 'pending' | 'approved' | 'rejected') || 'pending'
+      };
     } catch (error) {
       console.error('Error updating user:', error);
       return null;
@@ -166,7 +180,7 @@ export class AdminUserService {
         .from('admin_users')
         .upsert({
           user_id: id,
-          admin_role: role,
+          admin_role: role as any,
           is_active: true
         });
 
@@ -226,7 +240,7 @@ export class AdminUserService {
     }
   }
 
-  // Placeholder methods for requests (would need support_tickets table integration)
+  // Request Management
   static async getAllRequests(): Promise<UserRequest[]> {
     try {
       const { data, error } = await supabase
@@ -243,7 +257,7 @@ export class AdminUserService {
         status: ticket.status as any,
         description: ticket.description,
         requested_by: ticket.user_id || '',
-        created_at: ticket.created_at
+        created_at: ticket.created_at || new Date().toISOString()
       })) || [];
     } catch (error) {
       console.error('Error fetching requests:', error);
@@ -297,7 +311,13 @@ export class AdminUserService {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      return data?.map(user => ({
+        ...user,
+        is_active: true,
+        last_login: new Date().toISOString(),
+        verification_status: (user.verification_status as 'pending' | 'approved' | 'rejected') || 'pending'
+      })) || [];
     } catch (error) {
       console.error('Error searching users:', error);
       return [];
@@ -322,7 +342,13 @@ export class AdminUserService {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      return data?.map(user => ({
+        ...user,
+        is_active: true,
+        last_login: new Date().toISOString(),
+        verification_status: (user.verification_status as 'pending' | 'approved' | 'rejected') || 'pending'
+      })) || [];
     } catch (error) {
       console.error('Error filtering users:', error);
       return [];
