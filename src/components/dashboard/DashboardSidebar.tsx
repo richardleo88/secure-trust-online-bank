@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Home, Send, CreditCard, History, Settings, User, MapPin, Banknote, Shield, Bell, ChevronDown, ChevronRight, RefreshCw, Smartphone, Eye } from "lucide-react";
+
 interface DashboardSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   activeSection: string;
   setActiveSection: (section: string) => void;
 }
+
 const DashboardSidebar = ({
   isOpen,
   onClose,
@@ -14,12 +16,14 @@ const DashboardSidebar = ({
   setActiveSection
 }: DashboardSidebarProps) => {
   const [transferMenuOpen, setTransferMenuOpen] = useState(false);
+
   const menuItems = [{
     id: "overview",
     icon: Home,
     label: "Dashboard",
     section: "overview"
   }];
+
   const transferItems = [{
     id: "wire-transfer",
     icon: Send,
@@ -41,11 +45,12 @@ const DashboardSidebar = ({
     label: "Western Union",
     section: "western-union"
   }];
+
   const otherItems = [{
     id: "atm-card",
     icon: CreditCard,
     label: "ATM Card",
-    section: "atm"
+    section: "atm-card"
   }, {
     id: "history",
     icon: History,
@@ -62,17 +67,23 @@ const DashboardSidebar = ({
     label: "Profile",
     section: "profile"
   }];
+
   const handleMenuClick = (item: any) => {
     if (item.section) {
       setActiveSection(item.section);
     }
   };
+
   const handleTransferClick = (item: any) => {
     setActiveSection(item.section);
   };
-  return <>
+
+  return (
+    <>
       {/* Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" onClick={onClose} />}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" onClick={onClose} />
+      )}
 
       {/* Sidebar */}
       <aside className={`
@@ -94,14 +105,25 @@ const DashboardSidebar = ({
 
         <nav className="p-4 space-y-2">
           {/* Dashboard */}
-          {menuItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} onClick={() => handleMenuClick(item)} className="w-full justify-start bg-inherit text-banking-navy text-sm font-semibold">
+          {menuItems.map(item => (
+            <Button
+              key={item.id}
+              variant={activeSection === item.section ? "default" : "ghost"}
+              onClick={() => handleMenuClick(item)}
+              className="w-full justify-start bg-inherit text-banking-navy text-sm font-semibold"
+            >
               <item.icon className="h-4 w-4 mr-2" />
               {item.label}
-            </Button>)}
+            </Button>
+          ))}
 
           {/* Transfer Section */}
           <div>
-            <Button variant="ghost" onClick={() => setTransferMenuOpen(!transferMenuOpen)} className="w-full justify-between text-banking-navy text-sm font-semibold">
+            <Button
+              variant="ghost"
+              onClick={() => setTransferMenuOpen(!transferMenuOpen)}
+              className="w-full justify-between text-banking-navy text-sm font-semibold"
+            >
               <div className="flex items-center">
                 <Send className="h-4 w-4 mr-2" />
                 Transfer
@@ -109,33 +131,60 @@ const DashboardSidebar = ({
               {transferMenuOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </Button>
             
-            {transferMenuOpen && <div className="ml-6 mt-2 space-y-1">
-                {transferItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} size="sm" className="w-full justify-start" onClick={() => handleTransferClick(item)}>
+            {transferMenuOpen && (
+              <div className="ml-6 mt-2 space-y-1">
+                {transferItems.map(item => (
+                  <Button
+                    key={item.id}
+                    variant={activeSection === item.section ? "default" : "ghost"}
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => handleTransferClick(item)}
+                  >
                     <item.icon className="h-3 w-3 mr-2" />
                     {item.label}
-                  </Button>)}
-              </div>}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Other Menu Items */}
-          {otherItems.map(item => <Button key={item.id} variant={activeSection === item.section ? "default" : "ghost"} onClick={() => handleMenuClick(item)} className="w-full justify-start text-banking-navy font-semibold text-sm rounded-sm">
+          {otherItems.map(item => (
+            <Button
+              key={item.id}
+              variant={activeSection === item.section ? "default" : "ghost"}
+              onClick={() => handleMenuClick(item)}
+              className="w-full justify-start text-banking-navy font-semibold text-sm rounded-sm"
+            >
               <item.icon className="h-4 w-4 mr-2" />
               {item.label}
-            </Button>)}
+            </Button>
+          ))}
 
           <div className="pt-4 border-t mt-4">
-            <Button variant={activeSection === "security" ? "default" : "ghost"} onClick={() => setActiveSection("security")} className="w-full justify-start text-banking-navy font-semibold text-sm">
+            <Button
+              variant={activeSection === "security" ? "default" : "ghost"}
+              onClick={() => setActiveSection("security")}
+              className="w-full justify-start text-banking-navy font-semibold text-sm"
+            >
               <Shield className="h-4 w-4 mr-2" />
               Security
             </Button>
             
-            <Button variant={activeSection === "notifications" ? "default" : "ghost"} onClick={() => setActiveSection("notifications")} className="w-full justify-start font-semibold text-banking-navy text-sm">
+            <Button
+              variant={activeSection === "notifications" ? "default" : "ghost"}
+              onClick={() => setActiveSection("notifications")}
+              className="w-full justify-start font-semibold text-banking-navy text-sm"
+            >
               <Bell className="h-4 w-4 mr-2" />
               Notifications
             </Button>
           </div>
         </nav>
       </aside>
-    </>;
+    </>
+  );
 };
+
 export default DashboardSidebar;

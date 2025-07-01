@@ -1,17 +1,36 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Upload, DollarSign, Receipt, CreditCard } from "lucide-react";
+import { Camera, Upload, DollarSign, Receipt, CreditCard, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const DepositSection = () => {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [frontImage, setFrontImage] = useState<File | null>(null);
+  const [backImage, setBackImage] = useState<File | null>(null);
   const { toast } = useToast();
+  const { user, logActivity } = useAuth();
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, side: 'front' | 'back') => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (side === 'front') {
+        setFrontImage(file);
+      } else {
+        setBackImage(file);
+      }
+      toast({
+        title: "Image Uploaded",
+        description: `${side === 'front' ? 'Front' : 'Back'} of check uploaded successfully`,
+      });
+    }
+  };
 
   const handleMobileDeposit = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -23,16 +42,101 @@ const DepositSection = () => {
       return;
     }
 
-    setLoading(true);
-    // Simulate deposit processing
-    setTimeout(() => {
-      setLoading(false);
+    if (!frontImage || !backImage) {
       toast({
-        title: "Deposit Initiated",
-        description: `Mobile deposit of $${amount} has been submitted for processing`,
+        title: "Missing Images",
+        description: "Please upload both front and back images of the check",
+        variant: "destructive",
       });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in to make a deposit",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Get current balance
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('balance')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      const depositAmount = parseFloat(amount);
+      const newBalance = (profile.balance || 0) + depositAmount;
+
+      // Update balance
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ balance: newBalance })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      // Create transaction record
+      const { error: transactionError } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: user.id,
+          transaction_type: 'deposit',
+          recipient_name: 'Check Deposit',
+          amount: depositAmount,
+          fee: 0,
+          status: 'completed',
+          reference_number: `DEP-${Date.now()}`,
+          description: 'Mobile check deposit',
+          metadata: {
+            deposit_type: 'mobile_check',
+            has_front_image: true,
+            has_back_image: true
+          }
+        });
+
+      if (transactionError) throw transactionError;
+
+      // Log the activity
+      await logActivity('check_deposit', 'transaction', user.id, {
+        amount: depositAmount,
+        old_balance: profile.balance,
+        new_balance: newBalance
+      });
+
+      toast({
+        title: "Deposit Successful",
+        description: `$${depositAmount.toFixed(2)} has been deposited to your account`,
+      });
+
+      // Reset form
       setAmount("");
-    }, 2000);
+      setFrontImage(null);
+      setBackImage(null);
+      
+      // Reset file inputs
+      const frontInput = document.getElementById('front-upload') as HTMLInputElement;
+      const backInput = document.getElementById('back-upload') as HTMLInputElement;
+      if (frontInput) frontInput.value = '';
+      if (backInput) backInput.value = '';
+
+    } catch (error: any) {
+      console.error('Deposit error:', error);
+      toast({
+        title: "Deposit Failed",
+        description: error.message || "Failed to process deposit",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleATMDeposit = () => {
@@ -87,17 +191,59 @@ const DepositSection = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600 mb-2">Front of Check</p>
-                  <Button variant="outline" size="sm">
-                    Upload Image
+                  {frontImage ? (
+                    <div className="space-y-2">
+                      <CheckCircle className="mx-auto h-8 w-8 text-green-500" />
+                      <p className="text-sm text-green-600">Front uploaded</p>
+                      <p className="text-xs text-gray-500">{frontImage.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-600 mb-2">Front of Check</p>
+                    </>
+                  )}
+                  <input
+                    id="front-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e, 'front')}
+                    className="hidden"
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => document.getElementById('front-upload')?.click()}
+                  >
+                    {frontImage ? 'Change Image' : 'Upload Image'}
                   </Button>
                 </div>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600 mb-2">Back of Check</p>
-                  <Button variant="outline" size="sm">
-                    Upload Image
+                  {backImage ? (
+                    <div className="space-y-2">
+                      <CheckCircle className="mx-auto h-8 w-8 text-green-500" />
+                      <p className="text-sm text-green-600">Back uploaded</p>
+                      <p className="text-xs text-gray-500">{backImage.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-600 mb-2">Back of Check</p>
+                    </>
+                  )}
+                  <input
+                    id="back-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e, 'back')}
+                    className="hidden"
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => document.getElementById('back-upload')?.click()}
+                  >
+                    {backImage ? 'Change Image' : 'Upload Image'}
                   </Button>
                 </div>
               </div>
@@ -113,9 +259,10 @@ const DepositSection = () => {
               <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded">
                 <p className="font-semibold mb-1">Important Notes:</p>
                 <ul className="space-y-1">
-                  <li>• Deposits are subject to verification and hold policies</li>
+                  <li>• Deposits are processed immediately and added to your balance</li>
                   <li>• Daily mobile deposit limit: $5,000</li>
-                  <li>• Funds typically available within 1-2 business days</li>
+                  <li>• Both front and back images are required</li>
+                  <li>• Keep the original check until funds are available</li>
                 </ul>
               </div>
             </CardContent>

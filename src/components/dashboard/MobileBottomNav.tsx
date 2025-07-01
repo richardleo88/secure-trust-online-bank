@@ -12,7 +12,7 @@ const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavPro
     { id: "overview", icon: Home, label: "Accounts" },
     { id: "wire-transfer", icon: Send, label: "Transfer" },
     { id: "local-transfer", icon: ArrowLeftRight, label: "Zelle®" },
-    { id: "atm", icon: Receipt, label: "Deposit" },
+    { id: "deposit", icon: Receipt, label: "Deposit" },
     { id: "menu", icon: Menu, label: "Menu" },
   ];
 
@@ -37,6 +37,7 @@ const MobileBottomNav = ({ activeSection, setActiveSection }: MobileBottomNavPro
               activeSection === item.id || 
               (item.id === "wire-transfer" && ["wire-transfer", "ach-transfer", "western-union"].includes(activeSection)) ||
               (item.id === "local-transfer" && activeSection === "local-transfer") ||
+              (item.id === "deposit" && activeSection === "deposit") ||
               (item.id === "menu" && activeSection === "profile")
                 ? 'text-banking-navy bg-blue-50' : 'text-gray-600'
             }`}

@@ -57,7 +57,9 @@ const Dashboard = () => {
         return <LocalTransfer />;
       case "western-union":
         return <WesternUnion />;
-      case "atm":
+      case "atm-card":
+        return <ATMCard />;
+      case "deposit":
         return <DepositSection />;
       case "profile":
         return <Profile />;

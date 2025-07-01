@@ -1,12 +1,49 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Lock, Unlock, Eye, EyeOff, Settings } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const ATMCard = () => {
   const [cardLocked, setCardLocked] = useState(false);
   const [showPin, setShowPin] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (data && !error) {
+        setUserProfile(data);
+      }
+    };
+
+    fetchUserProfile();
+  }, [user]);
+
+  // Generate last 4 digits from user ID or account number
+  const getCardLastFour = () => {
+    if (userProfile?.account_number) {
+      return userProfile.account_number.slice(-4);
+    }
+    return "5678";
+  };
+
+  const getCardholderName = () => {
+    if (userProfile?.full_name) {
+      return userProfile.full_name.toUpperCase();
+    }
+    return user?.user_metadata?.full_name?.toUpperCase() || "JOHN SMITH";
+  };
 
   return (
     <div className="space-y-6">
@@ -33,7 +70,7 @@ const ATMCard = () => {
             <div className="space-y-4">
               <div>
                 <p className="text-xs opacity-75">Card Number</p>
-                <p className="text-lg font-mono">**** **** **** 5678</p>
+                <p className="text-lg font-mono">**** **** **** {getCardLastFour()}</p>
               </div>
               <div className="flex justify-between">
                 <div>
@@ -47,7 +84,7 @@ const ATMCard = () => {
               </div>
               <div>
                 <p className="text-xs opacity-75">Cardholder Name</p>
-                <p className="font-semibold">JOHN SMITH</p>
+                <p className="font-semibold">{getCardholderName()}</p>
               </div>
             </div>
           </div>
@@ -84,6 +121,17 @@ const ATMCard = () => {
               </Button>
             </div>
           </div>
+
+          {userProfile && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">Account Details</h3>
+              <div className="space-y-1 text-sm">
+                <p><span className="font-medium">Account Number:</span> {userProfile.account_number}</p>
+                <p><span className="font-medium">Email:</span> {userProfile.email}</p>
+                <p><span className="font-medium">Phone:</span> {userProfile.phone || 'Not provided'}</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
