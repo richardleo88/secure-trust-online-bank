@@ -28,83 +28,126 @@ const NotificationIcon = () => {
 
   useEffect(() => {
     if (user) {
-      initializeNotifications();
+      fetchNotifications();
+      setupRealtimeSubscription();
     }
   }, [user]);
 
-  const initializeNotifications = async () => {
+  const fetchNotifications = async () => {
     if (!user) return;
 
     try {
-      // Get user profile information
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, email, account_number, created_at, balance')
-        .eq('id', user.id)
-        .single();
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
 
-      if (profile) {
-        // Check if this is a new user (created within last 24 hours)
-        const accountAge = new Date().getTime() - new Date(profile.created_at).getTime();
-        const isNewUser = accountAge < 24 * 60 * 60 * 1000;
-
-        const welcomeNotifications: Notification[] = [];
-
-        if (isNewUser) {
-          // Welcome notification for new users
-          welcomeNotifications.push({
-            id: `welcome-${Date.now()}`,
-            title: "🎉 Welcome to UnionTrust Capital!",
-            message: `Thank you ${profile.full_name} for opening your premium banking account! Your account ${profile.account_number} is now active with a balance of $${profile.balance?.toLocaleString() || '5,000'}.`,
-            time: "Just now",
-            type: "welcome",
-            isRead: false
-          });
-
-          // Account setup notification
-          welcomeNotifications.push({
-            id: `setup-${Date.now() + 1}`,
-            title: "Account Setup Complete",
-            message: "Your premium banking features are now activated. Enjoy secure transfers, premium support, and exclusive benefits.",
-            time: "1 minute ago",
-            type: "system",
-            isRead: false
-          });
-        }
-
-        // Add some sample activity notifications
-        const activityNotifications: Notification[] = [
-          {
-            id: `security-${Date.now() + 2}`,
-            title: "Security Update",
-            message: "Your account security has been enhanced with two-factor authentication.",
-            time: "2 hours ago",
-            type: "security",
-            isRead: false
-          }
-        ];
-
-        setNotifications([...welcomeNotifications, ...activityNotifications]);
+      if (error) {
+        console.error('Error fetching notifications:', error);
+        return;
       }
+
+      const formattedNotifications = data?.map(notification => ({
+        id: notification.id,
+        title: notification.title,
+        message: notification.message,
+        time: formatTime(notification.created_at),
+        type: notification.type as any,
+        isRead: notification.is_read
+      })) || [];
+
+      setNotifications(formattedNotifications);
     } catch (error) {
-      console.error('Error initializing notifications:', error);
+      console.error('Error fetching notifications:', error);
     }
+  };
+
+  const setupRealtimeSubscription = () => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          const newNotification = {
+            id: payload.new.id,
+            title: payload.new.title,
+            message: payload.new.message,
+            time: formatTime(payload.new.created_at),
+            type: payload.new.type,
+            isRead: payload.new.is_read
+          };
+          setNotifications(prev => [newNotification, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
+    return date.toLocaleDateString();
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, isRead: true } : n)
-    );
+  const markAsRead = async (id: string) => {
+    try {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', id);
+
+      setNotifications(prev => 
+        prev.map(n => n.id === id ? { ...n, isRead: true } : n)
+      );
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
   };
 
-  const deleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+  const deleteNotification = async (id: string) => {
+    try {
+      await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', id);
+
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+  const markAllAsRead = async () => {
+    try {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', user?.id);
+
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
   };
 
   const getTypeColor = (type: string) => {

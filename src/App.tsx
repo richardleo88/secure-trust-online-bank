@@ -10,7 +10,7 @@ import ActivityLogger from "@/components/dashboard/ActivityLogger";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import Login from "./pages/Login";
+import Auth from "./pages/Auth";
 import Personal from "./pages/Personal";
 import Business from "./pages/Business";
 import Investments from "./pages/Investments";
@@ -30,7 +30,8 @@ const App = () => (
           <ActivityLogger>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/login" element={<Auth />} />
               <Route path="/personal" element={<Personal />} />
               <Route path="/business" element={<Business />} />
               <Route path="/investments" element={<Investments />} />
@@ -47,7 +48,7 @@ const App = () => (
               <Route 
                 path="/admin" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAdmin={true}>
                     <AdminDashboard />
                   </ProtectedRoute>
                 } 

@@ -23,7 +23,7 @@ const Auth = () => {
     setIsSignIn(true);
     toast({
       title: t('auth.registrationComplete') || "Registration Complete! 🎉",
-      description: t('auth.registrationSuccessDesc') || "Your account has been created successfully. Check your email for account details, then sign in to continue.",
+      description: t('auth.registrationSuccessDesc') || "Your account has been created successfully. Please check your email to verify your account.",
     });
   };
 

@@ -5,21 +5,28 @@ import { useAuth } from '@/hooks/useAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  requireAdmin?: boolean;
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+  const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login', { 
-        state: { from: location },
-        replace: true 
-      });
+    if (!loading) {
+      if (!user) {
+        // Not authenticated, redirect to auth page
+        navigate('/auth', { 
+          state: { from: location },
+          replace: true 
+        });
+      } else if (requireAdmin && !isAdmin) {
+        // Authenticated but not admin, redirect to dashboard
+        navigate('/dashboard', { replace: true });
+      }
     }
-  }, [user, loading, navigate, location]);
+  }, [user, loading, isAdmin, requireAdmin, navigate, location]);
 
   if (loading) {
     return (
@@ -29,7 +36,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  if (!user) {
+  if (!user || (requireAdmin && !isAdmin)) {
     return null;
   }
 

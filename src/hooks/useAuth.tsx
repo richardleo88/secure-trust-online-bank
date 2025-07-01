@@ -1,29 +1,16 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-// Dummy user type
-interface DummyUser {
-  id: string;
-  email: string;
-  created_at?: string;
-  user_metadata?: {
-    full_name?: string;
-  };
-}
-
-// Dummy session type
-interface DummySession {
-  access_token: string;
-  user: DummyUser;
-}
-
 interface AuthContextType {
-  user: DummyUser | null;
-  session: DummySession | null;
+  user: User | null;
+  session: Session | null;
   loading: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   logActivity: (action: string, resourceType?: string, resourceId?: string, metadata?: any) => Promise<void>;
 }
@@ -42,48 +29,54 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Dummy users database
-const DUMMY_USERS = [
-  {
-    id: 'admin-123',
-    email: 'admin@bank.com',
-    password: 'admin123',
-    full_name: 'Admin User',
-    is_admin: true,
-    created_at: '2024-01-01T00:00:00Z'
-  },
-  {
-    id: 'user-456',
-    email: 'user@example.com',
-    password: 'user123',
-    full_name: 'John Doe',
-    is_admin: false,
-    created_at: '2024-01-01T00:00:00Z'
-  }
-];
-
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<DummyUser | null>(null);
-  const [session, setSession] = useState<DummySession | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
 
-  // Check for existing session on mount
   useEffect(() => {
-    const storedSession = localStorage.getItem('dummy_session');
-    if (storedSession) {
-      try {
-        const parsedSession = JSON.parse(storedSession);
-        setSession(parsedSession);
-        setUser(parsedSession.user);
-        setIsAdmin(parsedSession.user.email === 'admin@bank.com');
-      } catch (error) {
-        console.error('Error parsing stored session:', error);
-        localStorage.removeItem('dummy_session');
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Check admin status
+          setTimeout(async () => {
+            try {
+              const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('is_admin')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (!error && profile) {
+                setIsAdmin(profile.is_admin || false);
+              }
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+            }
+          }, 0);
+        } else {
+          setIsAdmin(false);
+        }
+        
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    );
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const logActivity = async (
@@ -92,48 +85,61 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     resourceId?: string, 
     metadata?: any
   ) => {
-    console.log('Activity logged:', { action, resourceType, resourceId, metadata, user: user?.email });
+    if (!user) return;
+
+    try {
+      await supabase.from('activity_logs').insert({
+        user_id: user.id,
+        action,
+        resource_type: resourceType,
+        resource_id: resourceId,
+        metadata,
+        ip_address: '127.0.0.1', // Would be actual IP in production
+        success: true
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      
-      // Find user in dummy database
-      const foundUser = DUMMY_USERS.find(u => u.email === email && u.password === password);
-      
-      if (!foundUser) {
-        const error = { message: 'Invalid login credentials' };
-        return { error };
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (!error && data.user) {
+        await logActivity('login');
       }
 
-      // Create dummy session
-      const dummyUser: DummyUser = {
-        id: foundUser.id,
-        email: foundUser.email,
-        created_at: foundUser.created_at,
-        user_metadata: {
-          full_name: foundUser.full_name
-        }
-      };
-
-      const dummySession: DummySession = {
-        access_token: `dummy-token-${Date.now()}`,
-        user: dummyUser
-      };
-
-      // Store session
-      localStorage.setItem('dummy_session', JSON.stringify(dummySession));
-      
-      setSession(dummySession);
-      setUser(dummyUser);
-      setIsAdmin(foundUser.is_admin);
-
-      await logActivity('login');
-
-      return { error: null };
+      return { error };
     } catch (error: any) {
       console.error('Sign in error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signUp = async (email: string, password: string, fullName: string) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+
+      return { error };
+    } catch (error: any) {
+      console.error('Sign up error:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -143,17 +149,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signOut = async () => {
     try {
       await logActivity('logout');
+      const { error } = await supabase.auth.signOut();
       
-      // Clear session
-      localStorage.removeItem('dummy_session');
-      setUser(null);
-      setSession(null);
-      setIsAdmin(false);
-      
-      toast({
-        title: "Signed Out",
-        description: "You have been successfully signed out.",
-      });
+      if (!error) {
+        toast({
+          title: "Signed Out",
+          description: "You have been successfully signed out.",
+        });
+      }
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -165,6 +168,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loading,
     isAdmin,
     signIn,
+    signUp,
     signOut,
     logActivity
   };
