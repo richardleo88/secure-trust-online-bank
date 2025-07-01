@@ -11,7 +11,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Notification {
   id: string;
@@ -28,73 +27,44 @@ const NotificationIcon = () => {
 
   useEffect(() => {
     if (user) {
-      fetchNotifications();
-      setupRealtimeSubscription();
+      // Using mock data since there's no notifications table
+      const mockNotifications: Notification[] = [
+        {
+          id: '1',
+          title: 'Welcome to Union Trust Bank',
+          message: 'Your account has been successfully created. Welcome to our banking family!',
+          time: formatTime(new Date().toISOString()),
+          type: 'welcome',
+          isRead: false
+        },
+        {
+          id: '2',
+          title: 'Security Alert',
+          message: 'New login detected from your device. If this wasn\'t you, please contact support.',
+          time: formatTime(new Date(Date.now() - 3600000).toISOString()),
+          type: 'security',
+          isRead: false
+        },
+        {
+          id: '3',
+          title: 'Transaction Completed',
+          message: 'Your wire transfer of $1,500 has been processed successfully.',
+          time: formatTime(new Date(Date.now() - 7200000).toISOString()),
+          type: 'transaction',
+          isRead: true
+        },
+        {
+          id: '4',
+          title: 'System Maintenance',
+          message: 'Scheduled maintenance will occur on Sunday from 2:00 AM to 4:00 AM EST.',
+          time: formatTime(new Date(Date.now() - 86400000).toISOString()),
+          type: 'system',
+          isRead: true
+        }
+      ];
+      setNotifications(mockNotifications);
     }
   }, [user]);
-
-  const fetchNotifications = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) {
-        console.error('Error fetching notifications:', error);
-        return;
-      }
-
-      const formattedNotifications = data?.map(notification => ({
-        id: notification.id,
-        title: notification.title,
-        message: notification.message,
-        time: formatTime(notification.created_at),
-        type: notification.type as any,
-        isRead: notification.is_read
-      })) || [];
-
-      setNotifications(formattedNotifications);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
-  };
-
-  const setupRealtimeSubscription = () => {
-    if (!user) return;
-
-    const channel = supabase
-      .channel('notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`
-        },
-        (payload) => {
-          const newNotification = {
-            id: payload.new.id,
-            title: payload.new.title,
-            message: payload.new.message,
-            time: formatTime(payload.new.created_at),
-            type: payload.new.type,
-            isRead: payload.new.is_read
-          };
-          setNotifications(prev => [newNotification, ...prev]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -109,45 +79,18 @@ const NotificationIcon = () => {
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const markAsRead = async (id: string) => {
-    try {
-      await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', id);
-
-      setNotifications(prev => 
-        prev.map(n => n.id === id ? { ...n, isRead: true } : n)
-      );
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, isRead: true } : n)
+    );
   };
 
-  const deleteNotification = async (id: string) => {
-    try {
-      await supabase
-        .from('notifications')
-        .delete()
-        .eq('id', id);
-
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    } catch (error) {
-      console.error('Error deleting notification:', error);
-    }
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
-  const markAllAsRead = async () => {
-    try {
-      await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', user?.id);
-
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-    } catch (error) {
-      console.error('Error marking all as read:', error);
-    }
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
   };
 
   const getTypeColor = (type: string) => {

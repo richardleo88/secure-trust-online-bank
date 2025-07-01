@@ -342,6 +342,30 @@ export type Database = {
         }
         Relationships: []
       }
+      tasks: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          status: string | null
+          tittle: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          tittle?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          tittle?: string | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
