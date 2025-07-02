@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useToast } from "@/hooks/use-toast";
 import { Globe, Plus, Edit, Trash2, Eye } from "lucide-react";
 
@@ -38,13 +38,28 @@ const WebsiteCMS = ({ adminRole }: WebsiteCMSProps) => {
 
   const fetchContent = async () => {
     try {
-      const { data, error } = await supabase
-        .from('website_content')
-        .select('*')
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      setContent(data || []);
+      // Mock website content data
+      const mockContent = [
+        {
+          id: '1',
+          content_type: 'banner',
+          title: 'Welcome Banner',
+          content: { text: 'Welcome to UnionTrust', image: '/banner.jpg' },
+          status: 'published',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          content_type: 'announcement',
+          title: 'System Maintenance',
+          content: { text: 'Scheduled maintenance tonight' },
+          status: 'draft',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ];
+      setContent(mockContent);
     } catch (error: any) {
       console.error('Error fetching website content:', error);
       toast({
@@ -63,15 +78,16 @@ const WebsiteCMS = ({ adminRole }: WebsiteCMSProps) => {
 
   const createContent = async () => {
     try {
-      const { error } = await supabase
-        .from('website_content')
-        .insert({
-          ...formData,
-          content: JSON.parse(formData.content || '{}'),
-          author_id: (await supabase.auth.getUser()).data.user?.id
-        });
+      // Mock content creation
+      const newContent = {
+        id: Date.now().toString(),
+        ...formData,
+        content: JSON.parse(formData.content || '{}'),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      setContent(prev => [newContent, ...prev]);
 
       toast({
         title: "Success",
@@ -80,7 +96,6 @@ const WebsiteCMS = ({ adminRole }: WebsiteCMSProps) => {
 
       setShowCreateForm(false);
       setFormData({ content_type: 'banner', title: '', content: '', status: 'draft' });
-      fetchContent();
     } catch (error: any) {
       console.error('Error creating content:', error);
       toast({
@@ -93,22 +108,17 @@ const WebsiteCMS = ({ adminRole }: WebsiteCMSProps) => {
 
   const updateContentStatus = async (contentId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('website_content')
-        .update({ 
-          status: newStatus,
-          published_at: newStatus === 'published' ? new Date().toISOString() : null
-        })
-        .eq('id', contentId);
-
-      if (error) throw error;
+      // Mock update - update local state
+      setContent(prev => prev.map(item => 
+        item.id === contentId 
+          ? { ...item, status: newStatus, updated_at: new Date().toISOString() }
+          : item
+      ));
 
       toast({
         title: "Success",
         description: "Content status updated successfully",
       });
-
-      fetchContent();
     } catch (error: any) {
       console.error('Error updating content status:', error);
       toast({

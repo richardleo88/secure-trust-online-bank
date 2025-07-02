@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Upload, DollarSign, Receipt, CreditCard, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 
 const DepositSection = () => {
   const [amount, setAmount] = useState("");
@@ -63,52 +63,29 @@ const DepositSection = () => {
     setLoading(true);
 
     try {
-      // Get current balance
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('balance')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
+      // Get current balance and create transaction using mock service
       const depositAmount = parseFloat(amount);
-      const newBalance = (profile.balance || 0) + depositAmount;
+      
+      const { data: transaction, error: transactionError } = await mockDataService.createTransaction({
+        user_id: user.id,
+        transaction_type: 'deposit',
+        recipient_name: 'Check Deposit',
+        amount: depositAmount,
+        fee: 0,
+        status: 'completed',
+        description: 'Mobile check deposit',
+        metadata: {
+          deposit_type: 'mobile_check',
+          has_front_image: true,
+          has_back_image: true
+        }
+      });
 
-      // Update balance
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ balance: newBalance })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
-
-      // Create transaction record
-      const { error: transactionError } = await supabase
-        .from('transactions')
-        .insert({
-          user_id: user.id,
-          transaction_type: 'deposit',
-          recipient_name: 'Check Deposit',
-          amount: depositAmount,
-          fee: 0,
-          status: 'completed',
-          reference_number: `DEP-${Date.now()}`,
-          description: 'Mobile check deposit',
-          metadata: {
-            deposit_type: 'mobile_check',
-            has_front_image: true,
-            has_back_image: true
-          }
-        });
-
-      if (transactionError) throw transactionError;
+      if (transactionError) throw new Error(transactionError);
 
       // Log the activity
-      await logActivity('check_deposit', 'transaction', user.id, {
-        amount: depositAmount,
-        old_balance: profile.balance,
-        new_balance: newBalance
+      await logActivity('check_deposit', 'transaction', transaction.id, {
+        amount: depositAmount
       });
 
       toast({

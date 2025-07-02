@@ -34,7 +34,7 @@ const AdminHeader = ({ onSidebarToggle, adminRole }: AdminHeaderProps) => {
       <div className="flex items-center gap-4">
         <div className="text-right">
           <p className="text-sm font-medium text-gray-900">
-            {user?.user_metadata?.full_name || user?.email}
+            {user?.full_name || user?.user_metadata?.full_name || user?.email}
           </p>
           <p className="text-xs text-blue-600 font-medium">
             {adminRole?.replace('_', ' ').toUpperCase()}

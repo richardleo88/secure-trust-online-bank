@@ -9,6 +9,7 @@ interface AdminUser {
   phone?: string;
   verification_status: string;
   created_at: string;
+  admin_role: string;
 }
 
 interface UserRequest {
@@ -35,7 +36,8 @@ class MockAdminService {
       is_active: true,
       phone: '+1-555-0123',
       verification_status: 'verified',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      admin_role: 'super_admin'
     },
     {
       id: '2',
@@ -47,7 +49,8 @@ class MockAdminService {
       is_active: true,
       phone: '+1-555-0456',
       verification_status: 'pending',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      admin_role: 'user'
     }
   ];
 
@@ -81,7 +84,8 @@ class MockAdminService {
       is_active: userData.is_active || true,
       phone: userData.phone || '',
       verification_status: userData.verification_status || 'pending',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      admin_role: userData.admin_role || 'user'
     };
     
     this.adminUsers.push(newUser);

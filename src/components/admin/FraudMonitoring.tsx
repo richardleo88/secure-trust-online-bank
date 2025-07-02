@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle, Shield, Eye, CheckCircle } from "lucide-react";
 
@@ -31,32 +31,33 @@ const FraudMonitoring = ({ adminRole }: FraudMonitoringProps) => {
 
   const fetchFraudAlerts = async () => {
     try {
-      // First get fraud alerts
-      const { data: alertData, error: alertError } = await supabase
-        .from('fraud_alerts')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Mock fraud alerts data
+      const mockAlerts = [
+        {
+          id: '1',
+          user_id: '1',
+          alert_type: 'suspicious_login',
+          severity: 'high',
+          description: 'Multiple failed login attempts from unknown IP',
+          status: 'active',
+          created_at: new Date().toISOString(),
+          user_email: 'user1@example.com',
+          user_name: 'John Doe'
+        },
+        {
+          id: '2',
+          user_id: '2',
+          alert_type: 'large_transaction',
+          severity: 'medium',
+          description: 'Transaction amount exceeds daily limit',
+          status: 'investigated',
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          user_email: 'user2@example.com',
+          user_name: 'Jane Smith'
+        }
+      ];
 
-      if (alertError) throw alertError;
-
-      // Then get user profiles
-      const { data: profiles, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name');
-
-      if (profileError) throw profileError;
-
-      // Combine the data
-      const alertsWithUserInfo = alertData?.map(alert => {
-        const userProfile = profiles?.find(profile => profile.id === alert.user_id);
-        return {
-          ...alert,
-          user_email: userProfile?.email,
-          user_name: userProfile?.full_name
-        };
-      }) || [];
-
-      setAlerts(alertsWithUserInfo);
+      setAlerts(mockAlerts);
     } catch (error: any) {
       console.error('Error fetching fraud alerts:', error);
       toast({
@@ -105,22 +106,17 @@ const FraudMonitoring = ({ adminRole }: FraudMonitoringProps) => {
 
   const updateAlertStatus = async (alertId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('fraud_alerts')
-        .update({ 
-          status: newStatus,
-          investigated_at: new Date().toISOString()
-        })
-        .eq('id', alertId);
-
-      if (error) throw error;
+      // Mock update - update local state
+      setAlerts(prev => prev.map(alert => 
+        alert.id === alertId 
+          ? { ...alert, status: newStatus }
+          : alert
+      ));
 
       toast({
         title: "Success",
         description: "Alert status updated successfully",
       });
-
-      fetchFraudAlerts();
     } catch (error: any) {
       console.error('Error updating alert status:', error);
       toast({

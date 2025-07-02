@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { User, Mail, Phone, MapPin, Briefcase, Shield, LogOut, Calendar, CreditCard, FileText, Camera, Edit, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -19,11 +19,7 @@ const Profile = () => {
       if (!user) return;
       
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
+        const { data, error } = await mockDataService.getProfile(user.id);
 
         if (data) {
           setUserProfile(data);

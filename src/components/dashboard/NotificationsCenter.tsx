@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, AlertTriangle, CheckCircle, Info, DollarSign, Shield, Trash2, Settings, PartyPopper, UserCheck, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 
 interface NotificationItem {
   id: string;
@@ -37,11 +37,7 @@ const NotificationsCenter = () => {
 
     try {
       // Get user profile information
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, email, account_number, created_at, balance')
-        .eq('id', user.id)
-        .single();
+      const { data: profile } = await mockDataService.getProfile(user.id);
 
       if (profile) {
         // Check if this is a new user (created within last 24 hours)

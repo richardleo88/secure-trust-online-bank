@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useToast } from "@/hooks/use-toast";
 import { HeadphonesIcon, Clock, CheckCircle, AlertCircle } from "lucide-react";
 
@@ -29,13 +29,28 @@ const SupportTickets = ({ adminRole }: SupportTicketsProps) => {
 
   const fetchTickets = async () => {
     try {
-      const { data, error } = await supabase
-        .from('support_tickets')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTickets(data || []);
+      // Mock support tickets data
+      const mockTickets = [
+        {
+          id: '1',
+          title: 'Login Issues',
+          description: 'Cannot access account after password reset',
+          status: 'open',
+          priority: 'high',
+          created_at: new Date().toISOString(),
+          user_id: '1'
+        },
+        {
+          id: '2',
+          title: 'Transfer Delay',
+          description: 'Wire transfer not processed after 2 days',
+          status: 'in_progress',
+          priority: 'urgent',
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          user_id: '2'
+        }
+      ];
+      setTickets(mockTickets);
     } catch (error: any) {
       console.error('Error fetching support tickets:', error);
       toast({
@@ -84,22 +99,17 @@ const SupportTickets = ({ adminRole }: SupportTicketsProps) => {
 
   const updateTicketStatus = async (ticketId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('support_tickets')
-        .update({ 
-          status: newStatus,
-          resolved_at: newStatus === 'resolved' ? new Date().toISOString() : null
-        })
-        .eq('id', ticketId);
-
-      if (error) throw error;
+      // Mock update - update local state
+      setTickets(prev => prev.map(ticket => 
+        ticket.id === ticketId 
+          ? { ...ticket, status: newStatus }
+          : ticket
+      ));
 
       toast({
         title: "Success",
         description: "Ticket status updated successfully",
       });
-
-      fetchTickets();
     } catch (error: any) {
       console.error('Error updating ticket status:', error);
       toast({

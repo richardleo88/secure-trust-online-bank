@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useToast } from "@/hooks/use-toast";
 import { FileCheck, Clock, CheckCircle, XCircle } from "lucide-react";
 
@@ -29,32 +29,29 @@ const KYCVerification = ({ adminRole }: KYCVerificationProps) => {
 
   const fetchVerifications = async () => {
     try {
-      // First get KYC verifications
-      const { data: kycData, error: kycError } = await supabase
-        .from('kyc_verifications')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Mock KYC verifications data
+      const mockVerifications = [
+        {
+          id: '1',
+          user_id: '1',
+          document_type: 'passport',
+          verification_status: 'pending',
+          created_at: new Date().toISOString(),
+          user_email: 'user1@example.com',
+          user_name: 'John Doe'
+        },
+        {
+          id: '2',
+          user_id: '2',
+          document_type: 'drivers_license',
+          verification_status: 'approved',
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          user_email: 'user2@example.com',
+          user_name: 'Jane Smith'
+        }
+      ];
 
-      if (kycError) throw kycError;
-
-      // Then get user profiles
-      const { data: profiles, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name');
-
-      if (profileError) throw profileError;
-
-      // Combine the data
-      const verificationsWithUserInfo = kycData?.map(verification => {
-        const userProfile = profiles?.find(profile => profile.id === verification.user_id);
-        return {
-          ...verification,
-          user_email: userProfile?.email,
-          user_name: userProfile?.full_name
-        };
-      }) || [];
-
-      setVerifications(verificationsWithUserInfo);
+      setVerifications(mockVerifications);
     } catch (error: any) {
       console.error('Error fetching KYC verifications:', error);
       toast({
@@ -88,22 +85,17 @@ const KYCVerification = ({ adminRole }: KYCVerificationProps) => {
 
   const updateVerificationStatus = async (verificationId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('kyc_verifications')
-        .update({ 
-          verification_status: newStatus,
-          reviewed_at: new Date().toISOString()
-        })
-        .eq('id', verificationId);
-
-      if (error) throw error;
+      // Mock update - update local state
+      setVerifications(prev => prev.map(verification => 
+        verification.id === verificationId 
+          ? { ...verification, verification_status: newStatus }
+          : verification
+      ));
 
       toast({
         title: "Success",
         description: "KYC verification status updated successfully",
       });
-
-      fetchVerifications();
     } catch (error: any) {
       console.error('Error updating verification status:', error);
       toast({

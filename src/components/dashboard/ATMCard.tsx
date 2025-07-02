@@ -16,12 +16,7 @@ const ATMCard = () => {
     const fetchUserProfile = async () => {
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
+      const { data, error } = await mockDataService.getProfile(user.id);
       if (data && !error) {
         setUserProfile(data);
       }
@@ -42,7 +37,7 @@ const ATMCard = () => {
     if (userProfile?.full_name) {
       return userProfile.full_name.toUpperCase();
     }
-    return user?.user_metadata?.full_name?.toUpperCase() || "JOHN SMITH";
+    return user?.full_name?.toUpperCase() || user?.user_metadata?.full_name?.toUpperCase() || "JOHN SMITH";
   };
 
   return (

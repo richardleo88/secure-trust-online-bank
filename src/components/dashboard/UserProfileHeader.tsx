@@ -21,7 +21,7 @@ const UserProfileHeader = () => {
     if (user) {
       const dummyProfile = {
         id: user.id,
-        full_name: user.user_metadata?.full_name || 'User',
+        full_name: user.full_name || user.user_metadata?.full_name || 'User',
         email: user.email,
         phone: '+1 (555) 123-4567',
         address: {
