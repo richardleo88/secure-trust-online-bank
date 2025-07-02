@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useToast } from "@/hooks/use-toast";
 import { Search, Activity, AlertCircle, CheckCircle } from "lucide-react";
 
@@ -33,31 +33,21 @@ const TransactionLogs = ({ adminRole }: TransactionLogsProps) => {
 
   const fetchTransactions = async () => {
     try {
-      // First get transactions
-      const { data: transactionData, error: transactionError } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100);
+      // Get all transactions
+      const { data: transactionData } = await mockDataService.getAllTransactions();
 
-      if (transactionError) throw transactionError;
-
-      // Then get user profiles
-      const { data: profiles, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name');
-
-      if (profileError) throw profileError;
+      // Get all profiles
+      const { data: profiles } = await mockDataService.getAllProfiles();
 
       // Combine the data
-      const transactionsWithUserInfo = transactionData?.map(transaction => {
-        const userProfile = profiles?.find(profile => profile.id === transaction.user_id);
+      const transactionsWithUserInfo = transactionData.map(transaction => {
+        const userProfile = profiles.find(profile => profile.id === transaction.user_id);
         return {
           ...transaction,
           user_email: userProfile?.email,
           user_name: userProfile?.full_name
         };
-      }) || [];
+      });
 
       setTransactions(transactionsWithUserInfo);
     } catch (error: any) {

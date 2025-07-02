@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Activity, DollarSign, AlertTriangle } from "lucide-react";
 
@@ -19,45 +19,33 @@ const Analytics = () => {
 
   const fetchAnalytics = async () => {
     try {
-      // Get total users
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
+      // Get all profiles
+      const { data: profiles } = await mockDataService.getAllProfiles();
+      const totalUsers = profiles.length;
 
-      // Get total transactions
-      const { data: transactions, count: totalTransactions } = await supabase
-        .from('transactions')
-        .select('amount', { count: 'exact' });
+      // Get all transactions
+      const { data: transactions } = await mockDataService.getAllTransactions();
+      const totalTransactions = transactions.length;
 
       // Calculate total transaction amount
-      const totalAmount = transactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      const totalAmount = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-      // Get active fraud alerts
-      const { count: activeAlerts } = await supabase
-        .from('fraud_alerts')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active');
+      // Mock active alerts
+      const activeAlerts = 2;
 
-      // Get new users today
-      const today = new Date().toISOString().split('T')[0];
-      const { count: newUsersToday } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', today);
+      // Get new users today (mock)
+      const newUsersToday = 1;
 
-      // Get transactions today
-      const { count: transactionsToday } = await supabase
-        .from('transactions')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', today);
+      // Get transactions today (mock)
+      const transactionsToday = 3;
 
       setStats({
-        totalUsers: totalUsers || 0,
-        totalTransactions: totalTransactions || 0,
+        totalUsers,
+        totalTransactions,
         totalAmount,
-        activeAlerts: activeAlerts || 0,
-        newUsersToday: newUsersToday || 0,
-        transactionsToday: transactionsToday || 0
+        activeAlerts,
+        newUsersToday,
+        transactionsToday
       });
     } catch (error: any) {
       console.error('Error fetching analytics:', error);

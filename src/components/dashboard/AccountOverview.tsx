@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, TrendingUp, TrendingDown, Plus, CreditCard, PiggyBank, Wallet } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 import { useTransactions } from "@/hooks/useTransactions";
 const AccountOverview = () => {
   const [balancesVisible, setBalancesVisible] = useState(true);
@@ -20,7 +20,7 @@ const AccountOverview = () => {
       const {
         data,
         error
-      } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      } = await mockDataService.getProfile(user.id);
       if (data) {
         setUserProfile(data);
       }

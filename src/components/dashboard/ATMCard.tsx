@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CreditCard, Lock, Unlock, Eye, EyeOff, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { mockDataService } from "@/services/mockDataService";
 
 const ATMCard = () => {
   const [cardLocked, setCardLocked] = useState(false);
