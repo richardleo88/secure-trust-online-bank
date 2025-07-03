@@ -81,10 +81,6 @@ const AdminLogin = () => {
     }
   };
 
-  const fillAdminCredentials = () => {
-    setEmail('richard@gmail.com');
-    setPassword('AdminSecure2024!@#');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center p-4">
@@ -108,17 +104,6 @@ const AdminLogin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="bg-red-50 p-4 rounded-lg text-center mb-6 border border-red-200">
-              <p className="text-sm text-red-700 mb-2 font-medium">Demo Admin Account</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fillAdminCredentials}
-                className="text-red-600 border-red-300 hover:bg-red-100"
-              >
-                Fill Admin Credentials
-              </Button>
-            </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -251,7 +236,6 @@ const AdminLogin = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-red-200">
             <p className="font-medium text-red-800 mb-2">⚠️ Authorized Access Only</p>
             <p>This portal is restricted to authorized bank personnel.</p>
-            <p className="mt-2">Demo: richard@gmail.com / AdminSecure2024!@#</p>
           </div>
         </div>
       </div>
