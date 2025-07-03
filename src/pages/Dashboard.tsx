@@ -7,6 +7,7 @@ import AccountOverview from "@/components/dashboard/AccountOverview";
 import ActionsPanel from "@/components/dashboard/ActionsPanel";
 import SecurityPanel from "@/components/dashboard/SecurityPanel";
 import NotificationsCenter from "@/components/dashboard/NotificationsCenter";
+import Settings from "@/components/dashboard/Settings";
 import MobileBottomNav from "@/components/dashboard/MobileBottomNav";
 import WireTransfer from "@/components/dashboard/WireTransfer";
 import ACHTransfer from "@/components/dashboard/ACHTransfer";
@@ -29,12 +30,20 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logActivity } = useAuth();
 
-  // Log dashboard access
+  // Log dashboard access and setup navigation listener
   useEffect(() => {
     if (user) {
       logActivity('dashboard_access', 'page', 'dashboard');
       console.log('User successfully accessed REAL banking dashboard with full features');
     }
+
+    // Listen for custom navigation events
+    const handleNavigation = (e: CustomEvent) => {
+      setActiveSection(e.detail);
+    };
+
+    window.addEventListener('navigateToSection', handleNavigation as EventListener);
+    return () => window.removeEventListener('navigateToSection', handleNavigation as EventListener);
   }, [user, logActivity]);
 
   const renderContent = () => {
@@ -65,6 +74,8 @@ const Dashboard = () => {
         return <Profile />;
       case "history":
         return <TransactionHistory />;
+      case "settings":
+        return <Settings />;
       default:
         return <AccountOverview />;
     }

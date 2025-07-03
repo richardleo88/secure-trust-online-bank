@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Banknote, Users } from "lucide-react";
 import TransferPinModal from "./TransferPinModal";
 import TransferSuccessModal from "./TransferSuccessModal";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const WesternUnion = () => {
   const [amount, setAmount] = useState("");
@@ -17,6 +18,7 @@ const WesternUnion = () => {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transferData, setTransferData] = useState<any>({});
+  const { createTransaction } = useTransactions();
 
   const countries = [
     "Mexico", "Philippines", "India", "China", "Guatemala", "El Salvador",
@@ -39,9 +41,24 @@ const WesternUnion = () => {
     setShowPinModal(true);
   };
 
-  const handlePinSuccess = () => {
-    setShowPinModal(false);
-    setShowSuccessModal(true);
+  const handlePinSuccess = async () => {
+    const result = await createTransaction({
+      transaction_type: 'western_union',
+      recipient_name: transferData.recipientName,
+      amount: parseFloat(transferData.amount),
+      fee: Math.max(4.99, parseFloat(transferData.amount) * 0.02),
+      description: `Western Union transfer to ${transferData.recipientName} in ${transferData.recipientCountry}`,
+      metadata: { 
+        recipientCountry: transferData.recipientCountry,
+        recipientCity: transferData.recipientCity,
+        transferPurpose: transferData.transferPurpose
+      }
+    });
+
+    if (!result.error) {
+      setShowPinModal(false);
+      setShowSuccessModal(true);
+    }
   };
 
   return (

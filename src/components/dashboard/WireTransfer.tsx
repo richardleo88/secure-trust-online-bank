@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Globe, DollarSign, ArrowRight, ArrowLeft } from "lucide-react";
 import TransferPinModal from "./TransferPinModal";
 import TransferSuccessModal from "./TransferSuccessModal";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const WireTransfer = () => {
   const [step, setStep] = useState(1);
@@ -23,6 +24,7 @@ const WireTransfer = () => {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transferData, setTransferData] = useState<any>({});
+  const { createTransaction } = useTransactions();
 
   const countries = [
     "United Kingdom", "Canada", "Germany", "France", "Japan", "Australia", 
@@ -95,9 +97,26 @@ const WireTransfer = () => {
     setShowPinModal(true);
   };
 
-  const handlePinSuccess = () => {
-    setShowPinModal(false);
-    setShowSuccessModal(true);
+  const handlePinSuccess = async () => {
+    const result = await createTransaction({
+      transaction_type: 'wire_transfer',
+      recipient_name: transferData.accountName || 'International Recipient',
+      recipient_account: transferData.accountNumber,
+      amount: parseFloat(transferData.amount),
+      fee: 25.00,
+      description: `Wire transfer to ${transferData.bankName}, ${transferData.country}`,
+      metadata: { 
+        bankName: transferData.bankName, 
+        country: transferData.country,
+        swiftCode: transferData.swiftCode,
+        routingNumber: transferData.routingNumber 
+      }
+    });
+
+    if (!result.error) {
+      setShowPinModal(false);
+      setShowSuccessModal(true);
+    }
   };
 
   return (

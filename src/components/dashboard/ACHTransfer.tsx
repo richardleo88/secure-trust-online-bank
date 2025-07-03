@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Building, ArrowRight, ArrowLeft, RefreshCw } from "lucide-react";
 import TransferPinModal from "./TransferPinModal";
 import TransferSuccessModal from "./TransferSuccessModal";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const ACHTransfer = () => {
   const [step, setStep] = useState(1);
@@ -22,6 +23,7 @@ const ACHTransfer = () => {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transferData, setTransferData] = useState<any>({});
+  const { createTransaction } = useTransactions();
 
   const usaBanks = [
     "JPMorgan Chase Bank", "Bank of America", "Wells Fargo Bank", "Citibank",
@@ -60,9 +62,24 @@ const ACHTransfer = () => {
     setShowPinModal(true);
   };
 
-  const handlePinSuccess = () => {
-    setShowPinModal(false);
-    setShowSuccessModal(true);
+  const handlePinSuccess = async () => {
+    const result = await createTransaction({
+      transaction_type: 'ach_transfer',
+      recipient_name: transferData.recipientName,
+      recipient_account: transferData.accountNumber,
+      amount: parseFloat(transferData.amount),
+      fee: 5.00,
+      description: `ACH transfer to ${transferData.recipientName}`,
+      metadata: { 
+        routingNumber: transferData.routingNumber,
+        transferType: transferData.transferType 
+      }
+    });
+
+    if (!result.error) {
+      setShowPinModal(false);
+      setShowSuccessModal(true);
+    }
   };
 
   return (

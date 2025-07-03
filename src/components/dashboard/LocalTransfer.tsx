@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Smartphone, ArrowRight, ArrowLeft } from "lucide-react";
 import TransferPinModal from "./TransferPinModal";
 import TransferSuccessModal from "./TransferSuccessModal";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const LocalTransfer = () => {
   const [step, setStep] = useState(1);
@@ -21,6 +22,7 @@ const LocalTransfer = () => {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transferData, setTransferData] = useState<any>({});
+  const { createTransaction } = useTransactions();
 
   const usaBanks = [
     "JPMorgan Chase Bank", "Bank of America", "Wells Fargo Bank", "Citibank",
@@ -57,9 +59,21 @@ const LocalTransfer = () => {
     setShowPinModal(true);
   };
 
-  const handlePinSuccess = () => {
-    setShowPinModal(false);
-    setShowSuccessModal(true);
+  const handlePinSuccess = async () => {
+    const result = await createTransaction({
+      transaction_type: transferData.method === 'zelle' ? 'zelle_transfer' : 'local_transfer',
+      recipient_name: transferData.recipientName,
+      recipient_account: transferData.emailOrPhone,
+      amount: parseFloat(transferData.amount),
+      fee: 0.00,
+      description: `${transferData.method === 'zelle' ? 'Zelle' : 'Local'} transfer to ${transferData.recipientName}`,
+      metadata: { transferMethod: transferData.method }
+    });
+
+    if (!result.error) {
+      setShowPinModal(false);
+      setShowSuccessModal(true);
+    }
   };
 
   return (

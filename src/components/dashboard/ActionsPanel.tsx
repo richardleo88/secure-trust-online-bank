@@ -60,7 +60,14 @@ const ActionsPanel = () => {
             </CardHeader>
             <CardContent>
               <p className="text-banking-slate text-sm mb-4">{action.description}</p>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => {
+                  // Mock action handler - in real app, this would navigate or open modals
+                  console.log(`Starting action: ${action.title}`);
+                }}
+              >
                 Get Started
               </Button>
             </CardContent>

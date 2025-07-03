@@ -24,6 +24,8 @@ const TransferPinModal = ({ isOpen, onClose, onSuccess, transferData }: Transfer
       return;
     }
     if (pin === "1234") { // Demo PIN
+      console.log('Transfer authorized with PIN:', pin);
+      console.log('Transfer data:', transferData);
       onSuccess();
       setPin("");
       setError("");

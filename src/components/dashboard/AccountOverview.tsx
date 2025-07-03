@@ -119,7 +119,15 @@ const AccountOverview = () => {
               <CardTitle className="text-xl">Recent Transactions</CardTitle>
               <p className="text-blue-100 text-sm mt-1">Live transaction history - All transfers processed immediately</p>
             </div>
-            <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0">
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="bg-white/20 hover:bg-white/30 text-white border-0"
+              onClick={() => {
+                // Mock navigation to transaction history
+                window.dispatchEvent(new CustomEvent('navigateToSection', { detail: 'history' }));
+              }}
+            >
               <Plus className="h-4 w-4 mr-2" />
               View All
             </Button>
