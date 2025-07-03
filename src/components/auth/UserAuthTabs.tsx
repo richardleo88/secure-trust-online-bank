@@ -66,17 +66,6 @@ const UserAuthTabs = () => {
 
   return (
     <div className="space-y-4 mt-6">
-      <div className="bg-blue-50 p-4 rounded-lg text-center">
-        <p className="text-sm text-blue-700 mb-2">Demo User Account</p>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fillDemoCredentials}
-          className="text-blue-600 border-blue-200"
-        >
-          Fill Demo Credentials
-        </Button>
-      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
