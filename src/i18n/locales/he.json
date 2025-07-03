@@ -1,0 +1,32 @@
+{
+  "header": {
+    "personal": "אישי",
+    "business": "עסקי",
+    "investments": "השקעות",
+    "loans": "הלוואות",
+    "support": "תמיכה",
+    "signIn": "התחברות",
+    "signUp": "הרשמה",
+    "menu": "תפריט",
+    "languageSelector": "בחר את השפה שלך"
+  },
+  "auth": {
+    "welcome": "ברוך השב",
+    "signInSubtitle": "התחבר לחשבונך כדי להמשיך",
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "country": "מדינה",
+    "city": "עיר",
+    "email": "כתובת אימייל",
+    "phoneNumber": "מספר טלפון",
+    "password": "סיסמה",
+    "confirmPassword": "אשר סיסמה",
+    "selectCountry": "בחר מדינה",
+    "selectCity": "בחר עיר",
+    "firstSelectCountry": "תחילה בחר מדינה",
+    "personalInformation": "מידע אישי",
+    "basicDetailsPrompt": "בואו נתחיל עם הפרטים הבסיסיים שלך",
+    "countryCodeIncluded": "קוד המדינה נכלל אוטומטית",
+    "neverSpamPromise": "לעולם לא נשלח לך ספאם - הבטחה!"
+  }
+}

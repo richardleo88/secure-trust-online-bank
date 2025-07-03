@@ -24,6 +24,10 @@ import nl from './locales/nl.json';
 import sv from './locales/sv.json';
 import da from './locales/da.json';
 import no from './locales/no.json';
+import fi from './locales/fi.json';
+import he from './locales/he.json';
+import cs from './locales/cs.json';
+import hr from './locales/hr.json';
 
 const resources = {
   en: { translation: en },
@@ -45,7 +49,11 @@ const resources = {
   nl: { translation: nl },
   sv: { translation: sv },
   da: { translation: da },
-  no: { translation: no }
+  no: { translation: no },
+  fi: { translation: fi },
+  he: { translation: he },
+  cs: { translation: cs },
+  hr: { translation: hr }
 };
 
 // Country to language mapping for location-based detection
@@ -94,6 +102,14 @@ const countryToLanguage: { [key: string]: string } = {
   'DK': 'da',
   // Norwegian
   'NO': 'no',
+  // Finnish
+  'FI': 'fi',
+  // Hebrew
+  'IL': 'he',
+  // Czech
+  'CZ': 'cs',
+  // Croatian
+  'HR': 'hr',
   // Multi-language countries (using primary language)
   'CA': 'en', // Canada - English as primary
   'BE': 'nl', // Belgium - Dutch as primary

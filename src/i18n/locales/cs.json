@@ -1,0 +1,32 @@
+{
+  "header": {
+    "personal": "Osobní",
+    "business": "Obchodní",
+    "investments": "Investice",
+    "loans": "Půjčky",
+    "support": "Podpora",
+    "signIn": "Přihlásit se",
+    "signUp": "Registrovat se",
+    "menu": "Menu",
+    "languageSelector": "Vyberte váš jazyk"
+  },
+  "auth": {
+    "welcome": "Vítejte zpět",
+    "signInSubtitle": "Přihlaste se ke svému účtu a pokračujte",
+    "firstName": "Křestní jméno",
+    "lastName": "Příjmení",
+    "country": "Země",
+    "city": "Město",
+    "email": "E-mailová adresa",
+    "phoneNumber": "Telefonní číslo",
+    "password": "Heslo",
+    "confirmPassword": "Potvrdit heslo",
+    "selectCountry": "Vyberte zemi",
+    "selectCity": "Vyberte město",
+    "firstSelectCountry": "Nejprve vyberte zemi",
+    "personalInformation": "Osobní údaje",
+    "basicDetailsPrompt": "Začněme s vašimi základními údaji",
+    "countryCodeIncluded": "Kód země je zahrnut automaticky",
+    "neverSpamPromise": "Nikdy vám nebudeme posílat spam - slib!"
+  }
+}

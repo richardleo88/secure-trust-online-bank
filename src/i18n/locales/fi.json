@@ -1,0 +1,32 @@
+{
+  "header": {
+    "personal": "Henkilökohtainen",
+    "business": "Yritys",
+    "investments": "Sijoitukset",
+    "loans": "Lainat",
+    "support": "Tuki",
+    "signIn": "Kirjaudu sisään",
+    "signUp": "Rekisteröidy",
+    "menu": "Valikko",
+    "languageSelector": "Valitse kielesi"
+  },
+  "auth": {
+    "welcome": "Tervetuloa takaisin",
+    "signInSubtitle": "Kirjaudu tilillesi jatkaaksesi",
+    "firstName": "Etunimi",
+    "lastName": "Sukunimi",
+    "country": "Maa",
+    "city": "Kaupunki",
+    "email": "Sähköpostiosoite",
+    "phoneNumber": "Puhelinnumero",
+    "password": "Salasana",
+    "confirmPassword": "Vahvista salasana",
+    "selectCountry": "Valitse maa",
+    "selectCity": "Valitse kaupunki",
+    "firstSelectCountry": "Valitse ensin maa",
+    "personalInformation": "Henkilötiedot",
+    "basicDetailsPrompt": "Aloitetaan perustiedoillasi",
+    "countryCodeIncluded": "Maakoodi sisällytetään automaattisesti",
+    "neverSpamPromise": "Emme koskaan lähetä roskapostia - lupaus!"
+  }
+}

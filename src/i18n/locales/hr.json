@@ -1,0 +1,32 @@
+{
+  "header": {
+    "personal": "Osobno",
+    "business": "Poslovno",
+    "investments": "Investicije",
+    "loans": "Krediti",
+    "support": "Podrška",
+    "signIn": "Prijaviti se",
+    "signUp": "Registrirati se",
+    "menu": "Izbornik",
+    "languageSelector": "Odaberite svoj jezik"
+  },
+  "auth": {
+    "welcome": "Dobrodošli natrag",
+    "signInSubtitle": "Prijavite se na svoj račun da nastavite",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "country": "Zemlja",
+    "city": "Grad",
+    "email": "E-mail adresa",
+    "phoneNumber": "Broj telefona",
+    "password": "Lozinka",
+    "confirmPassword": "Potvrdite lozinku",
+    "selectCountry": "Odaberite zemlju",
+    "selectCity": "Odaberite grad",
+    "firstSelectCountry": "Prvo odaberite zemlju",
+    "personalInformation": "Osobni podaci",
+    "basicDetailsPrompt": "Počnimo s vašim osnovnim podacima",
+    "countryCodeIncluded": "Kod zemlje je automatski uključen",
+    "neverSpamPromise": "Nikada vam nećemo slati spam - obećanje!"
+  }
+}
