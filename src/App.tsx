@@ -17,6 +17,7 @@ import Business from "./pages/Business";
 import Investments from "./pages/Investments";
 import Loans from "./pages/Loans";
 import Support from "./pages/Support";
+import SignUpNew from "./pages/SignUpNew";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
+              <Route path="/signup" element={<SignUpNew />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/personal" element={<Personal />} />
               <Route path="/business" element={<Business />} />
