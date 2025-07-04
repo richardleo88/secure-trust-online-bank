@@ -15,7 +15,9 @@ class MockAuthService {
   private currentSession: Session | null = null;
   private listeners: ((session: Session | null) => void)[] = [];
 
-  // Mock users
+  // Mock users - Test Credentials Documentation:
+  // Admin: richard@gmail.com / AdminSecure2024!@#
+  // Regular Users: user@test.com / password123, john@example.com / password123, jane@demo.com / password123
   private mockUsers = [
     {
       id: '1',
@@ -30,24 +32,55 @@ class MockAuthService {
       password: 'password123',
       full_name: 'Test User',
       is_admin: false
+    },
+    {
+      id: '3',
+      email: 'john@example.com',
+      password: 'password123',
+      full_name: 'John Doe',
+      is_admin: false
+    },
+    {
+      id: '4',
+      email: 'jane@demo.com',
+      password: 'password123',
+      full_name: 'Jane Smith',
+      is_admin: false
+    },
+    {
+      id: '5',
+      email: 'user@example.com',
+      password: 'user123',
+      full_name: 'Demo User',
+      is_admin: false
     }
   ];
 
   constructor() {
-    // Check localStorage for persisted session
-    const savedSession = localStorage.getItem('mock_session');
-    if (savedSession) {
-      this.currentSession = JSON.parse(savedSession);
-      this.currentUser = this.currentSession?.user || null;
+    // Check localStorage for persisted session with error handling
+    try {
+      const savedSession = localStorage.getItem('mock_session');
+      if (savedSession) {
+        this.currentSession = JSON.parse(savedSession);
+        this.currentUser = this.currentSession?.user || null;
+        console.log('Restored session for user:', this.currentUser?.email);
+      }
+    } catch (error) {
+      console.error('Error restoring session from localStorage:', error);
+      localStorage.removeItem('mock_session');
     }
   }
 
   async signIn(email: string, password: string) {
+    console.log('Attempting login for:', email);
     const user = this.mockUsers.find(u => u.email === email && u.password === password);
     
     if (!user) {
+      console.error('Login failed - user not found or password mismatch for:', email);
       return { error: { message: 'Invalid login credentials' } };
     }
+
+    console.log('Login successful for:', email, user.is_admin ? '(admin)' : '(user)');
 
     const { password: _, ...userWithoutPassword } = user;
     this.currentUser = userWithoutPassword;

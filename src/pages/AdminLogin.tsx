@@ -28,7 +28,7 @@ const AdminLogin = () => {
       lowercase: /[a-z]/.test(password),
       number: /\d/.test(password),
       special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      noCommon: !/(password|123456|qwerty|admin|letmein)/i.test(password)
+      noCommon: !/(^password$|^123456$|^qwerty$|^letmein$)/i.test(password)
     };
     
     const score = Object.values(requirements).filter(Boolean).length;

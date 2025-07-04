@@ -15,7 +15,7 @@ const AdminLoginSection = () => {
   const handleAdminAccess = async () => {
     setLoading(true);
     const adminEmail = 'richard@gmail.com';
-    const adminPassword = '123456789';
+    const adminPassword = 'AdminSecure2024!@#';
 
     try {
       console.log('Starting admin login process...');
