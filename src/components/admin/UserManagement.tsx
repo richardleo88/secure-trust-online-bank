@@ -483,7 +483,154 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
                                     )}
                                   </div>
                                 </div>
-                              )}
+                                )}
+
+                              {/* ATM Card Management */}
+                              <div className="p-3 sm:p-4 border rounded-lg space-y-3 sm:space-y-4">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <h4 className="font-medium text-sm sm:text-base">ATM Card Management</h4>
+                                    <p className="text-xs sm:text-sm text-gray-600">
+                                      Manage user's ATM cards and settings
+                                    </p>
+                                  </div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => loadUserCards(user.id)}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <CreditCard className="h-4 w-4" />
+                                    View Cards
+                                  </Button>
+                                </div>
+
+                                {showCardSection && selectedUser?.id === user.id && (
+                                  <div className="space-y-4 border-t pt-4">
+                                    <div className="flex items-center justify-between">
+                                      <h5 className="font-medium text-sm">ATM Cards ({userCards.length})</h5>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => handleCreateCard(user.id)}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <Plus className="h-4 w-4" />
+                                        New Card
+                                      </Button>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                      {userCards.map((card) => (
+                                        <div key={card.id} className="border rounded-lg p-3 space-y-3">
+                                          <div className="flex items-center justify-between">
+                                            <div>
+                                              <p className="font-mono text-sm">{card.card_number}</p>
+                                              <div className="flex items-center gap-2 text-xs text-gray-600">
+                                                <Badge variant={card.card_status === 'active' ? 'default' : 
+                                                              card.card_status === 'blocked' ? 'destructive' : 'secondary'}>
+                                                  {card.card_status.toUpperCase()}
+                                                </Badge>
+                                                <span>•</span>
+                                                <span>{card.card_type.toUpperCase()}</span>
+                                                <span>•</span>
+                                                <span>Exp: {card.expiry_date}</span>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                              {card.card_status === 'active' ? (
+                                                <Button
+                                                  size="sm"
+                                                  variant="outline"
+                                                  onClick={() => handleBlockCard(card.id, user.id)}
+                                                  className="flex items-center gap-1 text-red-600"
+                                                >
+                                                  <Lock className="h-3 w-3" />
+                                                  Block
+                                                </Button>
+                                              ) : (
+                                                <Button
+                                                  size="sm"
+                                                  variant="outline"
+                                                  onClick={() => handleUnblockCard(card.id, user.id)}
+                                                  className="flex items-center gap-1 text-green-600"
+                                                >
+                                                  <Unlock className="h-3 w-3" />
+                                                  Unblock
+                                                </Button>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          <div className="grid grid-cols-2 gap-2 text-xs">
+                                            <div>
+                                              <span className="text-gray-600">Daily Limit:</span>
+                                              <p className="font-medium">${card.daily_limit}</p>
+                                            </div>
+                                            <div>
+                                              <span className="text-gray-600">Monthly Limit:</span>
+                                              <p className="font-medium">${card.monthly_limit}</p>
+                                            </div>
+                                          </div>
+
+                                          <div className="flex flex-col sm:flex-row gap-2">
+                                            <div className="flex-1 flex gap-2">
+                                              <Input
+                                                type="number"
+                                                placeholder="Daily limit"
+                                                value={cardLimits.daily}
+                                                onChange={(e) => setCardLimits({...cardLimits, daily: e.target.value})}
+                                                className="text-xs"
+                                              />
+                                              <Input
+                                                type="number"
+                                                placeholder="Monthly limit"
+                                                value={cardLimits.monthly}
+                                                onChange={(e) => setCardLimits({...cardLimits, monthly: e.target.value})}
+                                                className="text-xs"
+                                              />
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => handleUpdateCardLimits(card.id, user.id)}
+                                                disabled={!cardLimits.daily || !cardLimits.monthly}
+                                                className="flex items-center gap-1"
+                                              >
+                                                <DollarSign className="h-3 w-3" />
+                                                Update
+                                              </Button>
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => handleResetPin(card.id, user.id)}
+                                                className="flex items-center gap-1"
+                                              >
+                                                <Lock className="h-3 w-3" />
+                                                Reset PIN
+                                              </Button>
+                                            </div>
+                                          </div>
+
+                                          {card.last_used && (
+                                            <div className="flex items-center gap-2 text-xs text-gray-600">
+                                              <Clock className="h-3 w-3" />
+                                              <span>Last used: {new Date(card.last_used).toLocaleDateString()}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+
+                                      {userCards.length === 0 && (
+                                        <div className="text-center py-4 text-gray-500">
+                                          <CreditCard className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                                          <p className="text-sm">No ATM cards found</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </DialogContent>
                         </Dialog>
