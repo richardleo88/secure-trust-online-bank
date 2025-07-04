@@ -1,134 +1,159 @@
 
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-
-interface Country {
-  name: string;
-  code: string;
-  cities: string[];
-}
-
-const countriesWithCities: Country[] = [
-  {
-    name: "United States",
-    code: "US",
-    cities: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Washington DC", "Boston", "El Paso", "Nashville", "Detroit", "Oklahoma City", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Kansas City", "Mesa", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Long Beach", "Virginia Beach", "Minneapolis", "Tampa", "Oakland", "Tulsa", "Arlington", "New Orleans", "Wichita"]
-  },
-  {
-    name: "Canada",
-    code: "CA", 
-    cities: ["Toronto", "Montreal", "Vancouver", "Calgary", "Edmonton", "Ottawa", "Winnipeg", "Quebec City", "Hamilton", "Kitchener", "London", "Victoria", "Halifax", "Oshawa", "Windsor", "Saskatoon", "St. Catharines", "Regina", "Sherbrooke", "Barrie", "Kelowna", "Abbotsford", "Kingston", "Trois-Rivières", "Guelph", "Cambridge", "Whitby", "Coquitlam", "Saanich", "Burlington", "Richmond", "Markham", "Vaughan", "Gatineau", "Longueuil", "Burnaby", "Laval", "Brampton", "Mississauga", "Surrey"]
-  },
-  {
-    name: "United Kingdom",
-    code: "GB",
-    cities: ["London", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Newcastle", "Sheffield", "Bristol", "Belfast", "Leicester", "Edinburgh", "Brighton", "Cardiff", "Coventry", "Nottingham", "Hull", "Plymouth", "Stoke-on-Trent", "Wolverhampton", "Derby", "Swansea", "Southampton", "Salford", "Aberdeen", "Westminster", "Portsmouth", "York", "Peterborough", "Dundee", "Lancaster", "Oxford", "Newport", "Preston", "St Albans", "Norwich", "Chester", "Cambridge", "Salisbury", "Exeter", "Gloucester", "Lisburn", "Chichester", "Winchester", "Londonderry", "Carlisle", "Worcester", "Bath", "Durham", "Lincoln", "Wakefield", "Carlisle"]
-  },
-  {
-    name: "Germany",
-    code: "DE",
-    cities: ["Berlin", "Hamburg", "Munich", "Cologne", "Frankfurt", "Stuttgart", "Düsseldorf", "Dortmund", "Essen", "Leipzig", "Bremen", "Dresden", "Hanover", "Nuremberg", "Duisburg", "Bochum", "Wuppertal", "Bielefeld", "Bonn", "Münster", "Karlsruhe", "Mannheim", "Augsburg", "Wiesbaden", "Gelsenkirchen", "Mönchengladbach", "Braunschweig", "Chemnitz", "Kiel", "Aachen", "Halle", "Magdeburg", "Freiburg", "Krefeld", "Lübeck", "Oberhausen", "Erfurt", "Mainz", "Rostock", "Kassel", "Hagen", "Potsdam", "Saarbrücken", "Hamm", "Mülheim", "Ludwigshafen", "Leverkusen", "Oldenburg", "Osnabrück", "Solingen"]
-  },
-  {
-    name: "France", 
-    code: "FR",
-    cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille", "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Angers", "Grenoble", "Dijon", "Nîmes", "Aix-en-Provence", "Saint-Quentin-en-Yvelines", "Brest", "Le Mans", "Amiens", "Tours", "Limoges", "Clermont-Ferrand", "Villeurbanne", "Besançon", "Orléans", "Metz", "Rouen", "Mulhouse", "Perpignan", "Caen", "Boulogne-Billancourt", "Nancy", "Fort-de-France", "Roubaix", "Tourcoing", "Montreuil", "Avignon", "Créteil"]
-  },
-  {
-    name: "Australia",
-    code: "AU",
-    cities: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Newcastle", "Canberra", "Sunshine Coast", "Wollongong", "Logan City", "Geelong", "Hobart", "Townsville", "Cairns", "Darwin", "Toowoomba", "Ballarat", "Bendigo", "Albury", "Launceston", "Mackay", "Rockhampton", "Bunbury", "Bundaberg", "Coffs Harbour", "Wagga Wagga", "Hervey Bay", "Mildura", "Shepparton", "Port Macquarie", "Gladstone", "Tamworth", "Traralgon", "Orange", "Bowral", "Geraldton", "Dubbo", "Nowra"]
-  },
-  {
-    name: "Japan",
-    code: "JP", 
-    cities: ["Tokyo", "Yokohama", "Osaka", "Nagoya", "Sapporo", "Fukuoka", "Kobe", "Kawasaki", "Kyoto", "Saitama", "Hiroshima", "Sendai", "Kitakyushu", "Chiba", "Sakai", "Niigata", "Hamamatsu", "Okayama", "Kumamoto", "Sagamihara", "Shizuoka", "Himeji", "Akita", "Matsuyama", "Utsunomiya", "Matsudo", "Kawagoe", "Kanazawa", "Oita", "Nara", "Toyama", "Nagasaki", "Machida", "Gifu", "Hirakata", "Fujisawa", "Kashiwa", "Toyota", "Takatsuki", "Wakayama"]
-  },
-  {
-    name: "Brazil",
-    code: "BR",
-    cities: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte", "Manaus", "Curitiba", "Recife", "Goiânia", "Belém", "Porto Alegre", "Guarulhos", "Campinas", "São Luís", "São Gonçalo", "Maceió", "Duque de Caxias", "Nova Iguaçu", "Natal", "Campo Grande", "Teresina", "São Bernardo do Campo", "João Pessoa", "Jaboatão dos Guararapes", "Osasco", "Santo André", "São José dos Campos", "Ribeirão Preto", "Uberlândia", "Sorocaba", "Contagem", "Aracaju", "Feira de Santana", "Cuiabá", "Joinville", "Aparecida de Goiânia", "Londrina", "Juiz de Fora", "Ananindeua"]
-  },
-  {
-    name: "India",
-    code: "IN",
-    cities: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad", "Jaipur", "Surat", "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara", "Ghaziabad", "Ludhiana", "Agra", "Nashik", "Faridabad", "Meerut", "Rajkot", "Kalyan-Dombivali", "Vasai-Virar", "Varanasi", "Srinagar", "Aurangabad", "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad", "Ranchi", "Howrah", "Coimbatore", "Jabalpur"]
-  },
-  {
-    name: "China",
-    code: "CN",
-    cities: ["Shanghai", "Beijing", "Chongqing", "Tianjin", "Guangzhou", "Shenzhen", "Wuhan", "Dongguan", "Chengdu", "Nanjing", "Foshan", "Shenyang", "Hangzhou", "Xi'an", "Harbin", "Qingdao", "Zhengzhou", "Shijiazhuang", "Jinan", "Changchun", "Kunming", "Changsha", "Taiyuan", "Hefei", "Urumqi", "Dalian", "Yantai", "Guiyang", "Wenzhou", "Zibo", "Nanning", "Xuzhou", "Haikou", "Hohhot", "Lanzhou", "Baotou", "Daqing", "Wuxi", "Suzhou", "Ningbo"]
-  }
-];
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertCircle, MapPin, Globe } from 'lucide-react';
+import { useCountryCity } from '@/hooks/useCountryCity';
 
 interface CountryCitySelectProps {
   selectedCountry: string;
   selectedCity: string;
   onCountryChange: (country: string) => void;
   onCityChange: (city: string) => void;
+  disabled?: boolean;
+  showFlags?: boolean;
 }
 
 const CountryCitySelect = ({ 
   selectedCountry, 
   selectedCity, 
   onCountryChange, 
-  onCityChange 
+  onCityChange,
+  disabled = false,
+  showFlags = true
 }: CountryCitySelectProps) => {
   const { t } = useTranslation();
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
-
-  useEffect(() => {
-    const country = countriesWithCities.find(c => c.name === selectedCountry);
-    if (country) {
-      setAvailableCities(country.cities);
-    } else {
-      setAvailableCities([]);
-    }
-  }, [selectedCountry]);
+  const {
+    countries,
+    cities,
+    isLoadingCountries,
+    isLoadingCities,
+    error
+  } = useCountryCity(selectedCountry, selectedCity);
 
   const handleCountryChange = (country: string) => {
     onCountryChange(country);
     onCityChange(''); // Reset city when country changes
   };
 
+  const renderCountryOption = (country: { name: string; code: string; flag: string }) => (
+    <div className="flex items-center gap-2">
+      {showFlags && <span className="text-sm">{country.flag}</span>}
+      <span>{country.name}</span>
+    </div>
+  );
+
+  const renderCityFallback = () => {
+    if (!selectedCountry) {
+      return (
+        <div className="flex items-center gap-2 text-muted-foreground text-sm p-2">
+          <Globe className="h-4 w-4" />
+          <span>{t('auth.firstSelectCountry')}</span>
+        </div>
+      );
+    }
+
+    if (isLoadingCities) {
+      return (
+        <div className="flex items-center gap-2 text-muted-foreground text-sm p-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+          <span>Loading cities...</span>
+        </div>
+      );
+    }
+
+    if (cities.length === 0) {
+      return (
+        <div className="flex items-center gap-2 text-muted-foreground text-sm p-2">
+          <AlertCircle className="h-4 w-4" />
+          <span>No cities available for this country</span>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  if (error) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex items-center gap-2 text-destructive text-sm p-4 bg-destructive/10 rounded-md">
+          <AlertCircle className="h-4 w-4" />
+          <span>{error}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <Label htmlFor="country">{t('auth.country')} *</Label>
-        <Select value={selectedCountry} onValueChange={handleCountryChange}>
-          <SelectTrigger>
-            <SelectValue placeholder={t('auth.selectCountry')} />
-          </SelectTrigger>
-          <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
-            {countriesWithCities.map((country) => (
-              <SelectItem key={country.code} value={country.name}>
-                {country.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label htmlFor="country" className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          {t('auth.country')} *
+        </Label>
+        {isLoadingCountries ? (
+          <Skeleton className="h-10 w-full" />
+        ) : (
+          <Select 
+            value={selectedCountry} 
+            onValueChange={handleCountryChange}
+            disabled={disabled}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t('auth.selectCountry')} />
+            </SelectTrigger>
+            <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
+              {countries.map((country) => (
+                <SelectItem key={country.code} value={country.name}>
+                  {renderCountryOption(country)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       
       <div>
-        <Label htmlFor="city">{t('auth.city')} *</Label>
-        <Select 
-          value={selectedCity} 
-          onValueChange={onCityChange}
-          disabled={!selectedCountry || availableCities.length === 0}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={availableCities.length > 0 ? t('auth.selectCity') : t('auth.firstSelectCountry')} />
-          </SelectTrigger>
-          <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
-            {availableCities.map((city) => (
-              <SelectItem key={city} value={city}>
-                {city}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label htmlFor="city" className="flex items-center gap-2">
+          <MapPin className="h-4 w-4" />
+          {t('auth.city')} *
+        </Label>
+        {isLoadingCountries ? (
+          <Skeleton className="h-10 w-full" />
+        ) : (
+          <Select 
+            value={selectedCity} 
+            onValueChange={onCityChange}
+            disabled={disabled || !selectedCountry || isLoadingCities}
+          >
+            <SelectTrigger>
+              <SelectValue 
+                placeholder={
+                  !selectedCountry 
+                    ? t('auth.firstSelectCountry')
+                    : isLoadingCities 
+                    ? 'Loading cities...'
+                    : cities.length > 0 
+                    ? t('auth.selectCity') 
+                    : 'No cities available'
+                } 
+              />
+            </SelectTrigger>
+            <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
+              {cities.length > 0 ? (
+                cities.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))
+              ) : (
+                renderCityFallback()
+              )}
+            </SelectContent>
+          </Select>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useCountryCityData } from '@/hooks/useCountryCity';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
@@ -237,22 +238,14 @@ const countries = [
   { code: 'ZW', name: 'Zimbabwe', dialCode: '+263' },
 ];
 
-const cities: Record<string, string[]> = {
-  US: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia'],
-  CA: ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa', 'Edmonton'],
-  GB: ['London', 'Manchester', 'Birmingham', 'Leeds', 'Glasgow', 'Liverpool'],
-  AU: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
-  DE: ['Berlin', 'Hamburg', 'Munich', 'Cologne', 'Frankfurt', 'Stuttgart'],
-  FR: ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice', 'Nantes'],
-  JP: ['Tokyo', 'Osaka', 'Yokohama', 'Nagoya', 'Sapporo', 'Kobe'],
-  IN: ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata'],
-  BR: ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte'],
-  MX: ['Mexico City', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana', 'León'],
-};
+// Dynamic city loading - removed static city data to use the new service
 
 const ComprehensiveSignUpForm = ({ onSuccess }: ComprehensiveSignUpFormProps) => {
   const { t } = useTranslation();
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignUpFormData>();
+  const { getCitiesForCountry } = useCountryCityData();
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -348,10 +341,22 @@ const ComprehensiveSignUpForm = ({ onSuccess }: ComprehensiveSignUpFormProps) =>
     }
   };
 
-  const handleCountryChange = (value: string) => {
+  const handleCountryChange = async (value: string) => {
     setSelectedCountry(value);
     setValue('country', value);
     setValue('city', ''); // Reset city when country changes
+    
+    // Load cities for the selected country
+    setIsLoadingCities(true);
+    try {
+      const cities = await getCitiesForCountry(value);
+      setAvailableCities(cities);
+    } catch (error) {
+      console.error('Failed to load cities:', error);
+      setAvailableCities([]);
+    } finally {
+      setIsLoadingCities(false);
+    }
     
     // Auto-fill phone country code
     const country = countries.find(c => c.code === value);
@@ -419,17 +424,38 @@ const ComprehensiveSignUpForm = ({ onSuccess }: ComprehensiveSignUpFormProps) =>
               <Label htmlFor="city">{t('auth.city')} *</Label>
               <Select 
                 onValueChange={(value) => setValue('city', value)}
-                disabled={!selectedCountry}
+                disabled={!selectedCountry || isLoadingCities}
               >
                 <SelectTrigger className="h-12">
-                  <SelectValue placeholder={selectedCountry ? t('auth.selectCity') : t('auth.firstSelectCountry')} />
+                  <SelectValue placeholder={
+                    !selectedCountry 
+                      ? t('auth.firstSelectCountry')
+                      : isLoadingCities
+                      ? 'Loading cities...'
+                      : availableCities.length > 0
+                      ? t('auth.selectCity')
+                      : 'No cities available'
+                  } />
                 </SelectTrigger>
                 <SelectContent className="max-h-60 overflow-y-auto">
-                  {selectedCountry && cities[selectedCountry]?.map(city => (
-                    <SelectItem key={city} value={city}>
-                      {city}
-                    </SelectItem>
-                  ))}
+                  {availableCities.length > 0 ? (
+                    availableCities.map(city => (
+                      <SelectItem key={city} value={city}>
+                        {city}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    !selectedCountry ? (
+                      <div className="p-2 text-muted-foreground text-sm">Please select a country first</div>
+                    ) : isLoadingCities ? (
+                      <div className="p-2 text-muted-foreground text-sm flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        Loading cities...
+                      </div>
+                    ) : (
+                      <div className="p-2 text-muted-foreground text-sm">No cities available for this country</div>
+                    )
+                  )}
                 </SelectContent>
               </Select>
             </div>

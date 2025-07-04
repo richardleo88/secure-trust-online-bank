@@ -19,6 +19,7 @@ import Investments from "./pages/Investments";
 import Loans from "./pages/Loans";
 import Support from "./pages/Support";
 import SignUpNew from "./pages/SignUpNew";
+import CountryCityDemo from "./components/CountryCityDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
               <Route path="/business" element={<Business />} />
               <Route path="/investments" element={<Investments />} />
               <Route path="/loans" element={<Loans />} />
+              <Route path="/demo/country-city" element={<CountryCityDemo />} />
               <Route path="/support" element={<Support />} />
               <Route 
                 path="/dashboard" 
