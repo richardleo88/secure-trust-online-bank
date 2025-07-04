@@ -103,18 +103,18 @@ const Header = () => {
           </Link>
         </nav>
 
-        <div className="flex items-center space-x-2 md:space-x-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           <Select value={i18n.language} onValueChange={handleLanguageChange}>
-            <SelectTrigger className="w-24 md:w-32 h-8 text-sm">
+            <SelectTrigger className="w-20 sm:w-24 md:w-32 h-8 text-sm shrink-0">
               <SelectValue>
-                <span className="flex items-center gap-2">
-                  <span>{getCurrentLanguage().flag}</span>
-                  <span className="hidden md:inline">{getCurrentLanguage().name}</span>
-                  <span className="md:hidden">{getCurrentLanguage().code.toUpperCase()}</span>
+                <span className="flex items-center gap-1 sm:gap-2">
+                  <span className="text-xs sm:text-sm">{getCurrentLanguage().flag}</span>
+                  <span className="hidden lg:inline text-xs">{getCurrentLanguage().name}</span>
+                  <span className="lg:hidden text-xs">{getCurrentLanguage().code.toUpperCase()}</span>
                 </span>
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-50">
+            <SelectContent className="max-h-60 overflow-y-auto bg-white border shadow-lg z-[60]">
               {languages.map((lang) => (
                 <SelectItem key={lang.code} value={lang.code}>
                   <span className="flex items-center gap-2">
@@ -128,11 +128,11 @@ const Header = () => {
           </Select>
 
           {/* Desktop Login/Register */}
-          <div className="hidden sm:flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleLogin}>
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
+            <Button variant="outline" size="sm" onClick={handleLogin} className="text-xs sm:text-sm px-2 sm:px-3">
               {t('header.signIn')}
             </Button>
-            <Button className="banking-gradient text-white hover:opacity-90" size="sm" onClick={handleRegister}>
+            <Button className="banking-gradient text-white hover:opacity-90 text-xs sm:text-sm px-2 sm:px-3" size="sm" onClick={handleRegister}>
               {t('header.signUp')}
             </Button>
           </div>
