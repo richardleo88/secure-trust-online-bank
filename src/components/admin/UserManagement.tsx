@@ -7,9 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
-import { Search, UserPlus, Edit, Trash2, Shield, CheckCircle, XCircle, DollarSign, CreditCard, Plus, Minus } from "lucide-react";
+import { Search, UserPlus, Edit, Trash2, Shield, CheckCircle, XCircle, DollarSign, CreditCard, Plus, Minus, Calendar, Clock, Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CreateUserDialog from "./CreateUserDialog";
+import { AdminUserService, type ATMCard, type CardActivity } from "@/services/adminUserService";
 
 interface UserManagementProps {
   adminRole: string;
@@ -39,6 +40,10 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
   const [balanceAmount, setBalanceAmount] = useState<string>("");
   const [balanceReason, setBalanceReason] = useState("");
   const [transactionType, setTransactionType] = useState<"credit" | "debit">("credit");
+  const [userCards, setUserCards] = useState<ATMCard[]>([]);
+  const [cardActivities, setCardActivities] = useState<CardActivity[]>([]);
+  const [showCardSection, setShowCardSection] = useState(false);
+  const [cardLimits, setCardLimits] = useState({ daily: "", monthly: "" });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -111,6 +116,88 @@ const UserManagement = ({ adminRole }: UserManagementProps) => {
       setIsCreateDialogOpen(false);
     } catch (error) {
       console.error('Error creating user:', error);
+    }
+  };
+
+  // ATM Card management functions
+  const loadUserCards = async (userId: string) => {
+    try {
+      const cards = await AdminUserService.getUserCards(userId);
+      setUserCards(cards);
+      setShowCardSection(true);
+    } catch (error) {
+      console.error('Error loading user cards:', error);
+    }
+  };
+
+  const handleCreateCard = async (userId: string) => {
+    try {
+      await AdminUserService.createCard(userId, { card_type: 'debit' });
+      await loadUserCards(userId);
+      toast({
+        title: "ATM Card Created", 
+        description: "New ATM card has been created successfully."
+      });
+    } catch (error) {
+      console.error('Error creating card:', error);
+    }
+  };
+
+  const handleBlockCard = async (cardId: string, userId: string) => {
+    try {
+      await AdminUserService.blockCard(cardId, "Blocked by administrator");
+      await loadUserCards(userId);
+      toast({
+        title: "Card Blocked", 
+        description: "ATM card has been blocked successfully."
+      });
+    } catch (error) {
+      console.error('Error blocking card:', error);
+    }
+  };
+
+  const handleUnblockCard = async (cardId: string, userId: string) => {
+    try {
+      await AdminUserService.unblockCard(cardId);
+      await loadUserCards(userId);
+      toast({
+        title: "Card Unblocked", 
+        description: "ATM card has been unblocked successfully."
+      });
+    } catch (error) {
+      console.error('Error unblocking card:', error);
+    }
+  };
+
+  const handleUpdateCardLimits = async (cardId: string, userId: string) => {
+    try {
+      const daily = parseFloat(cardLimits.daily);
+      const monthly = parseFloat(cardLimits.monthly);
+      
+      if (daily && monthly) {
+        await AdminUserService.updateCardLimits(cardId, daily, monthly);
+        await loadUserCards(userId);
+        setCardLimits({ daily: "", monthly: "" });
+        toast({
+          title: "Card Limits Updated", 
+          description: "ATM card limits have been updated successfully."
+        });
+      }
+    } catch (error) {
+      console.error('Error updating card limits:', error);
+    }
+  };
+
+  const handleResetPin = async (cardId: string, userId: string) => {
+    try {
+      await AdminUserService.resetCardPin(cardId);
+      await loadUserCards(userId);
+      toast({
+        title: "PIN Reset", 
+        description: "ATM card PIN has been reset successfully."
+      });
+    } catch (error) {
+      console.error('Error resetting PIN:', error);
     }
   };
 

@@ -10,6 +10,34 @@ interface AdminUser {
   verification_status: string;
   created_at: string;
   admin_role: string;
+  last_login?: string;
+  profile_picture_url?: string;
+}
+
+interface ATMCard {
+  id: string;
+  user_id: string;
+  card_number: string;
+  card_type: 'debit' | 'credit';
+  card_status: 'active' | 'blocked' | 'expired' | 'pending';
+  expiry_date: string;
+  daily_limit: number;
+  monthly_limit: number;
+  created_at: string;
+  last_used?: string;
+  pin_attempts: number;
+}
+
+interface CardActivity {
+  id: string;
+  card_id: string;
+  activity_type: 'purchase' | 'withdrawal' | 'deposit' | 'pin_change' | 'status_change';
+  amount?: number;
+  location?: string;
+  merchant?: string;
+  status: 'success' | 'failed' | 'pending';
+  created_at: string;
+  description: string;
 }
 
 interface UserRequest {
@@ -61,6 +89,59 @@ class MockAdminService {
       request_type: 'account_verification',
       status: 'pending',
       created_at: new Date().toISOString()
+    }
+  ];
+
+  private atmCards: ATMCard[] = [
+    {
+      id: '1',
+      user_id: '1',
+      card_number: '**** **** **** 1234',
+      card_type: 'debit',
+      card_status: 'active',
+      expiry_date: '12/26',
+      daily_limit: 1000,
+      monthly_limit: 10000,
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      last_used: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      pin_attempts: 0
+    },
+    {
+      id: '2',
+      user_id: '2',
+      card_number: '**** **** **** 5678',
+      card_type: 'debit',
+      card_status: 'active',
+      expiry_date: '08/27',
+      daily_limit: 500,
+      monthly_limit: 5000,
+      created_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+      last_used: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      pin_attempts: 1
+    }
+  ];
+
+  private cardActivities: CardActivity[] = [
+    {
+      id: '1',
+      card_id: '1',
+      activity_type: 'purchase',
+      amount: 25.50,
+      location: 'New York, NY',
+      merchant: 'Coffee Shop',
+      status: 'success',
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      description: 'Purchase at Coffee Shop'
+    },
+    {
+      id: '2',
+      card_id: '2',
+      activity_type: 'withdrawal',
+      amount: 100.00,
+      location: 'ATM - Main St',
+      status: 'success',
+      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      description: 'Cash withdrawal'
     }
   ];
 
@@ -190,7 +271,145 @@ class MockAdminService {
     }
     return false;
   }
+
+  // ATM Card management methods
+  async getUserCards(userId: string): Promise<ATMCard[]> {
+    return this.atmCards.filter(card => card.user_id === userId);
+  }
+
+  async getAllCards(): Promise<ATMCard[]> {
+    return this.atmCards;
+  }
+
+  async createCard(userId: string, cardData: Partial<ATMCard>): Promise<ATMCard> {
+    const newCard: ATMCard = {
+      id: Date.now().toString(),
+      user_id: userId,
+      card_number: '**** **** **** ' + Math.floor(Math.random() * 10000).toString().padStart(4, '0'),
+      card_type: cardData.card_type || 'debit',
+      card_status: 'pending',
+      expiry_date: cardData.expiry_date || this.generateExpiryDate(),
+      daily_limit: cardData.daily_limit || 500,
+      monthly_limit: cardData.monthly_limit || 5000,
+      created_at: new Date().toISOString(),
+      pin_attempts: 0
+    };
+    
+    this.atmCards.push(newCard);
+    
+    // Log card creation activity
+    this.cardActivities.push({
+      id: Date.now().toString() + '_activity',
+      card_id: newCard.id,
+      activity_type: 'status_change',
+      status: 'success',
+      created_at: new Date().toISOString(),
+      description: 'Card created and issued'
+    });
+    
+    return newCard;
+  }
+
+  async updateCard(cardId: string, updates: Partial<ATMCard>): Promise<ATMCard | null> {
+    const index = this.atmCards.findIndex(card => card.id === cardId);
+    if (index !== -1) {
+      const oldStatus = this.atmCards[index].card_status;
+      this.atmCards[index] = { ...this.atmCards[index], ...updates };
+      
+      // Log status change activity
+      if (updates.card_status && updates.card_status !== oldStatus) {
+        this.cardActivities.push({
+          id: Date.now().toString() + '_activity',
+          card_id: cardId,
+          activity_type: 'status_change',
+          status: 'success',
+          created_at: new Date().toISOString(),
+          description: `Card status changed from ${oldStatus} to ${updates.card_status}`
+        });
+      }
+      
+      return this.atmCards[index];
+    }
+    return null;
+  }
+
+  async blockCard(cardId: string, reason: string): Promise<boolean> {
+    const result = await this.updateCard(cardId, { card_status: 'blocked' });
+    if (result) {
+      this.cardActivities.push({
+        id: Date.now().toString() + '_activity',
+        card_id: cardId,
+        activity_type: 'status_change',
+        status: 'success',
+        created_at: new Date().toISOString(),
+        description: `Card blocked: ${reason}`
+      });
+    }
+    return result !== null;
+  }
+
+  async unblockCard(cardId: string): Promise<boolean> {
+    const result = await this.updateCard(cardId, { card_status: 'active' });
+    if (result) {
+      this.cardActivities.push({
+        id: Date.now().toString() + '_activity',
+        card_id: cardId,
+        activity_type: 'status_change',
+        status: 'success',
+        created_at: new Date().toISOString(),
+        description: 'Card unblocked and activated'
+      });
+    }
+    return result !== null;
+  }
+
+  async updateCardLimits(cardId: string, dailyLimit: number, monthlyLimit: number): Promise<boolean> {
+    const result = await this.updateCard(cardId, { 
+      daily_limit: dailyLimit, 
+      monthly_limit: monthlyLimit 
+    });
+    if (result) {
+      this.cardActivities.push({
+        id: Date.now().toString() + '_activity',
+        card_id: cardId,
+        activity_type: 'status_change',
+        status: 'success',
+        created_at: new Date().toISOString(),
+        description: `Card limits updated: Daily $${dailyLimit}, Monthly $${monthlyLimit}`
+      });
+    }
+    return result !== null;
+  }
+
+  async getCardActivities(cardId: string): Promise<CardActivity[]> {
+    return this.cardActivities.filter(activity => activity.card_id === cardId);
+  }
+
+  async getAllCardActivities(): Promise<CardActivity[]> {
+    return this.cardActivities;
+  }
+
+  async resetCardPin(cardId: string): Promise<boolean> {
+    const result = await this.updateCard(cardId, { pin_attempts: 0 });
+    if (result) {
+      this.cardActivities.push({
+        id: Date.now().toString() + '_activity',
+        card_id: cardId,
+        activity_type: 'pin_change',
+        status: 'success',
+        created_at: new Date().toISOString(),
+        description: 'PIN reset by administrator'
+      });
+    }
+    return result !== null;
+  }
+
+  private generateExpiryDate(): string {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() + 4);
+    return (date.getMonth() + 1).toString().padStart(2, '0') + '/' + date.getFullYear().toString().slice(-2);
+  }
 }
 
 export const AdminUserService = new MockAdminService();
-export type { AdminUser, UserRequest };
+export type { AdminUser, UserRequest, ATMCard, CardActivity };
