@@ -516,6 +516,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_initial_balance: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       generate_reference_number: {
         Args: { transaction_type: string }
         Returns: string
