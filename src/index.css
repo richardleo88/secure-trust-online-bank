@@ -134,4 +134,21 @@
   .padding-responsive {
     @apply p-4 sm:p-6 md:p-8;
   }
+
+  /* Page Loader Animations */
+  @keyframes loading-progress {
+    0% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .loading-progress {
+    animation: loading-progress 3s ease-in-out infinite;
+  }
 }
