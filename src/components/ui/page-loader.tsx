@@ -17,7 +17,7 @@ const PageLoader = () => {
   if (!loading) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style={{ mixBlendMode: 'multiply' }}>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center" style={{ mixBlendMode: 'multiply' }}>
       <div className="relative">
         {/* Outer gradient ring */}
         <div className="w-32 h-32 rounded-full gradient-loader-ring animate-spin">
