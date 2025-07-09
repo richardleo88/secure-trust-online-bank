@@ -17,8 +17,8 @@ const PageLoader = () => {
   if (!loading) return null;
 
   const isHomepage = location.pathname === '/';
-  const backgroundClass = isHomepage ? 'bg-white/80' : 'bg-black/80';
-  const blurClass = isHomepage ? 'backdrop-blur-lg' : 'backdrop-blur-md';
+  const backgroundClass = isHomepage ? 'bg-white/45' : 'bg-black/80';
+  const blurClass = isHomepage ? 'backdrop-blur-xl' : 'backdrop-blur-md';
 
   return (
     <div className={`fixed inset-0 ${backgroundClass} ${blurClass} z-50 flex items-center justify-center`} style={{ mixBlendMode: 'multiply' }}>
