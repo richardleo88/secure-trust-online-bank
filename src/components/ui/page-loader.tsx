@@ -17,7 +17,7 @@ const PageLoader = () => {
   if (!loading) return null;
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-transparent z-50 flex items-center justify-center">
       <div className="relative">
         {/* Outer gradient ring */}
         <div className="w-32 h-32 rounded-full gradient-loader-ring animate-spin">

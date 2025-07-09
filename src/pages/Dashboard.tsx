@@ -82,7 +82,7 @@ const Dashboard = () => {
   };
 
   const handleMenuClick = () => {
-    setSidebarOpen(true);
+    setSidebarOpen(!sidebarOpen);
   };
 
   return (
