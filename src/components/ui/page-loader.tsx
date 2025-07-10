@@ -9,7 +9,7 @@ const PageLoader = () => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000); // 3 seconds delay
+    }, 1800); // 1.8 seconds delay
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
