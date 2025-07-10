@@ -86,7 +86,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-sky-200 via-blue-100 to-indigo-200">
       <SidebarProvider>
         <div className="flex w-full min-h-screen">
           <DashboardSidebar 

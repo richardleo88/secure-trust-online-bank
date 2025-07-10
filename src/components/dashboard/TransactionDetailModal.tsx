@@ -126,48 +126,50 @@ const TransactionDetailModal = ({ transaction, isOpen, onClose }: TransactionDet
             </div>
 
             {/* Transaction Details */}
-            <div className="space-y-2 sm:space-y-3 border-t pt-3 sm:pt-4">
-              <div className="flex justify-between text-sm sm:text-base">
-                <span className="text-gray-600">Transaction Type:</span>
-                <span className="font-medium">{transaction.type}</span>
-              </div>
-              <div className="flex justify-between text-sm sm:text-base">
-                <span className="text-gray-600">Recipient:</span>
-                <span className="font-medium break-all text-right">{transaction.recipient}</span>
-              </div>
-              <div className="flex justify-between text-sm sm:text-base">
-                <span className="text-gray-600">Method:</span>
-                <span className="font-medium">{transaction.method}</span>
-              </div>
-              <div className="flex justify-between text-sm sm:text-base">
-                <span className="text-gray-600">Account:</span>
-                <span className="font-medium">{transaction.account}</span>
-              </div>
-              <div className="flex justify-between text-sm sm:text-base">
-                <span className="text-gray-600">Date & Time:</span>
-                <span className="font-medium text-right">{transaction.date} at {transaction.time}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm sm:text-base">
-                <span className="text-gray-600">Reference:</span>
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <span className="font-medium text-xs sm:text-sm break-all">{transaction.reference}</span>
-                  <Button variant="ghost" size="sm" onClick={handleCopyReference} className="p-1">
-                    <Copy className="h-3 w-3" />
-                  </Button>
+            <div className="space-y-3 sm:space-y-4 border-t pt-3 sm:pt-4">
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                  <span className="text-gray-600 font-medium">Transaction Type:</span>
+                  <span className="font-semibold text-blue-900">{transaction.type}</span>
                 </div>
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                  <span className="text-gray-600 font-medium">Recipient:</span>
+                  <span className="font-semibold text-blue-900 break-words">{transaction.recipient}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                  <span className="text-gray-600 font-medium">Method:</span>
+                  <span className="font-semibold text-blue-900">{transaction.method}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                  <span className="text-gray-600 font-medium">Account:</span>
+                  <span className="font-semibold text-blue-900">{transaction.account}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                  <span className="text-gray-600 font-medium">Date & Time:</span>
+                  <span className="font-semibold text-blue-900">{transaction.date} at {transaction.time}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm sm:text-base gap-1">
+                  <span className="text-gray-600 font-medium">Reference:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-blue-900 break-all font-mono text-xs sm:text-sm">{transaction.reference}</span>
+                    <Button variant="ghost" size="sm" onClick={handleCopyReference} className="p-1">
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+                {transaction.fee && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                    <span className="text-gray-600 font-medium">Transaction Fee:</span>
+                    <span className="font-semibold text-blue-900">{transaction.fee}</span>
+                  </div>
+                )}
+                {transaction.description && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base gap-1">
+                    <span className="text-gray-600 font-medium">Description:</span>
+                    <span className="font-semibold text-blue-900 break-words">{transaction.description}</span>
+                  </div>
+                )}
               </div>
-              {transaction.fee && (
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-gray-600">Transaction Fee:</span>
-                  <span className="font-medium">{transaction.fee}</span>
-                </div>
-              )}
-              {transaction.description && (
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-gray-600">Description:</span>
-                  <span className="font-medium text-right break-words">{transaction.description}</span>
-                </div>
-              )}
             </div>
 
             {/* Footer */}
