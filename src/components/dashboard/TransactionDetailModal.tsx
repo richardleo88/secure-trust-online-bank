@@ -102,12 +102,13 @@ const TransactionDetailModal = ({ transaction, isOpen, onClose }: TransactionDet
         </DialogHeader>
 
         {/* Transaction Receipt */}
-        <Card className="border-2 border-blue-100">
+        <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white shadow-lg">
           <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
             {/* Header */}
-            <div className="text-center border-b pb-3 sm:pb-4">
-              <div className="text-xl sm:text-2xl font-bold text-blue-900">UnionTrust Bank</div>
-              <div className="text-xs sm:text-sm text-gray-600">Transaction Receipt</div>
+            <div className="text-center border-b border-blue-200 pb-3 sm:pb-4">
+              <div className="text-xl sm:text-2xl font-bold text-blue-900 mb-1">UnionTrust Bank</div>
+              <div className="text-xs sm:text-sm text-blue-600 font-medium">Transaction Payment Slip</div>
+              <div className="text-xs text-gray-500 mt-1">Licensed Financial Institution • Est. 1985</div>
             </div>
 
             {/* Status */}
@@ -119,9 +120,9 @@ const TransactionDetailModal = ({ transaction, isOpen, onClose }: TransactionDet
             </div>
 
             {/* Amount */}
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900">{transaction.amount}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Amount Transferred</div>
+            <div className="text-center bg-blue-100 rounded-lg p-3 sm:p-4">
+              <div className="text-2xl sm:text-3xl font-bold text-blue-900">{transaction.amount}</div>
+              <div className="text-xs sm:text-sm text-blue-600 font-medium">Amount Transferred</div>
             </div>
 
             {/* Transaction Details */}
@@ -170,9 +171,10 @@ const TransactionDetailModal = ({ transaction, isOpen, onClose }: TransactionDet
             </div>
 
             {/* Footer */}
-            <div className="text-center text-xs text-gray-500 border-t pt-3 sm:pt-4">
-              <div>Generated on {new Date().toLocaleString()}</div>
-              <div className="mt-1 break-all">For support, contact: support@uniontrust.com</div>
+            <div className="text-center text-xs text-gray-500 border-t border-blue-200 pt-3 sm:pt-4 bg-blue-50 rounded-b-lg -mx-6 -mb-6 px-6 pb-6">
+              <div className="font-medium text-blue-700">Generated on {new Date().toLocaleString()}</div>
+              <div className="mt-1 break-all">For support: support@uniontrust.com | 1-800-UNION-TRUST</div>
+              <div className="mt-1 text-xs">🏦 UnionTrust Bank - Your trusted banking partner</div>
             </div>
           </CardContent>
         </Card>

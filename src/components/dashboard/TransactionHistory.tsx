@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { History, Download, Eye, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import TransactionDetailModal from "./TransactionDetailModal";
+import StatementModal from "./StatementModal";
 import { useTransactions } from "@/hooks/useTransactions";
 
 const TransactionHistory = () => {
@@ -13,6 +14,7 @@ const TransactionHistory = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
   
   const { transactions, loading } = useTransactions();
 
@@ -80,9 +82,9 @@ const TransactionHistory = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-banking-navy">Transaction History</h2>
-        <Button variant="outline">
+        <Button variant="outline" onClick={() => setIsStatementModalOpen(true)}>
           <Download className="h-4 w-4 mr-2" />
-          Export Statement
+          Generate Statement
         </Button>
       </div>
 
@@ -206,6 +208,12 @@ const TransactionHistory = () => {
         transaction={selectedTransaction}
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
+      />
+
+      {/* Statement Generation Modal */}
+      <StatementModal
+        isOpen={isStatementModalOpen}
+        onClose={() => setIsStatementModalOpen(false)}
       />
     </div>
   );
