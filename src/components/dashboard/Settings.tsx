@@ -242,35 +242,19 @@ const SettingsPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => toast({ title: "Password Change", description: "Password change functionality coming soon." })}
-            >
+            <Button variant="outline" className="w-full justify-start">
               <User className="h-4 w-4 mr-2" />
               Change Password
             </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => toast({ title: "2FA Setup", description: "Two-factor authentication setup coming soon." })}
-            >
+            <Button variant="outline" className="w-full justify-start">
               <Smartphone className="h-4 w-4 mr-2" />
               Two-Factor Authentication
             </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => toast({ title: "Security Questions", description: "Security questions setup coming soon." })}
-            >
+            <Button variant="outline" className="w-full justify-start">
               <Shield className="h-4 w-4 mr-2" />
               Security Questions
             </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => toast({ title: "Trusted Devices", description: "Trusted devices management coming soon." })}
-            >
+            <Button variant="outline" className="w-full justify-start">
               <CreditCard className="h-4 w-4 mr-2" />
               Trusted Devices
             </Button>

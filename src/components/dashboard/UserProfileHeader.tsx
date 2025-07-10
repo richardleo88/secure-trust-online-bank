@@ -144,23 +144,11 @@ const UserProfileHeader = () => {
 
           {/* Actions */}
           <div className="space-y-1">
-            <DropdownMenuItem 
-              className="cursor-pointer"
-              onClick={() => {
-                const event = new CustomEvent('navigateToSection', { detail: 'profile' });
-                window.dispatchEvent(event);
-              }}
-            >
+            <DropdownMenuItem className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>View Full Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="cursor-pointer"
-              onClick={() => {
-                const event = new CustomEvent('navigateToSection', { detail: 'settings' });
-                window.dispatchEvent(event);
-              }}
-            >
+            <DropdownMenuItem className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               <span>Account Settings</span>
             </DropdownMenuItem>

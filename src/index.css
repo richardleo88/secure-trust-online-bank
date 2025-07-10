@@ -165,16 +165,4 @@
       transform: rotate(360deg);
     }
   }
-
-  /* HDR Display Enhancement */
-  .hdr-display {
-    color-gamut: rec2020;
-    filter: contrast(1.1) saturate(1.2) brightness(1.05);
-    background-attachment: fixed;
-  }
-
-  /* Enhanced contrast for better readability */
-  .high-contrast {
-    filter: contrast(1.3);
-  }
 }
