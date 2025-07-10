@@ -67,7 +67,7 @@ const AccountOverview = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent text-2xl font-bold">Account Overview</h2>
+          <h2 className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-2xl font-bold text-blue-900">Account Overview</h2>
           <p className="text-slate-600 mt-1 text-xs font-thin">Your live banking account with immediate processing</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => setBalancesVisible(!balancesVisible)} className="border-blue-200 hover:bg-blue-50 hover:border-blue-300 font-medium text-xs">
@@ -119,15 +119,12 @@ const AccountOverview = () => {
               <CardTitle className="text-xl">Recent Transactions</CardTitle>
               <p className="text-blue-100 text-sm mt-1">Live transaction history - All transfers processed immediately</p>
             </div>
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              className="bg-white/20 hover:bg-white/30 text-white border-0"
-              onClick={() => {
-                // Mock navigation to transaction history
-                window.dispatchEvent(new CustomEvent('navigateToSection', { detail: 'history' }));
-              }}
-            >
+            <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0" onClick={() => {
+            // Mock navigation to transaction history
+            window.dispatchEvent(new CustomEvent('navigateToSection', {
+              detail: 'history'
+            }));
+          }}>
               <Plus className="h-4 w-4 mr-2" />
               View All
             </Button>
