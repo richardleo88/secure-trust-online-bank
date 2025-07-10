@@ -70,7 +70,7 @@ const MobileBottomNav = ({ activeSection, setActiveSection, onMenuClick }: Mobil
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 backdrop-blur-md border-t border-sky-300/20 shadow-2xl md:hidden z-40 safe-area-pb">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 backdrop-blur-md border-t border-slate-500/30 shadow-2xl md:hidden z-40 safe-area-pb">
       <div className="flex items-center justify-around py-4 px-2">
         {navItems.map((item) => (
           <Button
@@ -79,8 +79,8 @@ const MobileBottomNav = ({ activeSection, setActiveSection, onMenuClick }: Mobil
             size="lg"
             className={`flex flex-col items-center gap-2 h-auto py-4 px-4 min-w-0 flex-1 rounded-2xl transition-all duration-300 relative ${
               isActive(item.id)
-                ? 'bg-white/90 shadow-xl backdrop-blur-lg border border-white/50 text-slate-700 scale-105' 
-                : 'text-slate-600 hover:text-slate-700 hover:bg-white/30 hover:scale-102'
+                ? 'bg-white/95 shadow-xl backdrop-blur-lg border border-white/60 text-slate-800 scale-105 font-semibold' 
+                : 'text-white/90 hover:text-white hover:bg-white/20 hover:scale-102 font-medium'
             }`}
             onClick={() => handleNavClick(item)}
           >
@@ -90,8 +90,8 @@ const MobileBottomNav = ({ activeSection, setActiveSection, onMenuClick }: Mobil
             )}
             
             <div className="relative z-10 flex flex-col items-center gap-2">
-              <item.icon className={`h-6 w-6 flex-shrink-0 ${isActive(item.id) ? 'text-slate-700' : 'text-slate-600'}`} />
-              <span className={`text-xs font-semibold leading-tight truncate text-center ${isActive(item.id) ? 'text-slate-700' : 'text-slate-600'}`}>
+              <item.icon className={`h-6 w-6 flex-shrink-0 ${isActive(item.id) ? 'text-slate-800' : 'text-white/90'}`} />
+              <span className={`text-xs font-semibold leading-tight truncate text-center ${isActive(item.id) ? 'text-slate-800' : 'text-white/90'}`}>
                 {item.label}
               </span>
             </div>

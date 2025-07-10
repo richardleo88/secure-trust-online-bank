@@ -106,11 +106,25 @@ const ATMCard = () => {
           <div className="space-y-3">
             <h3 className="font-semibold">Card Settings</h3>
             <div className="space-y-2">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={() => {
+                  // Add PIN change functionality
+                  alert('PIN change functionality - This would open a secure PIN change dialog');
+                }}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Change PIN
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={() => {
+                  // Add card request functionality
+                  alert('New card request sent - You will receive your new card within 5-7 business days');
+                }}
+              >
                 <CreditCard className="h-4 w-4 mr-2" />
                 Request New Card
               </Button>

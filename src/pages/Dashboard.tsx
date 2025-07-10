@@ -86,7 +86,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-200 via-blue-100 to-indigo-200">
+    <div className="min-h-screen bg-gradient-to-br from-sky-300 via-blue-200 to-indigo-300 hdr-display">
       <SidebarProvider>
         <div className="flex w-full min-h-screen">
           <DashboardSidebar 
@@ -111,7 +111,7 @@ const Dashboard = () => {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <h1 className="text-banking-navy text-base sm:text-lg font-bold truncate">
-                      {t('dashboard.welcome')}, {user?.full_name || user?.user_metadata?.full_name || 'User'}
+                      Welcome, {user?.full_name || user?.user_metadata?.full_name || 'User'}!
                     </h1>
                     <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                   </div>
